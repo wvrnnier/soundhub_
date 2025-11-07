@@ -1,42 +1,41 @@
-import { Component } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-inicio', 
+  selector: 'app-inicio',
   standalone: true,
-  imports: [RouterLink], 
-  template: `<section class="inicio">
-              <h1> SounHUB </h1>
-              <p> Descubre escucha y crea </p>
-
-<!-- Routerlink me crea enlaces entre rutas sin regargar la pagina -->
-<a routerLink="/explorar" class = "btn-explorar"> Explorar </a>
-</section>`,
-styles: [`
-  .inicio {
-  text-align:center;
-  margin-top: 80px;
-  font-family: Arial, sans-serif;
-  }
-
-h1{
-font-size:2.5rem;
-color: #512DA8;
-margin-bottom: 0.5rem;}
-}
-.btn {
-display. inline-block;
-margin-top: 1rem;´
-padding: 10px 20px;
-background-color: #512DA8;
-color: white;
-text-decoration: none;
-border-radius: 8px;
-transition: background-color 0.3s;
-}
-.btn:hover {
-background-color: #311B92;
-}
-`]
+  imports: [RouterLink],
+  template: `
+    <section class="inicio">
+      <h1>SoundHub</h1>
+      <p>Descubre música y guarda tus favoritas.</p>
+      <a routerLink="/explorar" class="btn">Explorar canciones →</a>
+    </section>
+  `,
+  styles: [`
+    .inicio {
+      text-align: center;
+      margin-top: 80px;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #512da8;
+      margin-bottom: 0.5rem;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 10px 20px;
+      background-color: #512da8;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background-color: #311b92;
+    }
+  `]
 })
 export class InicioComponent {}

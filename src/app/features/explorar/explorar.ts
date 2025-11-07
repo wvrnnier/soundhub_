@@ -1,28 +1,36 @@
-import { Component, signal} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, RouterModule } from '@angular/router';
-import { MusicService, Track } from '../../core/services/music';
-@Component({
-  selector: 'app-explorar',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './explorar.html',
-  styleUrls: ['./explorar.css']
-})
-export class ExplorarComponent {
-  termm = signal('');
 
-  results = signal<Track[]>([]);
+ // Importamos los módulos y servicios necesarios
+import { Component, signal } from '@angular/core'; // señal reactiva de Angular
+import { CommonModule } from '@angular/common'; // Módulo común de Angular
+import { RouterLink } from '@angular/router'; // Para enlaces de navegación
+import { MusicService, Track } from '../../core/services/music'; //º Servicio de música y la interfaz Track
 
-  constructor(public music: MusicService) {
-    this.results.set(this.music.tracks());
+@Component({ // Definición del componente
+  selector: 'app-explorar',// Nombre del selector
+  standalone: true, 
+  imports: [CommonModule, RouterLink], // Módulos importados
+  templateUrl: './explorar.html', 
+  styleUrl: './explorar.css'
+}) // Basicamente declaramos el componente standalone, decimos que modulos usar y conecta el html y css.
+
+export class ExplorarComponent { // Definimos la clase del componente
+  term = signal<string>('');       // texto del buscador
+  results = signal<Track[]>([]);   // lista mostrada
+
+  constructor(public music: MusicService) { // Inyectamos el servicio de música
+    this.results.set(this.music.tracks()); // carga inicial de canciones
   }
-  oSearch(v: string) {
-    this.termm.set(v);
-    this.results.set(this.music.search(v));
+
+  onSearch(v: string) { // Aquí manejamos la busqueda
+    this.term.set(v); // Actualizamos el término de búsqueda
+    this.results.set(this.music.search(v)); // Actualizamos los resultados de búsqueda
   }
 
-  isfav(id: string) { return this.music.favs().includes(id); }
-  toggle(id: string){ this.music.toggleFav(id);}
+  isFav(id: string) { // Comprueba si una canción es favorita
+    return this.music.favs().includes(id);
+  }
+
+  toggle(id: string) { //Llama al servicio para añadir o eliminar de favs
+    this.music.toggleFav(id);
+  }
 }
-

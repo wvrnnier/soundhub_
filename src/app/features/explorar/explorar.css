@@ -1,0 +1,11 @@
+body{background-color: black;
+}
+
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+gap: 16px;
+}
+article { padding: 12px; border: 1px solid #eee; border-radius: 12px; }
+img { width: 100%; border-radius: 8px; display: block; }
+.actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }

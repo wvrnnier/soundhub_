@@ -1,10 +1,22 @@
 <h2>Explorar</h2>
-    placeholder = "Buscar Artistas o canciones"
-    [value]=termm()
-    (input)="onSearch(($event.target as HTMLInputElement).value)"
+
+<input
+#q
+placeholder="Buscar canción o artista"
+[value]="term()"
+(input)="onSearch(q.value)" />
+
 <div class="grid">
-    <article *ngFor="let t of results()">
-        <img 
-        
-    </article>
+  <article *ngFor="let t of results()">
+    <img [src]="t.cover" alt="" />
+    <h3>{{ t.title }}</h3>
+    <p>{{ t.artist }}</p>
+
+    <div class="actions">
+    <button (click)="toggle(t.id)">
+        {{ isFav(t.id) ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
+    </button>
+    <a [routerLink]="['/cancion', t.id]">Detalle</a>
+    </div>
+  </article>
 </div>
