@@ -1,0 +1,27 @@
+<div class="search-container">
+    <input 
+        type="text" 
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        (blur)="onBlur()"
+        placeholder="Buscar canciones..."
+        class="search-input">
+    
+    @if (showDropdown && searchResults.length > 0) {
+        <div class="search-dropdown">
+            @for (result of searchResults; track result) {
+                <div 
+                    class="search-result-item"
+                    (click)="onSelectResult(result)">
+                    {{ result }}
+                </div>
+            }
+        </div>
+    }
+    
+    @if (showDropdown && searchResults.length === 0 && searchTerm.length > 0) {
+        <div class="search-dropdown no-results">
+            <div class="search-result-item">No se encontraron resultados</div>
+        </div>
+    }
+</div>

@@ -5,37 +5,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-inicio',
   standalone: true,
   imports: [RouterLink],
-  template: `
-    <section class="inicio">
-      <h1>SoundHub</h1>
-      <p>Descubre música y guarda tus favoritas.</p>
-      <a routerLink="/explorar" class="btn">Explorar canciones →</a>
-    </section>
-  `,
-  styles: [`
-    .inicio {
-      text-align: center;
-      margin-top: 80px;
-      font-family: Arial, sans-serif;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #512da8;
-      margin-bottom: 0.5rem;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 10px 20px;
-      background-color: #512da8;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 8px;
-      transition: background 0.3s;
-    }
-    .btn:hover {
-      background-color: #311b92;
-    }
-  `]
+  templateUrl: './inicio.html',
+  styleUrls: ['./inicio.css'],
 })
 export class InicioComponent {}
