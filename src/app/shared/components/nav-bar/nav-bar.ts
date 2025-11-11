@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { SearchBarComponent } from '../search-bar/search-bar';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { SearchBarComponent } from '../search-bar/search-bar';
 
 @Component({
     selector: 'app-nav-bar',
