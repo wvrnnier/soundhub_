@@ -11,3 +11,8 @@
   margin-left: 240px; /* ancho del sidebar */
   overflow-y: auto;
 }
+
+app-library {
+  width: 240px;
+  flex-shrink: 0;
+}
