@@ -1,22 +1,21 @@
-<h2>Explorar</h2>
+<div class="page">
+  <h2>Explorar</h2>
 
-<input
-#q
-placeholder="Buscar canción o artista"
-[value]="term()"
-(input)="onSearch(q.value)" />
+  <input #q
+    placeholder="Buscar canción o artista"
+    [value]="term()"
+    (input)="onSearch(q.value)"
+    style="width: 320px; padding:10px; border-radius:10px; border:1px solid var(--border); background:#1c1c1c; color:var(--text);" />
 
-<div class="grid">
-  <article *ngFor="let t of results()">
-    <img [src]="t.cover" alt="" />
-    <h3>{{ t.title }}</h3>
-    <p>{{ t.artist }}</p>
-
-    <div class="actions">
-    <button (click)="toggle(t.id)">
-        {{ isFav(t.id) ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
-    </button>
-    <a [routerLink]="['/cancion', t.id]">Detalle</a>
-    </div>
-  </article>
+  <div class="grid" style="margin-top:16px">
+    <article class="card" *ngFor="let t of results()">
+      <img [src]="t.cover" alt="" />
+      <h3>{{ t.title }}</h3>
+      <p>{{ t.artist }}</p>
+      <div class="actions">
+        <button (click)="toggle(t.id)">{{ isFav(t.id) ? 'Quitar de favoritos' : 'Añadir a favoritos' }}</button>
+        <a [routerLink]="['/cancion', t.id]">Detalle</a>
+      </div>
+    </article>
+  </div>
 </div>

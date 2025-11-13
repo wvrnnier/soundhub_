@@ -1,13 +1,14 @@
-import { Routes } from '@angular/router';
-import { Layout } from './shared/layout/layout';
+import { Routes } from '@angular/router'; // Importar el tipo para definir las rutas
+import { LayoutComponent } from './shared/components/layout/layout';
+//Componente  que actúa como marco.
 import { InicioComponent } from './features/inicio/inicio';
 import { ExplorarComponent } from './features/explorar/explorar';
 import { FavoritasComponent } from './features/favoritas/favoritas';
 
-export const routes: Routes = [
+export const routes: Routes = [ // Exporta un array de rutas
   {
     path: '',
-    component: Layout,
+    component: LayoutComponent,
     children: [
       { path: '', component: InicioComponent },
       { path: 'explorar', component: ExplorarComponent },

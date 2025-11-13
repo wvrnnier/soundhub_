@@ -1,5 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
-:root {
-    --primary-color: #00d7b0;
-    --hover-color: #0075fb;
+:root{
+  --header-h: 64px;
+  --sb-collapsed: 72px;   /* ancho lateral cerrada */
+  --sb-expanded: 300px;   /* ancho lateral abierta (solo hover, no empuja) */
+
+  --bg: #0f0f10;          /* fondo app */
+  --surface: #121212;     /* barras / superficies */
+  --card: #181818;        /* tarjetas */
+  --border: #2a2a2a;
+  --text: #e6e6e6;
+  --muted: #a3a3a3;
+  --accent: #1ed760;      /* verde spotify */
 }
+
+*{ box-sizing: border-box; }
+html, body{ height:100%; }
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Enlaces */
+a{ color: #a78bfa; text-decoration: none; }
+a:hover{ text-decoration: underline; }

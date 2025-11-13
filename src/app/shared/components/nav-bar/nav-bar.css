@@ -10,6 +10,10 @@ header {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+app-side-bar.expanded ~ header {
+  left: var(--sidebar-w-expanded);
+}
+
 .nav-bar {
     display: flex;
     justify-content: space-between;

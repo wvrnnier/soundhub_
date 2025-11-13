@@ -1,0 +1,49 @@
+:host {
+  display: block;
+}
+
+/* Barra cerrada */
+.sidebar {
+  width: 72px;
+  height: 100vh;
+  background: #141414;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: width 0.25s ease;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+:host(.expanded) .sidebar {/* cuando el host tiene la clase expanded el sidebar se vuelve ancho*/
+  width: 220px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.item:hover {
+  background: #1f1f1f;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+.label {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+:host(.expanded) .label { /*si está ecpandido mostramos el texto*/
+  opacity: 1;
+}
