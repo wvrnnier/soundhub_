@@ -1,0 +1,4 @@
+<button (click)="openLoginModal()">Login</button>
+@if (isModalOpen) {
+<app-login-modal (close)="closeLoginModal()"></app-login-modal>
+}

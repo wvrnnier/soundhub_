@@ -1,23 +1,21 @@
 .search-container {
     position: relative;
-    width: 100%;
-    max-width: 500px;
+    width: 400px;
 }
 
 .search-input {
     width: 100%;
     padding: 10px 15px;
-    border: 2px solid lightslategray;
-    border-radius: 8px;
+    border: 2px solid var(--border);
     font-size: 1rem;
     transition: border-color 0.3s;
     color: white;
-    background-color: rgb(77, 77, 77);
+    background-color: var(--card);
 }
 
 .search-input:focus {
     outline: none;
-    border-color: var(--primary-color);
+    border-color: var(--accent);
 }
 
 .search-dropdown {
@@ -45,7 +43,7 @@
 }
 
 .search-result-item:hover {
-    background-color: #00d7b0;
+    background-color: var(--accent);
 }
 
 .no-results .search-result-item {
