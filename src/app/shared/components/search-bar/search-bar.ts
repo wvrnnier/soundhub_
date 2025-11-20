@@ -30,14 +30,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     ngOnInit() {
         if (isPlatformBrowser(this.platformId)) {
             document.addEventListener('click', this.onExitClick.bind(this));
-            console.log('Document click listener added');
+            console.log('Añadido listener de click al documento');
         }
     }
 
     ngOnDestroy() {
         if (isPlatformBrowser(this.platformId)) {
             document.removeEventListener('click', this.onExitClick.bind(this));
-            console.log('Document click listener removed');
+            console.log('Eliminado listener de click del documento');
         }
     }
 
@@ -70,9 +70,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     onKeyDown(event: KeyboardEvent) {
         console.log('Key pressed:', event.key, 'Dropdown visible:', this.showDropdown, 'Results length:', this.searchResults.length);
-        if (!this.showDropdown || this.searchResults.length === 0) {
-            console.log('Dropdown no visible o sin resultados');
-            return;
+        if (this.searchResults.length === 0 && event.key !== 'Escape') {
+        console.log('Sin resultados y no es escape');
+        return;
         }
 
         if (event.key === 'ArrowDown') {
@@ -89,6 +89,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                 console.log('Enter: resultado selecionado ', this.highlightedIndex);
                 this.onSelectResult(this.searchResults[this.highlightedIndex]);
             }
+        } else if (event.key === 'Escape') {
+            event.preventDefault();
+            console.log('Escape: cerrando dropdown');
+            this.showDropdown = false;
+            this.cdr.detectChanges();
         }
     }
 
