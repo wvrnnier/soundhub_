@@ -1,36 +1,30 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MusicService } from '../../core/services/music';
+import { SearchStateService } from '../../core/services/search-state';
 
- // Importamos los módulos y servicios necesarios
-import { Component, signal } from '@angular/core'; // señal reactiva de Angular
-import { CommonModule } from '@angular/common'; // Módulo común de Angular
-import { RouterLink } from '@angular/router'; // Para enlaces de navegación
-import { MusicService, Track } from '../../core/services/music'; //º Servicio de música y la interfaz Track
-
-@Component({ // Definición del componente
-  selector: 'app-explorar',// Nombre del selector
-  standalone: true, 
-  imports: [CommonModule, RouterLink], // Módulos importados
-  templateUrl: './explorar.html', 
+@Component({
+  selector: 'app-explorar',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './explorar.html',
   styleUrl: './explorar.css'
-}) // Basicamente declaramos el componente standalone, decimos que modulos usar y conecta el html y css.
+})
+export class ExplorarComponent {
+  constructor(
+    public music: MusicService,
+    public searchState: SearchStateService
+  ) {}
 
-export class ExplorarComponent { // Definimos la clase del componente
-  term = signal<string>('');       // texto del buscador
-  results = signal<Track[]>([]);   // lista mostrada
-
-  constructor(public music: MusicService) { // Inyectamos el servicio de música
-    this.results.set(this.music.tracks()); // carga inicial de canciones
+  get selectedTrack() {
+    return this.searchState.selectedTrack();
   }
 
-  onSearch(v: string) { // Aquí manejamos la busqueda
-    this.term.set(v); // Actualizamos el término de búsqueda
-    this.results.set(this.music.search(v)); // Actualizamos los resultados de búsqueda
-  }
-
-  isFav(id: string) { // Comprueba si una canción es favorita
+  isFav(id: string) {
     return this.music.favs().includes(id);
   }
 
-  toggle(id: string) { //Llama al servicio para añadir o eliminar de favs
+  toggle(id: string) {
     this.music.toggleFav(id);
   }
 }

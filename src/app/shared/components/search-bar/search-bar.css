@@ -52,5 +52,9 @@
 }
 
 .no-results .search-result-item:hover {
-    background-color: rgb(255, 255, 255);
+    background-color: var(--card);
+}
+.search-result-item.highlighted {
+    background: var(--accent);
+    color: #fff;
 }

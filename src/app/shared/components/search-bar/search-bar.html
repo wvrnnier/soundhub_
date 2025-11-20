@@ -4,16 +4,18 @@
         [(ngModel)]="searchTerm"
         (input)="onSearch()"
         (blur)="onBlur()"
+        (keydown)="onKeyDown($event)"
         placeholder="Buscar canciones..."
         class="search-input">
     
     @if (showDropdown && searchResults.length > 0) {
         <div class="search-dropdown">
-            @for (result of searchResults; track result) {
+            @for (result of searchResults; track result.id) {
                 <div 
                     class="search-result-item"
+                    [class.highlighted]="$index === highlightedIndex"
                     (click)="onSelectResult(result)">
-                    {{ result }}
+                    <strong>{{ result.title }} </strong> <span class="artist-name">- {{ result.artist }}</span>
                 </div>
             }
         </div>

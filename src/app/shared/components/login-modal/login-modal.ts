@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } 
 from '@angular/forms';
-
+import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-login-modal',
   imports: [CommonModule, ReactiveFormsModule],

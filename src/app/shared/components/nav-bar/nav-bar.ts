@@ -10,7 +10,4 @@ import { LoginBtnComponent } from '../login-btn/login-btn';
     styleUrls: ['./nav-bar.css'],
     imports: [SearchBarComponent, RouterLink, RouterLinkActive, LoginBtnComponent]
 })
-export class NavBarComponent {
-    onSearch(searchTerm: string){
-        console.log('Busqueda:', searchTerm);
-}}
+export class NavBarComponent {}
