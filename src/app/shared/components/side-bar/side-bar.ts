@@ -21,14 +21,15 @@ export class SideBarComponent {
     this.expanded = false;// cambie el estado de expansión
   }
 
+isSearchMenuOpen = false;
+onMouseEnterSearch(){
+  this.isSearchMenuOpen = true;
+}
+onMouseLeaveSearch(){
+  this.isSearchMenuOpen = false;
+}
   @HostBinding('class.expanded')
   get isExpanded() { //getter que se evalúa para decidir si se añade la clase
     return this.expanded; // devolvemos valor de expanded.
   }
-
-  isSearchMenuOpen = false;
-  toggleSearchMenu() {
-    this.isSearchMenuOpen = !this.isSearchMenuOpen;
-  }
-
 }

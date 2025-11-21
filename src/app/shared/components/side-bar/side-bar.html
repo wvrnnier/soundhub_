@@ -5,20 +5,30 @@
   <div class="item" routerLink="#">
     <span class="icon">*</span>
     <span class="label">Biblioteca</span>
-  </div>***
-
-  <div class="item" routerLink="/explorar">
-    <span class="icon">*</span>
-    <span class="label">Explorar</span>
   </div>
-  <div class="item" (click)="toggleSearchMenu()">
+  <div class="item" routerLink="#">
+    <span class="icon">*</span>
+    <span class="label">Perfil</span>
+  </div>
+
+
+
+
+<div class="item"
+       (mouseenter)="onMouseEnterSearch()"
+       (mouseleave)="onMouseLeaveSearch()">
+
     <span class="icon">*</span>
     <span class="label">Buscar</span>
-  </div>
+
+
+
+
   @if (isSearchMenuOpen) {
-  <div class="submenu">
-    <button>Mis playlists</button>
-    <button>Mis artistas</button>
-    <button>Mis Favoritas</button>
-  </div>
-}
+    <div class="submenu">
+      <button>Mis playlists</button>
+      <button>Mis artistas</button>
+      <button>Mis favoritas</button>
+    </div>
+  }
+    </div>
