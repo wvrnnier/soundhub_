@@ -10,7 +10,7 @@ header {
 }
 
 app-side-bar.expanded ~ header {
-  left: var(--sidebar-w-expanded);
+    left: var(--sidebar-w-expanded);
 }
 
 .nav-bar {
