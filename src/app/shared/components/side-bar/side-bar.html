@@ -11,10 +11,20 @@
     <span class="icon">*</span>
     <span class="label">Explorar</span>
   </div>
+  <div class="item" (click)="toggleSearchMenu()">
+    <span class="icon">*</span>
+    <span class="label">Buscar</span>
+  </div>
+
+  <div class="submenu" *ngIf="isSearchMenuOpen">
+    <div class="submenu-item">→ Mis Playlist</div>
+    <div class="submenu-item">→ Mis Artistas Favoritos</div>
+    <div class="submenu-item">→ Mis Álbumes Guardados</div>
+  </div>
+  
 
   <div class="item" routerLink="/favoritas">
     <span class="icon">*</span>
     <span class="label">Favoritas</span>
   </div>
-
 </nav>

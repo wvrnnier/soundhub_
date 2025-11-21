@@ -47,3 +47,30 @@
 :host(.expanded) .label { /*si está ecpandido mostramos el texto*/
   opacity: 1;
 }
+.submenu {
+  margin-left: 20px;
+  padding-left: 10px;
+  border-left: 2px solid #ffffff30;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: fadeIn 0.2s ease;
+}
+
+.submenu-item {
+  font-size: 14px;
+  color: #fff;
+  opacity: 0.75;
+  cursor: pointer;
+  transition: opacity 0.2s ease, padding-left 0.2s ease;
+}
+
+.submenu-item:hover {
+  opacity: 1;
+  padding-left: 5px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

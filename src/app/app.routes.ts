@@ -3,7 +3,6 @@ import { LayoutComponent } from './shared/components/layout/layout';
 //Componente  que actúa como marco.
 import { InicioComponent } from './features/inicio/inicio';
 import { ExplorarComponent } from './features/explorar/explorar';
-import { FavoritasComponent } from './features/favoritas/favoritas';
 
 export const routes: Routes = [ // Exporta un array de rutas
   {
@@ -12,7 +11,6 @@ export const routes: Routes = [ // Exporta un array de rutas
     children: [
       { path: '', component: InicioComponent },
       { path: 'explorar', component: ExplorarComponent },
-      { path: 'favoritas', component: FavoritasComponent }
     ]
   }
 ];
