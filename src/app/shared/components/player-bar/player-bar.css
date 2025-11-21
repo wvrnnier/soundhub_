@@ -1,0 +1,13 @@
+:host {
+  display: block;       /* Importante: hace que el componente ocupe espacio real */
+  width: 100%;          /* Fuerza el ancho total */
+  height: 100%;         /* Ocupa toda la altura del footer padre */
+}
+
+/* Si tienes una etiqueta footer dentro de player-bar.html, asegúrate que también estire */
+footer {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}

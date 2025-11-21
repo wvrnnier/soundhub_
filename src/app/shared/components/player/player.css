@@ -1,0 +1,247 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.player-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 24px;
+    background-color: #000000; /* Fondo negro puro o muy oscuro */
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- IZQUIERDA: INFO --- */
+.track-info {
+    display: flex;
+    align-items: center;
+    width: 30%;
+    min-width: 200px;
+    gap: 14px;
+}
+
+.cover-image {
+    height: 56px;
+    width: 56px;
+    border-radius: 4px;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.track-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.track-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-title:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.track-artist {
+    font-size: 12px;
+    color: #b3b3b3; /* Gris claro */
+}
+
+.track-artist:hover {
+    color: #fff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Botones pequeños (like, etc) */
+.small-btn {
+    color: #b3b3b3;
+    transform: scale(0.9);
+}
+.small-btn:hover { color: #fff; }
+
+
+/* --- CENTRO: CONTROLES --- */
+.controls-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    max-width: 722px;
+    gap: 6px;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 4px;
+}
+
+/* Botones estándar */
+.icon-btn {
+    background: none;
+    border: none;
+    color: #b3b3b3; /* Gris inactivo */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.icon-btn:hover {
+    color: #fff;
+}
+
+.secondary-control {
+    color: #5e5e5e; /* Más oscuro para shuffle/repeat si están inactivos */
+}
+.secondary-control:hover { color: #b3b3b3; }
+
+/* EL BOTÓN PLAY CIRCULAR (Estilo Referencia) */
+.play-btn-circle {
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff; /* Fondo blanco */
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.play-btn-circle:hover {
+    transform: scale(1.05);
+    background-color: #f0f0f0;
+}
+
+.play-btn-circle:active {
+    transform: scale(0.95);
+}
+
+/* El icono dentro del círculo debe ser negro */
+.play-btn-circle .material-symbols-rounded {
+    color: #000000; 
+    font-size: 24px;
+    font-variation-settings: 'FILL' 1, 'wght' 700; /* Icono relleno y gordito */
+}
+
+/* Tamaño iconos laterales */
+.icon-btn .material-symbols-rounded {
+    font-size: 22px;
+    font-variation-settings: 'FILL' 1;
+}
+
+
+/* --- BARRA DE PROGRESO --- */
+.progress-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+}
+
+.time {
+    font-size: 11px;
+    color: #a7a7a7;
+    min-width: 35px;
+    text-align: center;
+    font-variant-numeric: tabular-nums; /* Evita salto de números */
+}
+
+.progress-bar-container {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    group: progress;
+}
+
+/* Fondo gris de la barra */
+.progress-background {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: #4d4d4d;
+    border-radius: 2px;
+}
+
+/* Relleno blanco (progreso) */
+.progress-fill {
+    position: absolute;
+    height: 4px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+/* Al pasar el ratón, la barra se pone verde (opcional) o se queda blanca */
+.progress-bar-container:hover .progress-fill {
+    background-color: #1db954; /* Verde estilo Spotify */
+}
+
+/* Input Range Invisible (para funcionalidad) */
+.progress-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+    margin: 0;
+}
+
+
+/* --- DERECHA: VOLUMEN --- */
+.volume-area {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100px;
+}
+
+.volume-icon {
+    color: #b3b3b3;
+    font-size: 20px;
+}
+
+.volume-bar {
+    height: 4px;
+    width: 100%;
+    background-color: #4d4d4d;
+    border-radius: 2px;
+    position: relative;
+}
+
+/* Simulación de volumen al 70% */
+.volume-bar::after {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 100%;
+    background-color: #b3b3b3;
+    border-radius: 2px;
+}
+
+.volume-bar:hover::after {
+    background-color: #1db954;
+}

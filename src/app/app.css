@@ -22,3 +22,13 @@ html,body{
   scrollbar-gutter: stable both-edges;/*mantiene sitio para hacer scroll cuando lo tenga que hgacer*/
 }
 
+.player-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;          /* Quita márgenes */
+  z-index: 1000;
+  background-color: #000000; /* Fondo oscuro para la barra */
+  border-top: 10px solid #000000; /* Borde superior sutil */
+  padding: 10px 10px;
+}
