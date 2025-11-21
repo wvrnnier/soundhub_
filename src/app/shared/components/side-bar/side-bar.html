@@ -5,7 +5,7 @@
   <div class="item" routerLink="#">
     <span class="icon">*</span>
     <span class="label">Biblioteca</span>
-  </div>
+  </div>***
 
   <div class="item" routerLink="/explorar">
     <span class="icon">*</span>
@@ -15,16 +15,10 @@
     <span class="icon">*</span>
     <span class="label">Buscar</span>
   </div>
-
-  <div class="submenu" *ngIf="isSearchMenuOpen">
-    <div class="submenu-item">→ Mis Playlist</div>
-    <div class="submenu-item">→ Mis Artistas Favoritos</div>
-    <div class="submenu-item">→ Mis Álbumes Guardados</div>
+  @if (isSearchMenuOpen) {
+  <div class="submenu">
+    <button>Mis playlists</button>
+    <button>Mis artistas</button>
+    <button>Mis Favoritas</button>
   </div>
-  
-
-  <div class="item" routerLink="/favoritas">
-    <span class="icon">*</span>
-    <span class="label">Favoritas</span>
-  </div>
-</nav>
+}

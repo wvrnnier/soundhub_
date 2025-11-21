@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router'; // Importar el tipo para definir las rutas
 import { LayoutComponent } from './shared/components/layout/layout';
-//Componente  que actúa como marco.
 import { InicioComponent } from './features/inicio/inicio';
 import { ExplorarComponent } from './features/explorar/explorar';
 

@@ -1,13 +1,12 @@
 import { Component, HostBinding } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import {NgIf} from '@angular/common';
-
+import { RouterLink} from '@angular/router';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-side-bar',
   standalone: true,
   templateUrl: './side-bar.html',
   styleUrls: ['./side-bar.css'],
-  imports: [RouterLink, NgIf],
+  imports: [RouterLink, CommonModule]
 })
 export class SideBarComponent {
   expanded = false;//Estado interno , cuando true: Abierto y false: cerrado
