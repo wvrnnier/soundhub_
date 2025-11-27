@@ -1,6 +1,5 @@
-<nav class="sidebar"
-    (mouseenter)="onMouseEnter()"
-    (mouseleave)="onMouseLeave()"> <!--Cuando el ratón entra y cuando sale-->
+<nav class="sidebar" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+  <!--Cuando el ratón entra y cuando sale-->
 
   <div class="item" routerLink="#">
     <span class="icon">*</span>
@@ -11,24 +10,15 @@
     <span class="label">Perfil</span>
   </div>
 
-
-
-
-<div class="item"
-       (mouseenter)="onMouseEnterSearch()"
-       (mouseleave)="onMouseLeaveSearch()">
-
+  <div class="item" (mouseenter)="onMouseEnterSearch()" (mouseleave)="onMouseLeaveSearch()">
     <span class="icon">*</span>
     <span class="label">Buscar</span>
 
-
-
-
-  @if (isSearchMenuOpen) {
+    @if (isSearchMenuOpen) {
     <div class="submenu">
-      <button>Mis playlists</button>
-      <button>Mis artistas</button>
-      <button>Mis favoritas</button>
+      <button routerLink="/tracks">Canciones</button>
+      <button routerLink="/artists">Artistas</button>
     </div>
-  }
-    </div>
+    }
+  </div>
+</nav>

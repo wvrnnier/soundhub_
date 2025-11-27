@@ -1,0 +1,17 @@
+.artist-card {
+  text-align: center;
+  cursor: pointer;
+}
+
+img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.name {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}

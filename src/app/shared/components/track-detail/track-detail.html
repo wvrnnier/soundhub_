@@ -1,0 +1,10 @@
+@if (track()) {
+<div class="detail">
+  <img [src]="track()!.artworkUrl100" />
+
+  <h2>{{ track()!.trackName }}</h2>
+  <h3>{{ track()!.artistName }}</h3>
+
+  <button (click)="play()">▶ Preview</button>
+</div>
+}

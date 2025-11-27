@@ -1,24 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { MusicService } from '../../../core/services/music-service';
 
 @Component({
-  selector: 'app-search-bar',
+  selector: 'app-search-list',
   standalone: true,
-  templateUrl: './search-bar.html',
-  styleUrls: ['./search-bar.css'],
   imports: [FormsModule],
+  templateUrl: './search-list.html',
+  styleUrls: ['./search-list.css'],
 })
 export class SearchBarComponent {
   music = inject(MusicService);
-  router = inject(Router);
-
   query = signal('');
 
-  async onSearch() {
-    this.router.navigate(['/tracks'], {
-      queryParams: { q: this.query() },
-    });
+  onSearch() {
+    if (this.query().trim().length === 0) return;
+    this.music.searchSongs(this.query());
   }
 }
