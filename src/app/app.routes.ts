@@ -3,13 +3,20 @@ import { LayoutComponent } from './shared/components/layout/layout';
 import { InicioComponent } from './features/inicio/inicio';
 import { ExplorarComponent } from './features/explorar/explorar';
 
-export const routes: Routes = [ // Exporta un array de rutas
+import { TracksListComponent } from './shared/components/track-list/track-list';
+import { TrackDetailComponent } from './shared/components/track-detail/track-detail';
+
+export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
     children: [
       { path: '', component: InicioComponent },
       { path: 'explorar', component: ExplorarComponent },
-    ]
-  }
+      { path: 'tracks', component: TracksListComponent },
+
+      // 👇 AQUI EL DETALLE, DENTRO DEL MISMO LAYOUT
+      { path: 'track/:id', component: TrackDetailComponent },
+    ],
+  },
 ];

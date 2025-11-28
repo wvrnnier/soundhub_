@@ -1,0 +1,6 @@
+<div class="card" [routerLink]="['/track', track.trackId]">
+  <img [src]="track.artworkUrl100" />
+  <div class="title">{{ track.trackName }}</div>
+  <div class="subtitle">{{ track.artistName }}</div>
+  <button class="play-btn" (click)="playPreview(); $event.stopPropagation()">▶</button>
+</div>

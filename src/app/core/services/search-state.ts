@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Track } from './music';
+import { Track } from './music-service';
 
 @Injectable({ providedIn: 'root' })
 export class SearchStateService {

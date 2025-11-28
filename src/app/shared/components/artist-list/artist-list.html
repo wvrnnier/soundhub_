@@ -1,0 +1,7 @@
+<h2>Artistas Populares</h2>
+
+<div class="grid">
+  @for (artist of music.artists(); track artist.artistId) {
+  <app-artist-card [artist]="artist" />
+  }
+</div>

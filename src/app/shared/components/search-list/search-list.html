@@ -1,0 +1,10 @@
+<div class="search-box">
+  <input
+    type="text"
+    placeholder="Buscar canciones..."
+    [(ngModel)]="query"
+    (keyup.enter)="onSearch()"
+  />
+
+  <button (click)="onSearch()">Buscar</button>
+</div>

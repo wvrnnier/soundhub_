@@ -1,0 +1,7 @@
+<h2>Canciones en tendencia</h2>
+
+<div class="grid">
+  @for (item of music.tracks(); track item.trackId) {
+  <app-track-card [track]="item" />
+  }
+</div>
