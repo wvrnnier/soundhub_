@@ -18,14 +18,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @ViewChild('audioElement') audio!: ElementRef<HTMLAudioElement>;
 
   public tracks: Track[] = [
-    {title: 'Creep', artist: 'Radiohead', cover: 'assets/covers/creep.jpg', source: 'assets/audio/Creep.mp3'},
+    { title: 'Creep', artist: 'Radiohead', cover: 'assets/covers/creep.jpg', source: 'assets/audio/Creep.mp3' },
   ];
-   
+
   public currentTrackIndex: number = 0;
   public currentTrack: Track = this.tracks[this.currentTrackIndex];
   public isPlaying: boolean = false;
   public currentTime: number = 0;
   public duration: number = 0;
+  public volume: number = 1;
+  public isMuted: boolean = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
@@ -63,10 +65,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       } else {
         this.currentTrackIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
       }
-      
+
       this.currentTrack = this.tracks[this.currentTrackIndex];
       this.audio.nativeElement.src = this.currentTrack.source;
-      
+
       // Si estaba reproduciendo, reanuda automáticamente la nueva canción
       if (this.isPlaying) {
         this.audio.nativeElement.play();
@@ -79,6 +81,40 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const time = event.target.value;
       this.audio.nativeElement.currentTime = time;
     }
+  }
+  // Controles de volumen
+
+  setVolume(event: any): void {
+    if (isPlatformBrowser(this.platformId)) {
+      // 1. Guardamos el valor en la variable de la clase (importante)
+      this.volume = parseFloat(event.target.value);
+      this.audio.nativeElement.volume = this.volume;
+
+      // 2. Si el volumen es 0, forzamos el estado de "mute"
+      if (this.volume === 0) {
+        this.isMuted = true;
+        this.audio.nativeElement.muted = true;
+      } else {
+        // Si subimos el volumen, quitamos el mute
+        this.isMuted = false;
+        this.audio.nativeElement.muted = false;
+      }
+    }
+  }
+
+  toggleMute(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const audioEl = this.audio.nativeElement;
+      audioEl.muted = !audioEl.muted;
+      this.isMuted = audioEl.muted;
+    }
+  }
+
+  getVolumenIcon(): string {
+    if (this.isMuted || this.volume === 0) {
+      return 'volume_off';
+    }
+    return 'volume_up';
   }
 
   // --- MÉTODOS DE EVENTOS DEL AUDIO ---
