@@ -1,8 +1,5 @@
 <div class="player-container">
-  <audio #audioElement 
-         (loadedmetadata)="onMetadataLoaded()"
-         (timeupdate)="onTimeUpdate()"
-         (ended)="onTrackEnded()">
+  <audio #audioElement (loadedmetadata)="onMetadataLoaded()" (timeupdate)="onTimeUpdate()" (ended)="onTrackEnded()">
   </audio>
 
   <div class="track-info">
@@ -13,16 +10,10 @@
       </div>
       <span class="track-artist">{{ currentTrack.artist }}</span>
     </div>
-    <button class="icon-btn small-btn" title="Guardar">
-      <span class="material-symbols-rounded">favorite_border</span>
-    </button>
   </div>
 
   <div class="controls-area">
     <div class="buttons">
-      <button class="icon-btn secondary-control" title="Aleatorio">
-        <span class="material-symbols-rounded">shuffle</span>
-      </button>
 
       <button class="icon-btn" (click)="skip('prev')" title="Anterior">
         <span class="material-symbols-rounded">skip_previous</span>
@@ -38,9 +29,6 @@
         <span class="material-symbols-rounded">skip_next</span>
       </button>
 
-      <button class="icon-btn secondary-control" title="Repetir">
-        <span class="material-symbols-rounded">repeat</span>
-      </button>
     </div>
 
     <div class="progress-wrapper">
@@ -48,24 +36,18 @@
       <div class="progress-bar-container">
         <div class="progress-background"></div>
         <div class="progress-fill" [style.width.%]="(currentTime / duration) * 100 || 0"></div>
-        <input type="range" 
-               [min]="0" 
-               [max]="duration" 
-               [value]="currentTime" 
-               (change)="seek($event)"
-               class="progress-input">
+        <input type="range" [min]="0" [max]="duration" [value]="currentTime" (change)="seek($event)"
+          class="progress-input">
       </div>
       <span class="time">{{ formatTime(duration) }}</span>
     </div>
   </div>
 
   <div class="volume-area">
-    <button class="icon-btn small-btn">
-      <span class="material-symbols-rounded">mic</span> </button>
-    <button class="icon-btn small-btn">
-      <span class="material-symbols-rounded">queue_music</span> </button>
     <div class="volume-control">
-      <span class="material-symbols-rounded volume-icon">volume_up</span>
-      <div class="volume-bar"></div> </div>
+      <span class="material-symbols-rounded volume-icon" (click)="toggleMute()">{{ getVolumenIcon() }}</span>
+      <input type="range" [min]="0" [max]="1" step="0.1" [value]="volume" (change)="setVolume($event)"
+        class="volume-input">
+    </div>
   </div>
 </div>
