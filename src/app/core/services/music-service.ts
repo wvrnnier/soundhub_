@@ -1,5 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface Track {
   trackId: number;
@@ -38,11 +40,10 @@ export class MusicService {
     });
   }
 
-  getTrackById(id: number): Promise<Track> {
+  getTrackById(id: number): Observable<Track> {
     const url = `https://itunes.apple.com/lookup?id=${id}`;
     return this.http
       .get<any>(url)
-      .toPromise()
-      .then((resp) => resp.results[0] as Track);
+      .pipe(map((resp) => resp.results[0] as Track));
   }
 }

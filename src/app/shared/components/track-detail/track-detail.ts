@@ -14,13 +14,12 @@ export class TrackDetailComponent implements OnInit {
   route = inject(ActivatedRoute);
   audioService = inject(AudioService);
 
-  track = signal<Track | null>(null); // ← ESTADO REACTIVO REAL
+  track = signal<Track | null>(null);
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-
-    this.music.getTrackById(id).then((track) => {
-      this.track.set(track); // ← CAMBIO REACTIVO
+    this.music.getTrackById(id).subscribe((track) => {
+      this.track.set(track);
     });
   }
 

@@ -1,32 +1,41 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MusicService, Track } from '../../../core/services/music-service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TrackDetailComponent } from './track-detail';
+import { MusicService } from '../../../core/services/music-service';
 import { AudioService } from '../../../core/services/audio-service';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
-@Component({
-  selector: 'app-track-detail',
-  standalone: true,
-  templateUrl: './track-detail.html',
-  styleUrls: ['./track-detail.css'],
-})
-export class TrackDetailComponent implements OnInit {
-  route = inject(ActivatedRoute);
-  music = inject(MusicService);
-  audioService = inject(AudioService); // 👈 Añadido
+describe('TrackDetailComponent', () => {
+  let component: TrackDetailComponent;
+  let fixture: ComponentFixture<TrackDetailComponent>;
+  let audioServiceSpy: jasmine.SpyObj<AudioService>;
 
-  track?: Track;
+  const mockTrack = {
+    id: 1,
+    title: 'Song Test',
+    previewUrl: 'http://test.com/audio.mp3',
+  };
 
-  ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+  beforeEach(async () => {
+    audioServiceSpy = jasmine.createSpyObj('AudioService', ['play']);
 
-    this.music.getTrackById(id).then((track) => {
-      this.track = track;
-    });
-  }
+    await TestBed.configureTestingModule({
+      imports: [TrackDetailComponent],
+      providers: [
+        {
+          provide: MusicService,
+          useValue: { getTrackById: () => of(mockTrack) },
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { paramMap: { get: () => '1' } } },
+        },
+        { provide: AudioService, useValue: audioServiceSpy },
+      ],
+    }).compileComponents();
 
-  play() {
-    if (this.track?.previewUrl) {
-      this.audioService.play(this.track.previewUrl); // 👈 USAR AUDIO GLOBAL
-    }
-  }
-}
+    fixture = TestBed.createComponent(TrackDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+});
