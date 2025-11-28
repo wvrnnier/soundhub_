@@ -1,10 +1,29 @@
-<div class="search-box">
+<div class="search-container">
   <input
     type="text"
+    [(ngModel)]="searchTerm"
+    (input)="onSearch()"
+    (blur)="onBlur()"
+    (keydown)="onKeyDown($event)"
     placeholder="Buscar canciones..."
-    [(ngModel)]="query"
-    (keyup.enter)="onSearch()"
+    class="search-input"
   />
 
-  <button (click)="onSearch()">Buscar</button>
+  @if (showDropdown && searchResults.length > 0) {
+  <div class="search-dropdown">
+    @for (result of searchResults; track result.trackId) {
+    <div
+      class="search-result-item"
+      [class.highlighted]="$index === highlightedIndex"
+      (click)="onSelectResult(result)"
+    >
+      <strong>{{ result.trackName }} </strong> <span class="artist-name">- {{ result.artistName }}</span>
+    </div>
+    }
+  </div>
+  } @if (showDropdown && searchResults.length === 0 && searchTerm.length > 0) {
+  <div class="search-dropdown no-results">
+    <div class="search-result-item">No se encontraron resultados</div>
+  </div>
+  }
 </div>

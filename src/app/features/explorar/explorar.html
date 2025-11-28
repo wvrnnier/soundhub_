@@ -1,13 +1,12 @@
 <div class="page">
   <h2>Explorar</h2>
   <div class="grid" style="margin-top:16px">
-    <article class="card" *ngIf="selectedTrack">
-      <img [src]="selectedTrack.cover" alt="" />
-      <h3>{{ selectedTrack.title }}</h3>
-      <p>{{ selectedTrack.artist }}</p>
-      <button (click)="toggle(selectedTrack.id)">
-        {{ isFav(selectedTrack.id) ? 'Quitar de Favoritos' : 'Añadir a Favoritos' }}
-      </button>
-    </article>
+    @if(selectedTrack) {
+      <article class="card">
+        <img [src]="selectedTrack.artworkUrl100" alt="" />
+        <h3>{{ selectedTrack.trackName }}</h3>
+        <p>{{ selectedTrack.artistName }}</p>
+      </article>
+    }
   </div>
 </div>

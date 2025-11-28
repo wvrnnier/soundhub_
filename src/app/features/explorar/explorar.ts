@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MusicService } from '../../core/services/music';
+import { MusicService } from '../../core/services/music-service';
 import { SearchStateService } from '../../core/services/search-state';
 
 @Component({
@@ -18,13 +18,5 @@ export class ExplorarComponent {
 
   get selectedTrack() {
     return this.searchState.selectedTrack();
-  }
-
-  isFav(id: string) {
-    return this.music.favs().includes(id);
-  }
-
-  toggle(id: string) {
-    this.music.toggleFav(id);
   }
 }
