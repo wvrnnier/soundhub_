@@ -38,11 +38,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {
     effect(() => {
-      this.searchResults = this.music.tracks();
-      console.log('Search results:', this.searchResults);
+      const results = this.music.tracks();
+
+      // motrar x resultado en la buscador con muchos te pone el scroll el navegaor por defecto
+      this.searchResults = results.slice(0, 4);
+
+      console.log('Search results (limit 4):', this.searchResults);
+
       if (this.searchResults.length > 0) {
         this.showDropdown = true;
         this.highlightedIndex = 0;
+      } else {
+        this.showDropdown = false;
+        this.highlightedIndex = -1;
       }
     });
   }
