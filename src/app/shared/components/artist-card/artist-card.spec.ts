@@ -1,18 +1,16 @@
+import { ArtistCardComponent } from './artist-card';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ArtistCard } from './artist-card';
-
 describe('ArtistCard', () => {
-  let component: ArtistCard;
-  let fixture: ComponentFixture<ArtistCard>;
+  let component: ArtistCardComponent;
+  let fixture: ComponentFixture<ArtistCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ArtistCard]
-    })
-    .compileComponents();
+      imports: [ArtistCardComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(ArtistCard);
+    fixture = TestBed.createComponent(ArtistCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
