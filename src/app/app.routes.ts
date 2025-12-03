@@ -15,7 +15,7 @@ export const routes: Routes = [
       { path: 'explorar', component: ExplorarComponent },
       { path: 'tracks', component: TracksListComponent },
 
-      // 👇 AQUI EL DETALLE, DENTRO DEL MISMO LAYOUT
+      // DENTRO DEL MISMO LAYOUT
       { path: 'track/:id', component: TrackDetailComponent },
     ],
   },
