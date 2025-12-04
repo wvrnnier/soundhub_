@@ -41,7 +41,11 @@ export class PlayerComponent {
   }
 
   skip(direction: 'next' | 'prev') {
-    console.log('Skip no implementado aún');
+    if (direction === 'next') {
+      this.audioService.next();
+    } else {
+      this.audioService.prev();
+    }
   }
 
   getVolumenIcon(): string {

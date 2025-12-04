@@ -12,12 +12,13 @@ import { AudioService } from '../../../core/services/audio-service';
 })
 export class TrackCardComponent {
   @Input() track!: Track;
+  @Input() list: Track[] = [];
 
   audioService = inject(AudioService);
 
   playPreview() {
     if (this.track.previewUrl) {
-      this.audioService.playTrack(this.track);
+      this.audioService.playTrack(this.track, this.list);
     }
   }
 }

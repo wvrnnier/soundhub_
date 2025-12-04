@@ -15,6 +15,7 @@ export class AudioService {
   duration = signal(0);
   volume = signal(1);
   isMuted = signal(false);
+  queue = signal<Track[]>([]); 
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {
     if (isPlatformBrowser(platformId)) {
@@ -43,8 +44,12 @@ export class AudioService {
     this.audio.addEventListener('pause', () => this.isPlaying.set(false));
   }
 
-  playTrack(track: Track) {
+  playTrack(track: Track, queue: Track[] = []) {
     if (!this.audio) return;
+
+    if (queue.length > 0) {
+      this.queue.set(queue);
+    }
 
     // Si es la misma canción, pausar/reanudar
     if (this.currentTrack()?.trackId === track.trackId) {
@@ -99,5 +104,29 @@ export class AudioService {
 
   toggleMute() {
     this.isMuted() ? this.unmute() : this.mute();
+  }
+
+  next() {
+    const current = this.currentTrack();
+    const queue = this.queue();
+    if (!current || queue.length === 0) return;
+
+    const index = queue.findIndex(t => t.trackId === current.trackId);
+    // Si no es la última, pasamos a la siguiente
+    if (index !== -1 && index < queue.length - 1) {
+      this.playTrack(queue[index + 1]);
+    }
+  }
+
+  prev() {
+    const current = this.currentTrack();
+    const queue = this.queue();
+    if (!current || queue.length === 0) return;
+
+    const index = queue.findIndex(t => t.trackId === current.trackId);
+    // Si no es la primera, volvemos a la anterior
+    if (index > 0) {
+      this.playTrack(queue[index - 1]);
+    }
   }
 }

@@ -2,6 +2,6 @@
 
 <div class="grid">
   @for (item of music.tracks(); track item.trackId) {
-  <app-track-card [track]="item" />
+  <app-track-card [track]="item" [list]="music.tracks()" /> 
   }
 </div>

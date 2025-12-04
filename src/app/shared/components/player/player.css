@@ -165,7 +165,6 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    group: progress;
 }
 
 /* Fondo gris de la barra */
