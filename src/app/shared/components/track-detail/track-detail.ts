@@ -25,7 +25,7 @@ export class TrackDetailComponent implements OnInit {
 
   play() {
     if (this.track()?.previewUrl) {
-      this.audioService.play(this.track()!.previewUrl);
+      this.audioService.playTrack(this.track()!);
     }
   }
 }

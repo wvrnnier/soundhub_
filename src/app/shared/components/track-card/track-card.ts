@@ -17,7 +17,7 @@ export class TrackCardComponent {
 
   playPreview() {
     if (this.track.previewUrl) {
-      this.audioService.play(this.track.previewUrl);
+      this.audioService.playTrack(this.track);
     }
   }
 }
