@@ -40,7 +40,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     effect(() => {
       const results = this.music.tracks();
 
-      // motrar x resultado en la buscador con muchos te pone el scroll el navegaor por defecto
+      // mostrar x resultado en la buscador con muchos te pone el scroll el navegaor por defecto
       this.searchResults = results.slice(0, 4);
 
       console.log('Search results (limit 4):', this.searchResults);
