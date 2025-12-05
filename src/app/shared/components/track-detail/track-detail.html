@@ -5,6 +5,14 @@
   <h2>{{ track()!.trackName }}</h2>
   <h3>{{ track()!.artistName }}</h3>
 
-  <button (click)="play()">▶ Preview</button>
+  <button class="play-btn" (click)="play()">▶</button>
+</div>
+<div>
+  @if (lyrics()) {
+    <div class="lyrics-container">
+      <h3>Letra</h3>
+      <p class="lyrics-text">{{ lyrics() }}</p>
+    </div>
+}
 </div>
 }

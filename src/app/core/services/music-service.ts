@@ -9,6 +9,8 @@ export interface Track {
   artistName: string;
   artworkUrl100: string;
   previewUrl: string;
+  collectionName: string;
+  trackTimeMillis: number;
 }
 
 export interface Artist {
