@@ -1,53 +1,30 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MusicService, Track } from '../../../core/services/music-service';
-import { AudioService } from '../../../core/services/audio-service';
-import { LyricsService } from '../../../core/services/lyrics-service';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Track } from '../../../core/services/music-service';
 
 @Component({
   selector: 'app-track-detail',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './track-detail.html',
-  styleUrls: ['./track-detail.css'],
 })
-export class TrackDetailComponent implements OnInit {
-  music = inject(MusicService);
-  route = inject(ActivatedRoute);
-  audioService = inject(AudioService);
-  lyricsService = inject(LyricsService);
-  lyrics = signal<string>('');
-
+export class TrackDetailComponent {
   track = signal<Track | null>(null);
 
+  constructor(private router: Router) {}
+
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.music.getTrackById(id).subscribe((track) => {
-      this.track.set(track);
+    // 1) Intentamos recuperar el track desde el estado de navegación
+    const nav = this.router.getCurrentNavigation();
+    const savedTrack = nav?.extras?.state?.['track'];
 
-      if (track) {
-        const durationSeconds = Math.round(track.trackTimeMillis / 1000);
-
-        this.lyricsService.getLyrics(
-          track.trackName,
-          track.artistName,
-          track.collectionName,
-          durationSeconds
-        ).subscribe({
-          next: (data) => {
-            this.lyrics.set(data.plainLyrics || 'Letra no encontrada');
-          },
-          error: (err) => {
-            console.error('Error fetching lyrics:', err);
-            this.lyrics.set('No se pudo cargar la letra.');
-          }
-        });
-      }
-    });
-  }
-
-  play() {
-    if (this.track()?.previewUrl) {
-      this.audioService.playTrack(this.track()!);
+    if (savedTrack) {
+      this.track.set(savedTrack);
+      return;
     }
+
+    // 2) Si no viene track (por ejemplo, refrescan la página), mostramos mensaje
+    console.warn('No track received. You must navigate from TrackList.');
   }
 }

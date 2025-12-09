@@ -1,18 +1,22 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MusicService } from '../../../core/services/music-service';
-import { ArtistCardComponent } from '../../../shared/components/artist-card/artist-card';
+import { CarruselComponent } from '../carrusel/carrusel';
 
 @Component({
-  selector: 'app-artists-list',
+  selector: 'app-artist-list',
   standalone: true,
-  imports: [ArtistCardComponent],
+  imports: [CommonModule, CarruselComponent],
   templateUrl: './artist-list.html',
-  styleUrls: ['./artist-list.css'],
 })
-export class ArtistsListComponent implements OnInit {
+export class ArtistListComponent implements OnInit {
   music = inject(MusicService);
 
+  artists = this.music.artists;
+
+  query = 'a'; // búsqueda amplia para obtener muchos resultados
+
   ngOnInit() {
-    this.music.searchArtists('reggaeton');
+    this.music.searchArtists(this.query);
   }
 }

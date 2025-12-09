@@ -1,5 +1,5 @@
 /* CONTENEDOR GENERAL DE LA TARJETA */
-.track-card {
+.album-card {
   width: 160px;
   padding: 12px;
   border-radius: 10px;
@@ -14,13 +14,13 @@
 }
 
 /* HOVER PROFESIONAL */
-.track-card:hover {
+.album-card:hover {
   transform: translateY(-6px); /*subo para el eje*/
   background: #282828;
 }
 
 /* IMAGEN DE LA TARJETA */
-.track-card img {
+.album-card img {
   width: 100%;
   height: auto;
   object-fit: cover;
@@ -28,7 +28,7 @@
 }
 
 /* TÍTULO */
-.track-card h3 {
+.album-card h3 {
   font-size: 14px;
   font-weight: 600;
   margin: 0;
@@ -37,7 +37,7 @@
 }
 
 /* ARTISTA O SUBTÍTULO */
-.track-card p {
+.album-card p {
   font-size: 12px;
   margin: 0;
   color: #b3b3b3;

@@ -1,7 +1,8 @@
-<h2>Canciones en tendencia</h2>
+<h2>Canciones</h2>
 
-<div class="grid">
-  @for (item of music.tracks(); track item.trackId) {
-  <app-track-card [track]="item" [list]="music.tracks()" /> 
+<div class="track-grid">
+  @for (t of tracks(); track t.trackId) {
+  <app-track-card [track]="t"> </app-track-card>
+
   }
 </div>

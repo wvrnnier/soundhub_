@@ -1,28 +1,24 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MusicService } from '../../../core/services/music-service';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MusicService, Track } from '../../../core/services/music-service';
 import { TrackCardComponent } from '../track-card/track-card';
+import { CarruselComponent } from '../carrusel/carrusel';
 
 @Component({
-  selector: 'app-tracks-list',
+  selector: 'app-track-list',
   standalone: true,
-  imports: [TrackCardComponent],
+  imports: [CommonModule, TrackCardComponent],
   templateUrl: './track-list.html',
-  styleUrls: ['./track-list.css'],
 })
-export class TracksListComponent implements OnInit {
+export class TrackListComponent implements OnInit {
+  // 1) Inyecto el servicio
   music = inject(MusicService);
-  route = inject(ActivatedRoute);
 
-  query = signal('');
-  page = signal(0);
+  // 2) Obtengo la señal de tracks desde el servicio
+  tracks = this.music.tracks;
 
   ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
-      this.query.set(params['q'] ?? 'reggaeton');
-      this.page.set(Number(params['page'] ?? 0));
-
-      this.music.searchSongs(this.query(), 24, this.page() * 24);
-    });
+    // 3) Pido una sola vez los datos
+    this.music.searchSongs('a');
   }
 }
