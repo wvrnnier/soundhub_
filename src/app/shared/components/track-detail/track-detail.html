@@ -1,15 +1,28 @@
 @if (track()) {
-<div class="detail">
-  <img [src]="track()!.artworkUrl100" />
+<div class="track-detail-container">
+  <!-- Banner Principal -->
+  <div class="track-banner">
+    <div class="track-artwork">
+      <img [src]="track()!.artworkUrl100.replace('100x100', '400x400')" alt="Album Art" />
+    </div>
 
-  <h2>{{ track()!.trackName }}</h2>
-  <h3>{{ track()!.artistName }}</h3>
+    <div class="track-info">
+      <span class="type-label">CANCIÓN</span>
+      <h1 class="track-title">{{ track()!.trackName }}</h1>
+      <div class="track-meta">
+        <span class="artist-name">{{ track()!.artistName }}</span>
+        <span class="separator">•</span>
+        <span class="album-name">{{ track()!.collectionName }}</span>
+      </div>
 
-  <button class="play-btn" (click)="play()">▶</button>
-</div>
-<div>
+      <div class="actions">
+        <button class="play-btn-large" (click)="play()">▶</button>
+      </div>
+    </div>
+  </div>
+  <!-- Sección de Letras -->
   @if (lyrics()) {
-  <div class="lyrics-container">
+  <div class="lyrics-section">
     <h3>Letra</h3>
     <p class="lyrics-text">{{ lyrics() }}</p>
   </div>
