@@ -18,10 +18,10 @@ export class TracksListComponent implements OnInit {
   page = signal(0);
 
   ngOnInit() {
+    //queryParams observable de servicio ActivateRoute
     this.route.queryParams.subscribe((params) => {
       this.query.set(params['q'] ?? 'reggaeton');
       this.page.set(Number(params['page'] ?? 0));
-
       this.music.searchSongs(this.query(), 24, this.page() * 24);
     });
   }

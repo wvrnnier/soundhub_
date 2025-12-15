@@ -2,6 +2,15 @@
 
 <div class="grid">
   @for (item of music.tracks(); track item.trackId) {
-  <app-track-card [track]="item" [list]="music.tracks()" /> 
+  <app-track-card [track]="item" [list]="music.tracks()" />
   }
 </div>
+
+<h2>Artistas Populares</h2>
+<div class="grid">
+  @for (item of music.tracks(); track item.trackId) {
+  <app-track-card [track]="item" [list]="music.tracks()" />
+  }
+</div>
+
+<h2>Álbunes Sencillos Populares</h2>
