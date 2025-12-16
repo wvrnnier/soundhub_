@@ -38,6 +38,7 @@ export class AudioService {
     this.audio.addEventListener('ended', () => {
       this.isPlaying.set(false);
       this.currentTime.set(0);
+      this.next();
     });
 
     this.audio.addEventListener('play', () => this.isPlaying.set(true));
@@ -117,6 +118,7 @@ export class AudioService {
       this.playTrack(queue[index + 1]);
     }
   }
+  
 
   prev() {
     const current = this.currentTrack();
