@@ -18,7 +18,7 @@ export class TrackListComponent implements OnInit {
   tracks = this.music.tracks;
 
   ngOnInit() {
-    // 3) Pido una sola vez los datos
+    // 3) Pido los datos
     this.music.searchSongs('a');
   }
 }
