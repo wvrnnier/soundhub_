@@ -9,16 +9,16 @@ import { CarruselComponent } from '../carrusel/carrusel';
   standalone: true,
   imports: [CommonModule, TrackCardComponent],
   templateUrl: './track-list.html',
+  styleUrl: './track-list.css',
 })
 export class TrackListComponent implements OnInit {
   // 1) Inyecto el servicio
   music = inject(MusicService);
 
   // 2) Obtengo la señal de tracks desde el servicio
-  tracks = this.music.tracks;
-
+  tracks = this.music.homeTracks;
   ngOnInit() {
     // 3) Pido los datos
-    this.music.searchSongs('a');
+    this.music.loadHomeSongs();
   }
 }

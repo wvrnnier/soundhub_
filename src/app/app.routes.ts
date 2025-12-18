@@ -6,6 +6,7 @@ import { ExplorarComponent } from './features/explorar/explorar';
 import { TrackDetailComponent } from './shared/components/track-detail/track-detail';
 import { PortadaComponent } from './shared/components/portada/portada';
 import { AlbumDetail } from './shared/components/album-detail/album-detail';
+import { TrackListComponent } from './shared/components/track-list/track-list';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,7 @@ export const routes: Routes = [
       { path: '', component: InicioComponent },
       { path: 'explorar', component: ExplorarComponent },
       { path: 'portada', component: PortadaComponent },
+      { path: 'tracks', component: TrackListComponent },
 
       // DENTRO DEL MISMO LAYOUT
       { path: 'trackDetail/:id', component: TrackDetailComponent },
