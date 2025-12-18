@@ -1,0 +1,15 @@
+<div class="carrusel">
+  <button (click)="prev()">⟨</button>
+
+  <div class="row">
+    @for (item of visibleItems(); track $index) { @if (type() === 'album') {
+    <app-album [album]="item"></app-album>
+    }@if (type() === 'track') {
+    <app-track-card [track]="item"></app-track-card>
+    } @if (type() === 'artist') {
+    <app-artist-card [artist]="item"></app-artist-card>
+    } }
+  </div>
+
+  <button (click)="next()">⟩</button>
+</div>

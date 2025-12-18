@@ -1,24 +1,16 @@
-import { Component, Input, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Track } from '../../../core/services/music-service';
-import { AudioService } from '../../../core/services/audio-service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-track-card',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './track-card.html',
   styleUrls: ['./track-card.css'],
 })
 export class TrackCardComponent {
-  @Input() track!: Track;
-  @Input() list: Track[] = [];
-
-  audioService = inject(AudioService);
-
-  playPreview() {
-    if (this.track.previewUrl) {
-      this.audioService.playTrack(this.track, this.list);
-    }
-  }
+  // Recibo el track ya cargado
+  track = input.required<Track>();
 }

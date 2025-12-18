@@ -1,0 +1,5 @@
+<article class="album-card" [routerLink]="['/albumDetail', album().collectionId]">
+  <img [src]="album().artworkUrl100" />
+  <h3>{{ album().collectionName }}</h3>
+  <p>{{ album().artistName }}</p>
+</article>

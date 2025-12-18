@@ -1,15 +1,8 @@
-.card {
-  position: relative;
+/* CONTENEDOR GENERAL DE LA TARJETA */
+.track-card {
   width: 160px;
-  padding: 10px;
+  padding: 12px;
   border-radius: 10px;
-  background: #121212;
-  cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.card:hover {
-  transform: scale(1.07);
   background: #181818;
 }
 

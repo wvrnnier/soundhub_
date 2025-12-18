@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SearchList } from './search-list';
+import { AlbumList } from './album-list';
 
-describe('SearchList', () => {
-  let component: SearchList;
-  let fixture: ComponentFixture<SearchList>;
+describe('AlbumList', () => {
+  let component: AlbumList;
+  let fixture: ComponentFixture<AlbumList>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SearchList],
-    }).compileComponents();
+      imports: [AlbumList]
+    })
+    .compileComponents();
 
-    fixture = TestBed.createComponent(SearchList);
+    fixture = TestBed.createComponent(AlbumList);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

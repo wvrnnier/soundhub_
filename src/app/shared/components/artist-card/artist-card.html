@@ -1,4 +1,8 @@
+@if (artist()) {
+
 <div class="artist-card">
-  <img [src]="artist.artworkUrl100" />
-  <div class="name">{{ artist.artistName }}</div>
+  <h3>{{ artist().artistName }}</h3>
+  <p>{{ artist().primaryGenreName }}</p>
 </div>
+
+}

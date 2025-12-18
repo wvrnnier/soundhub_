@@ -1,0 +1,14 @@
+<section class="portada">
+  <h2>Albums destacada</h2>
+
+  <!-- CARRUSEL DE ÁLBUMES -->
+  <app-carrusel [items]="albums()" type="album"></app-carrusel>
+
+  <!-- CARRUSEL DE CANCIONES -->
+  <h2>Canciones destacada</h2>
+  <app-carrusel [items]="tracks()" type="track"> </app-carrusel>
+
+  <!--  CARRUSEL DE ARTISTAS -->
+  <h2>Artistas destacada</h2>
+  <app-carrusel [items]="artists()" type="artist"> </app-carrusel>
+</section>

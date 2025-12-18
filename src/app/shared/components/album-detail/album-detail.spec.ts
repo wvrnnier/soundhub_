@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TrackCardComponent } from './track-card';
+import { AlbumDetail } from './album-detail';
 
-describe('TrackCardComponent', () => {
-  let component: TrackCardComponent;
-  let fixture: ComponentFixture<TrackCardComponent>;
+describe('AlbumDetail', () => {
+  let component: AlbumDetail;
+  let fixture: ComponentFixture<AlbumDetail>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TrackCardComponent]
+      imports: [AlbumDetail]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TrackCardComponent);
+    fixture = TestBed.createComponent(AlbumDetail);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
