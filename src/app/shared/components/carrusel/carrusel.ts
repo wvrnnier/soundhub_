@@ -12,13 +12,13 @@ import { AlbumComponent } from '../album/album';
   styleUrl: './carrusel.css',
 })
 export class CarruselComponent {
-  //recibine una lista cualquiera
+  //recibe una lista cualquiera
   items = input.required<any[]>();
 
   // el tipo de la lista
   type = input.required<'track' | 'album' | 'artist'>();
 
-  itemsPerView = 5; //cuantos quiero q aparesca
+  itemsPerView = 5; //eligo numero de album en el carrusel
   page = signal(0);
 
   totalPages = computed(() => Math.ceil(this.items().length / this.itemsPerView));
