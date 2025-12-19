@@ -1,9 +1,24 @@
 @if (track()) {
 <article class="track-card" [routerLink]="['/trackDetail', track().trackId]">
-  <img [src]="track().artworkUrl100" />
+  <div class="artwork-container">
+    <img [src]="track().artworkUrl100" alt="Artwork for {{ track().trackName }}" />
+
+    <button class="play-btn" (click)="togglePlay($event)">
+      @if (!isPlaying) {
+      <!-- PLAY -->
+      <svg viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+      } @else {
+      <!-- PAUSE -->
+      <svg viewBox="0 0 24 24">
+        <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+      </svg>
+      }
+    </button>
+  </div>
 
   <h3>{{ track().trackName }}</h3>
-
   <p>{{ track().artistName }}</p>
 </article>
 }

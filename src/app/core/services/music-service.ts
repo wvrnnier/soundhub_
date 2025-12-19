@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 // ======================
 // INTERFACES REALES
@@ -127,5 +127,27 @@ export class MusicService {
   getTrackById(id: number): Observable<Track> {
     const url = `https://itunes.apple.com/lookup?id=${id}`;
     return this.http.get<any>(url).pipe(map((resp) => resp.results[0] as Track));
+  }
+
+  getTrendingSongs() {
+    //primera peticion para obtener id de ranking itunes no la da
+    const rssUrl = 'https://rss.applemarketingtools.com/api/v2/us/music/most-played/24/songs.json';
+
+    this.http
+      .get<any>(rssUrl)
+      .pipe(
+        map((response) => response.feed.results.map((track: any) => track.id)),
+        switchMap((ids) => {
+          if (ids.length === 0) {
+            return of({ results: [] });
+          }
+          //aqui ya obtengo con los id las canciones
+          const lookupUrl = `https://itunes.apple.com/lookup?id=${ids.join(',')}`;
+          return this.http.get<any>(lookupUrl);
+        })
+      )
+      .subscribe((response) => {
+        this.tracks.set(response.results as Track[]);
+      });
   }
 }
