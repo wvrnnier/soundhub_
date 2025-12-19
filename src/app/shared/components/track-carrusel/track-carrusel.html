@@ -1,0 +1,7 @@
+<h2>Canciones Destacadas</h2>
+
+<app-carrusel>
+  @for (t of trackCarrusel(); track $index) {
+  <app-track-card [track]="t"></app-track-card>
+  }
+</app-carrusel>
