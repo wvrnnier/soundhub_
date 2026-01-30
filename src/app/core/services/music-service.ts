@@ -36,13 +36,14 @@ export interface Album {
   providedIn: 'root',
 })
 export class MusicService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // DATOS PARA LA BÚSQUEDA DINÁMICA
 
   tracks = signal<Track[]>([]);
   artists = signal<Artist[]>([]);
   albums = signal<Album[]>([]);
+  isSearching = signal<boolean>(false);
 
   // DATOS FIJOS DEL HOME (PORTADA)
 
@@ -93,10 +94,16 @@ export class MusicService {
   // BÚSQUEDAS DINÁMICAS
 
   searchSongs(query: string, limit = 24, offset = 0) {
+    this.isSearching.set(true);
     const url = `https://itunes.apple.com/search?term=${query}&entity=song&limit=${limit}&offset=${offset}`;
     this.http.get<any>(url).subscribe((resp) => {
       this.tracks.set(resp.results as Track[]);
     });
+  }
+
+  clearSearch() {
+    this.isSearching.set(false);
+    this.tracks.set([]);
   }
 
   searchAlbums(query: string, limit = 24, offset = 0) {

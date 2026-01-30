@@ -73,6 +73,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (this.searchTerm.trim().length > 0) {
       this.music.searchSongs(this.searchTerm);
     } else {
+      this.music.clearSearch();
       this.searchResults = [];
       this.showDropdown = false;
       this.highlightedIndex = -1;
