@@ -101,6 +101,19 @@ export class MusicService {
     });
   }
 
+  // Método adaptado para el código del usuario que espera un Observable
+  searchTracks(query: string, limit: number): Observable<any> {
+    this.isSearching.set(true);
+    const url = `https://itunes.apple.com/search?term=${query}&entity=song&limit=${limit}`;
+    return this.http.get<any>(url).pipe(
+      map(resp => {
+        // Actualizamos también la señal global para que el resto de la app (Home/Tracks) reacione
+        this.tracks.set(resp.results as Track[]);
+        return resp;
+      })
+    );
+  }
+
   clearSearch() {
     this.isSearching.set(false);
     this.tracks.set([]);

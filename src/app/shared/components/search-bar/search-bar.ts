@@ -1,15 +1,4 @@
-import {
-  Component,
-  Output,
-  EventEmitter,
-  OnInit,
-  OnDestroy,
-  ElementRef,
-  Inject,
-  PLATFORM_ID,
-  ChangeDetectorRef,
-  effect,
-} from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, OnDestroy, ElementRef, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { MusicService, Track } from '../../../core/services/music-service';
@@ -36,24 +25,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     private el: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef
-  ) {
-    effect(() => {
-      const results = this.music.tracks();
-
-      // mostrar x resultado en la buscador con muchos te pone el scroll el navegaor por defecto
-      this.searchResults = results.slice(0, 4);
-
-      console.log('Search results (limit 4):', this.searchResults);
-
-      if (this.searchResults.length > 0) {
-        this.showDropdown = true;
-        this.highlightedIndex = 0;
-      } else {
-        this.showDropdown = false;
-        this.highlightedIndex = -1;
-      }
-    });
-  }
+  ) { }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -71,9 +43,23 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   onSearch() {
     if (this.searchTerm.trim().length > 0) {
-      this.music.searchSongs(this.searchTerm);
+      // Usar searchTracks() que devuelve un Observable
+      this.music.searchTracks(this.searchTerm, 20).subscribe({
+        next: (response) => {
+          this.searchResults = response.results;
+          console.log('Search results:', this.searchResults);
+          this.showDropdown = true;
+          this.highlightedIndex = this.searchResults.length > 0 ? 0 : -1;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al buscar:', err);
+          this.searchResults = [];
+          this.showDropdown = false;
+        }
+      });
     } else {
-      this.music.clearSearch();
+      this.music.clearSearch(); // Mantenemos esta funcionalidad importante
       this.searchResults = [];
       this.showDropdown = false;
       this.highlightedIndex = -1;
@@ -81,7 +67,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onSelectResult(result: Track) {
-    this.searchTerm = result.trackName;
+    this.searchTerm = result.trackName; // CORREGIDO: title -> trackName
     this.showDropdown = false;
     this.selectResult.emit(result);
     this.searchState.setSelectedTrack(result);
@@ -95,14 +81,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onKeyDown(event: KeyboardEvent) {
-    console.log(
-      'Key pressed:',
-      event.key,
-      'Dropdown visible:',
-      this.showDropdown,
-      'Results length:',
-      this.searchResults.length
-    );
+    console.log('Key pressed:', event.key, 'Dropdown visible:', this.showDropdown, 'Results length:', this.searchResults.length);
     if (this.searchResults.length === 0 && event.key !== 'Escape') {
       console.log('Sin resultados y no es escape');
       return;
@@ -114,13 +93,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       console.log('ArrowDown: índice =', this.highlightedIndex);
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
-      this.highlightedIndex =
-        (this.highlightedIndex - 1 + this.searchResults.length) % this.searchResults.length;
+      this.highlightedIndex = (this.highlightedIndex - 1 + this.searchResults.length) % this.searchResults.length;
       console.log('ArrowUp: índice =', this.highlightedIndex);
     } else if (event.key === 'Enter') {
       event.preventDefault();
       if (this.highlightedIndex >= 0 && this.highlightedIndex < this.searchResults.length) {
-        console.log('Enter: resultado selecionado ', this.highlightedIndex);
+        console.log('Enter: resultado seleccionado ', this.highlightedIndex);
         this.onSelectResult(this.searchResults[this.highlightedIndex]);
       }
     } else if (event.key === 'Escape') {
@@ -136,7 +114,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (event.target instanceof Element && !this.el.nativeElement.contains(event.target)) {
       console.log('Click fuera del componente, cerrando dropdown');
       this.showDropdown = false;
-      this.cdr.detectChanges(); // Force UI update
+      this.cdr.detectChanges();
     } else {
       console.log('Click dentro del componente, no hacer nada');
     }
