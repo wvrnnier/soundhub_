@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router'; // Importar el tipo para definir las rutas
 import { LayoutComponent } from './shared/components/layout/layout';
-import { ExplorarComponent } from './features/explorar/explorar';
 
 import { TrackDetailComponent } from './shared/components/track-detail/track-detail';
 import { PortadaComponent } from './shared/components/portada/portada';
@@ -13,7 +12,6 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: '', component: PortadaComponent },
-      { path: 'explorar', component: ExplorarComponent },
       { path: 'tracks', component: TrackListComponent },
 
       // DENTRO DEL MISMO LAYOUT
