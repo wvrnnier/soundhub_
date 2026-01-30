@@ -14,7 +14,7 @@ export class ExplorarComponent {
   constructor(
     public music: MusicService,
     public searchState: SearchStateService
-  ) {}
+  ) { }
 
   get selectedTrack() {
     return this.searchState.selectedTrack();

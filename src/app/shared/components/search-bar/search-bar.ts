@@ -44,7 +44,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   onSearch() {
     if (this.searchTerm.trim().length > 0) {
       // Usar searchTracks() que devuelve un Observable
-      this.music.searchTracks(this.searchTerm, 20).subscribe({
+      this.music.searchTracks(this.searchTerm, 24).subscribe({
         next: (response) => {
           this.searchResults = response.results;
           console.log('Search results:', this.searchResults);
@@ -67,7 +67,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onSelectResult(result: Track) {
-    this.searchTerm = result.trackName; // CORREGIDO: title -> trackName
+    this.searchTerm = result.trackName;
     this.showDropdown = false;
     this.selectResult.emit(result);
     this.searchState.setSelectedTrack(result);
