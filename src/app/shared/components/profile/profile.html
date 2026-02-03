@@ -1,0 +1,35 @@
+<div class="profile-page">
+    <!-- HEADER CON GRADIENTE -->
+    <div class="profile-header">
+        <div class="profile-img-container">
+            <img [src]="user.image" alt="Profile" class="profile-img" />
+            <div class="edit-overlay">
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <span class="label">Perfil</span>
+            <h1 class="name">{{ user.name }}</h1>
+            <div class="stats">
+                <span>{{ user.playlists }} listas públicas</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="content">
+
+        <!-- CANCIONES -->
+        <section class="section">
+            <div class="section-top">
+                <h2>Canciones más escuchadas de este mes</h2>
+            </div>
+            <!-- Usamos un grid simple para las canciones -->
+            <div class="track-grid">
+                @for (track of topTracks().slice(0, 14); track track.trackId) {
+                <app-track-card [track]="track"></app-track-card>
+                }
+            </div>
+        </section>
+    </div>
+</div>
