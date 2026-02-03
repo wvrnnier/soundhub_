@@ -14,6 +14,8 @@ export interface Track {
   artworkUrl100: string;
   previewUrl: string;
   collectionName: string;
+  contractId: number;
+  collectionId: number;
   trackTimeMillis: number;
 }
 
@@ -147,6 +149,12 @@ export class MusicService {
   getTrackById(id: number): Observable<Track> {
     const url = `https://itunes.apple.com/lookup?id=${id}`;
     return this.http.get<any>(url).pipe(map((resp) => resp.results[0] as Track));
+  }
+
+  // DETALLE DE ÁLBUM (Tracks + Metadata)
+  getAlbumDetails(collectionId: number): Observable<any> {
+    const url = `https://itunes.apple.com/lookup?id=${collectionId}&entity=song`;
+    return this.http.get<any>(url);
   }
 
   getTrendingSongs() {

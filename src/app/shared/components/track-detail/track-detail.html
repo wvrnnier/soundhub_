@@ -1,5 +1,4 @@
-
- @if (track()) {
+@if (track()) {
 <div class="track-detail-container">
   <div class="track-banner">
     <div class="track-artwork">
@@ -12,7 +11,7 @@
       <div class="track-meta">
         <span class="artist-name">{{ track()!.artistName }}</span>
         <span class="separator">•</span>
-        <span class="album-name">{{ track()!.collectionName }}</span>
+        <a [routerLink]="['/albumDetail', track()!.collectionId]" class="album-name">{{ track()!.collectionName }}</a>
       </div>
 
       <div class="actions">
@@ -27,4 +26,4 @@
   </div>
   }
 </div>
-} 
+}

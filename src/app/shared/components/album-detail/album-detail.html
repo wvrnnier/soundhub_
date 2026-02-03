@@ -1,1 +1,45 @@
-<p>album-detail works!</p>
+<div class="album-page" *ngIf="album()">
+    <!-- CABECERA -->
+    <header class="album-header">
+        <div class="cover-art">
+            <img [src]="album().artworkUrl100.replace('100x100', '600x600')" [alt]="album().collectionName">
+        </div>
+        <div class="album-info">
+            <span class="type">Álbum</span>
+            <h1 class="title">{{ album().collectionName }}</h1>
+            <div class="meta">
+                <div class="artist-info">
+                    <span class="artist-name">{{ album().artistName }}</span>
+                </div>
+                <span class="dot">•</span>
+                <span class="year">{{ getYear(album().releaseDate) }}</span>
+                <span class="dot">•</span>
+                <span class="song-count">{{ album().trackCount }} canciones</span>
+            </div>
+        </div>
+    </header>
+    <div class="action-bar">
+        <button class="play-btn-large" (click)="playAlbum()">▶</button>
+    </div>
+
+    <!-- LISTA DE CANCIONES -->
+    <div class="track-list-container">
+        <div class="track-list-header">
+            <div class="col-number">#</div>
+            <div class="col-title">Título</div>
+        </div>
+
+        <div class="track-row" *ngFor="let track of tracks(); let i = index"
+            [routerLink]="['/trackDetail', track.trackId]">
+            <div class="col-number">
+                <span class="track-index">{{ i + 1 }}</span>
+                <button class="track-play-btn" (click)="$event.stopPropagation(); playFromTrack(i)">▶</button>
+            </div>
+            <div class="col-title">
+                <span class="track-name">{{ track.trackName }}</span>
+                <span class="track-artist">{{ track.artistName }}</span>
+            </div>
+            <div class="col-time">{{ formatDuration(track.trackTimeMillis) }}</div>
+        </div>
+    </div>
+</div>

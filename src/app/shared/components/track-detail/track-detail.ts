@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MusicService, Track } from '../../../core/services/music-service';
 import { AudioService } from '../../../core/services/audio-service';
 import { LyricsService } from '../../../core/services/lyrics-service';
@@ -7,6 +7,7 @@ import { LyricsService } from '../../../core/services/lyrics-service';
 @Component({
   selector: 'app-track-detail',
   standalone: true,
+  imports: [RouterLink],
   styleUrls: ['./track-detail.css'],
   templateUrl: './track-detail.html',
 })

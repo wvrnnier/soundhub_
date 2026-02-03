@@ -1,0 +1,250 @@
+:host {
+    display: block;
+    color: #fff;
+    padding-bottom: 2rem;
+}
+
+.album-page {
+    display: flex;
+    flex-direction: column;
+}
+
+/* CABECERA */
+.album-header {
+    display: flex;
+    padding: 24px 32px;
+    align-items: flex-end;
+    gap: 24px;
+    background: linear-gradient(to bottom, #535353, #2e2e2e);
+    /* Fallback gradient */
+    height: 30vh;
+    min-height: 240px;
+    max-height: 400px;
+}
+
+.cover-art {
+    width: 232px;
+    height: 232px;
+    box-shadow: 0 4px 60px rgba(0, 0, 0, .5);
+    flex-shrink: 0;
+}
+
+.cover-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.album-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.type {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.title {
+    font-size: 4rem;
+    /* 6rem en desktop grande */
+    font-weight: 900;
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 8px;
+    gap: 5px;
+}
+
+.artist-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+}
+
+.artist-info:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.dot {
+    font-size: 0.5rem;
+    margin: 0 4px;
+}
+
+.year,
+.song-count {
+    color: #b3b3b3;
+}
+
+/* ACTION BAR */
+.action-bar {
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.play-btn-large {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #1db954;
+    border: none;
+    color: black;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.play-btn-large:hover {
+    transform: scale(1.05);
+    background-color: #1ed760;
+}
+
+
+.action-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #b3b3b3;
+    padding: 0;
+}
+
+.action-btn:hover {
+    color: #fff;
+}
+
+.action-btn svg {
+    fill: currentColor;
+}
+
+
+/* TRACK LIST */
+.track-list-container {
+    padding: 0 32px;
+}
+
+.track-list-header {
+    display: grid;
+    grid-template-columns: 48px minmax(120px, 4fr) minmax(120px, 1fr);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0 16px;
+    height: 36px;
+    align-items: center;
+    color: #b3b3b3;
+    font-size: 0.875rem;
+    position: sticky;
+    top: 72px;
+    /* Debajo de tu header sticky si lo tienes */
+    background: #121212;
+    /* Para tapar al hacer scroll */
+    margin-bottom: 16px;
+}
+
+.track-row {
+    display: grid;
+    grid-template-columns: 48px minmax(120px, 4fr) minmax(120px, 1fr);
+    padding: 8px 16px;
+    border-radius: 4px;
+    align-items: center;
+    color: #b3b3b3;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.track-row:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.track-row:hover .col-number {
+    color: #fff;
+    /* Aquí podrías cambiar el número por un play icon */
+}
+
+.track-row:hover .col-title {
+    color: #fff;
+}
+
+.col-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    width: 16px;
+    position: relative;
+    /* Para posicionar el botón si hiciera falta */
+}
+
+/* Ocultar botón por defecto */
+.track-play-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0;
+}
+
+/* Al hover la fila: */
+.track-row:hover .track-index {
+    display: none;
+}
+
+.track-row:hover .track-play-btn {
+    display: block;
+}
+
+.col-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+}
+
+.col-title .track-name {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #fff;
+}
+
+.col-title .track-artist {
+    font-size: 0.875rem;
+    color: #b3b3b3;
+}
+
+.track-row:hover .col-title .track-artist {
+    color: #fff;
+}
+
+.col-time {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
+}
+
+.col-time svg {
+    fill: currentColor;
+}
