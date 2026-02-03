@@ -1,4 +1,3 @@
-import { ArtistCardComponent } from './../artist-card/artist-card';
 import { Component, input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TrackCardComponent } from '../track-card/track-card';
@@ -7,7 +6,7 @@ import { AlbumComponent } from '../album/album';
 @Component({
   selector: 'app-carrusel',
   standalone: true,
-  imports: [CommonModule, TrackCardComponent, AlbumComponent, ArtistCardComponent],
+  imports: [CommonModule, TrackCardComponent, AlbumComponent],
   templateUrl: './carrusel.html',
   styleUrl: './carrusel.css',
 })
@@ -16,7 +15,7 @@ export class CarruselComponent {
   items = input.required<any[]>();
 
   // el tipo de la lista
-  type = input.required<'track' | 'album' | 'artist'>();
+  type = input.required<'track' | 'album'>();
 
   itemsPerView = 5; //eligo numero de album en el carrusel
   page = signal(0);

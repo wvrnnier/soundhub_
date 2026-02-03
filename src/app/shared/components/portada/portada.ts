@@ -16,12 +16,10 @@ export class PortadaComponent implements OnInit {
   // signals para datos fijos
   albums = this.music.homeAlbums;
   tracks = this.music.homeTracks;
-  artists = this.music.homeArtists;
 
   ngOnInit() {
     // cargo los datos fijos
     this.music.loadHomeAlbums();
-    this.music.loadHomeArtists();
     this.music.loadHomeSongs();
   }
 }

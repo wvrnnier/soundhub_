@@ -19,12 +19,7 @@ export interface Track {
   trackTimeMillis: number;
 }
 
-export interface Artist {
-  artistId: number;
-  artistName: string;
-  primaryGenreName: string;
-  image?: string | null; // Imagen REAL añadida después
-}
+
 
 export interface Album {
   collectionId: number;
@@ -43,14 +38,12 @@ export class MusicService {
   // DATOS PARA LA BÚSQUEDA DINÁMICA
 
   tracks = signal<Track[]>([]);
-  artists = signal<Artist[]>([]);
   albums = signal<Album[]>([]);
   isSearching = signal<boolean>(false);
 
   // DATOS FIJOS DEL HOME (PORTADA)
 
   homeTracks = signal<Track[]>([]);
-  homeArtists = signal<Artist[]>([]);
   homeAlbums = signal<Album[]>([]);
 
   //  DATOS PARA PORTADA
@@ -67,30 +60,6 @@ export class MusicService {
     this.http.get<any>(url).subscribe((resp) => {
       this.homeAlbums.set(resp.results as Album[]);
     });
-  }
-
-  loadHomeArtists(limit = 24) {
-    const url = `https://itunes.apple.com/search?term=a&entity=musicArtist&limit=${limit}`;
-    this.http.get<any>(url).subscribe((resp) => {
-      const rawArtists = resp.results as Artist[];
-
-      // Añadir imagen real usando una canción del artista
-      rawArtists.forEach((artist) => {
-        this.getArtistImage(artist.artistName).subscribe((img) => {
-          artist.image = img;
-          this.homeArtists.set([...rawArtists]); // actualiza señal del home
-        });
-      });
-    });
-  }
-
-  // OBTENER IMAGEN REAL DE ARTISTAS DESDE CANCIONES
-  getArtistImage(artistName: string): Observable<string | null> {
-    const url = `https://itunes.apple.com/search?term=${encodeURIComponent(
-      artistName
-    )}&entity=song&limit=1`;
-
-    return this.http.get<any>(url).pipe(map((resp) => resp.results?.[0]?.artworkUrl100 ?? null));
   }
 
   // BÚSQUEDAS DINÁMICAS
@@ -125,22 +94,6 @@ export class MusicService {
     const url = `https://itunes.apple.com/search?term=${query}&entity=album&limit=${limit}&offset=${offset}`;
     this.http.get<any>(url).subscribe((resp) => {
       this.albums.set(resp.results as Album[]);
-    });
-  }
-
-  searchArtists(query: string, limit = 24) {
-    const url = `https://itunes.apple.com/search?term=${query}&entity=musicArtist&limit=${limit}`;
-
-    this.http.get<any>(url).subscribe((resp) => {
-      const rawArtists = resp.results as Artist[];
-
-      // Añadir imagen real desde canciones
-      rawArtists.forEach((artist) => {
-        this.getArtistImage(artist.artistName).subscribe((img) => {
-          artist.image = img;
-          this.artists.set([...rawArtists]); // actualiza señal
-        });
-      });
     });
   }
 
