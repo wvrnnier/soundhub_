@@ -53,12 +53,13 @@ export class AudioService {
     }
 
     // Si es la misma canción, pausar/reanudar
-    if (this.currentTrack()?.trackId === track.trackId) {
+    if (this.currentTrack()?.id === track.id) {
       this.togglePlay();
       return;
     }
 
     // Si es nueva, cargar y reproducir
+    if (!track.previewUrl) return;
     this.currentTrack.set(track);
     this.audio.src = track.previewUrl;
     this.audio.load();
@@ -112,7 +113,7 @@ export class AudioService {
     const queue = this.queue();
     if (!current || queue.length === 0) return;
 
-    const index = queue.findIndex(t => t.trackId === current.trackId);
+    const index = queue.findIndex(t => t.id === current.id);
     // Si no es la última, pasamos a la siguiente
     if (index !== -1 && index < queue.length - 1) {
       this.playTrack(queue[index + 1]);
@@ -125,7 +126,7 @@ export class AudioService {
     const queue = this.queue();
     if (!current || queue.length === 0) return;
 
-    const index = queue.findIndex(t => t.trackId === current.trackId);
+    const index = queue.findIndex(t => t.id === current.id);
     // Si no es la primera, volvemos a la anterior
     if (index > 0) {
       this.playTrack(queue[index - 1]);

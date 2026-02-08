@@ -2,16 +2,16 @@
 <div class="track-detail-container">
   <div class="track-banner">
     <div class="track-artwork">
-      <img [src]="track()!.artworkUrl100.replace('100x100', '400x400')" alt="Album Art" />
+      <img [src]="track()!.cover" alt="Album Art" />
     </div>
 
     <div class="track-info">
       <span class="type-label">CANCIÓN</span>
-      <h1 class="track-title">{{ track()!.trackName }}</h1>
+      <h1 class="track-title">{{ track()!.title }}</h1>
       <div class="track-meta">
-        <span class="artist-name">{{ track()!.artistName }}</span>
+        <span class="artist-name">{{ track()!.artist }}</span>
         <span class="separator">•</span>
-        <a [routerLink]="['/albumDetail', track()!.collectionId]" class="album-name">{{ track()!.collectionName }}</a>
+        <a [routerLink]="['/albumDetail', track()!.albumId]" class="album-name">{{ track()!.album }}</a>
       </div>
 
       <div class="actions">

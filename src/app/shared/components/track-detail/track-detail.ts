@@ -21,17 +21,17 @@ export class TrackDetailComponent implements OnInit {
   track = signal<Track | null>(null);
 
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = this.route.snapshot.paramMap.get('id')!;
     this.music.getTrackById(id).subscribe((track) => {
       this.track.set(track);
 
       if (track) {
-        const durationSeconds = Math.round(track.trackTimeMillis / 1000);
+        const durationSeconds = Math.round((track.duration || 0) / 1000);
 
         this.lyricsService.getLyrics(
-          track.trackName,
-          track.artistName,
-          track.collectionName,
+          track.title,
+          track.artist,
+          track.album || '',
           durationSeconds
         ).subscribe({
           next: (data) => {

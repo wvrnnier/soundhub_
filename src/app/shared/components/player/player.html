@@ -2,12 +2,12 @@
 <div class="player-container" *ngIf="currentTrack">
   
   <div class="track-info">
-    <img [src]="currentTrack.artworkUrl100" alt="" class="cover-image">
+    <img [src]="currentTrack.cover" alt="" class="cover-image">
     <div class="track-details">
       <div class="track-title-wrapper">
-        <span class="track-title">{{ currentTrack.trackName }}</span>
+        <span class="track-title">{{ currentTrack.title }}</span>
       </div>
-      <span class="track-artist">{{ currentTrack.artistName }}</span>
+      <span class="track-artist">{{ currentTrack.artist }}</span>
     </div>
   </div>
 

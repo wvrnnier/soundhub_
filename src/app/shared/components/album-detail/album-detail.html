@@ -2,14 +2,14 @@
     <!-- CABECERA -->
     <header class="album-header">
         <div class="cover-art">
-            <img [src]="album().artworkUrl100.replace('100x100', '600x600')" [alt]="album().collectionName">
+            <img [src]="album().cover" [alt]="album().title">
         </div>
         <div class="album-info">
             <span class="type">Álbum</span>
-            <h1 class="title">{{ album().collectionName }}</h1>
+            <h1 class="title">{{ album().title }}</h1>
             <div class="meta">
                 <div class="artist-info">
-                    <span class="artist-name">{{ album().artistName }}</span>
+                    <span class="artist-name">{{ album().artist }}</span>
                 </div>
                 <span class="dot">•</span>
                 <span class="year">{{ getYear(album().releaseDate) }}</span>
@@ -30,16 +30,16 @@
         </div>
 
         <div class="track-row" *ngFor="let track of tracks(); let i = index"
-            [routerLink]="['/trackDetail', track.trackId]">
+            [routerLink]="['/trackDetail', track.id]">
             <div class="col-number">
                 <span class="track-index">{{ i + 1 }}</span>
                 <button class="track-play-btn" (click)="$event.stopPropagation(); playFromTrack(i)">▶</button>
             </div>
             <div class="col-title">
-                <span class="track-name">{{ track.trackName }}</span>
-                <span class="track-artist">{{ track.artistName }}</span>
+                <span class="track-name">{{ track.title }}</span>
+                <span class="track-artist">{{ track.artist }}</span>
             </div>
-            <div class="col-time">{{ formatDuration(track.trackTimeMillis) }}</div>
+            <div class="col-time">{{ formatDuration(track.duration) }}</div>
         </div>
     </div>
 </div>

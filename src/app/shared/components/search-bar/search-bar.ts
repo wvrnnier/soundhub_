@@ -67,7 +67,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onSelectResult(result: Track) {
-    this.searchTerm = result.trackName;
+    this.searchTerm = result.title;
     this.showDropdown = false;
     this.selectResult.emit(result);
     this.searchState.setSelectedTrack(result);

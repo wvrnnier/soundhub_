@@ -1,7 +1,7 @@
 @if (track()) {
-<article class="track-card" [routerLink]="['/trackDetail', track().trackId]">
+<article class="track-card" [routerLink]="['/trackDetail', track().id]">
   <div class="artwork-container">
-    <img [src]="track().artworkUrl100" alt="Artwork for {{ track().trackName }}" />
+    <img [src]="track().cover" alt="Artwork for {{ track().title }}" />
 
     <button class="play-btn" (click)="togglePlay($event)">
       @if (!isPlaying) {
@@ -18,7 +18,7 @@
     </button>
   </div>
 
-  <h3>{{ track().trackName }}</h3>
-  <p>{{ track().artistName }}</p>
+  <h3>{{ track().title }}</h3>
+  <p>{{ track().artist }}</p>
 </article>
 }

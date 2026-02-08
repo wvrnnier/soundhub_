@@ -1,26 +1,35 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+import { ReactiveFormsModule } from "@angular/forms";
 import { LoginModal } from "../login-modal/login-modal";
+import { RegisterModal } from "../register-modal/register-modal";
 
 @Component({
     selector: 'app-login-btn',
     templateUrl: './login-btn.html',
     styleUrls: ['./login-btn.css'],
-    imports: [CommonModule, ReactiveFormsModule, LoginModal],
+    imports: [CommonModule, ReactiveFormsModule, LoginModal, RegisterModal],
     standalone: true
 })
-
 export class LoginBtnComponent {
-    isModalOpen = false;
+    isLoginModalOpen = false;
+    isRegisterModalOpen = false;
 
     openLoginModal() {
-        this.isModalOpen = true;
+        this.isLoginModalOpen = true;
     }
+
     closeLoginModal() {
-        this.isModalOpen = false;
+        this.isLoginModalOpen = false;
+    }
+
+    openRegisterModal() {
+        this.isLoginModalOpen = false;
+        this.isRegisterModalOpen = true;
+    }
+
+    closeRegisterModal() {
+        this.isRegisterModalOpen = false;
     }
 }
 

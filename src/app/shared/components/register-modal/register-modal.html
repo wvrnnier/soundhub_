@@ -1,0 +1,149 @@
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeModal()">&times;</button>
+    <h2>Crear Cuenta</h2>
+    
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <span [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">1</span>
+      <span class="step-line" [class.completed]="currentStep > 1"></span>
+      <span [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">2</span>
+      <span class="step-line" [class.completed]="currentStep > 2"></span>
+      <span [class.active]="currentStep >= 3">3</span>
+    </div>
+    
+    @if (errorMessage) {
+      <div class="alert-error">{{ errorMessage }}</div>
+    }
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Step 1: Email, Username, Password -->
+      @if (currentStep === 1) {
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email" 
+                 placeholder="tu@email.com" [disabled]="loading" />
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <div class="error">
+              @if (registerForm.get('email')?.errors?.['required']) {
+                <span>Email requerido</span>
+              }
+              @if (registerForm.get('email')?.errors?.['email']) {
+                <span>Email inválido</span>
+              }
+            </div>
+          }
+        </div>
+        
+        <div class="form-group">
+          <label for="username">Nombre de usuario</label>
+          <input id="username" type="text" formControlName="username" 
+                 placeholder="Tu nombre de usuario" [disabled]="loading" />
+          @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+            <div class="error">
+              @if (registerForm.get('username')?.errors?.['required']) {
+                <span>Nombre de usuario requerido</span>
+              }
+              @if (registerForm.get('username')?.errors?.['minlength']) {
+                <span>Mínimo 3 caracteres</span>
+              }
+            </div>
+          }
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" formControlName="password" 
+                 placeholder="********" [disabled]="loading" />
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+            <div class="error">
+              @if (registerForm.get('password')?.errors?.['required']) {
+                <span>Contraseña requerida</span>
+              }
+              @if (registerForm.get('password')?.errors?.['minlength']) {
+                <span>Mínimo 8 caracteres</span>
+              }
+            </div>
+          }
+        </div>
+        
+        <button type="button" class="btn-next" [disabled]="!isStep1Valid" (click)="nextStep()">
+          Siguiente
+        </button>
+      }
+      
+      <!-- Step 2: Gender and Birth Year -->
+      @if (currentStep === 2) {
+        <div class="form-group">
+          <label>Género</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="gender" value="m" />
+              <span>Masculino</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="gender" value="f" />
+              <span>Femenino</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="gender" value="nb" />
+              <span>No binario</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="gender" value="na" />
+              <span>Prefiero no decirlo</span>
+            </label>
+          </div>
+          @if (registerForm.get('gender')?.invalid && registerForm.get('gender')?.touched) {
+            <div class="error">
+              <span>Selecciona una opción</span>
+            </div>
+          }
+        </div>
+        
+        <div class="form-group">
+          <label for="birthYear">Año de nacimiento</label>
+          <select id="birthYear" formControlName="birthYear" [disabled]="loading">
+            <option value="">Selecciona tu año de nacimiento</option>
+            @for (year of birthYears; track year) {
+              <option [value]="year">{{ year }}</option>
+            }
+          </select>
+          @if (registerForm.get('birthYear')?.invalid && registerForm.get('birthYear')?.touched) {
+            <div class="error">
+              <span>Año de nacimiento requerido</span>
+            </div>
+          }
+        </div>
+        
+        <div class="btn-group">
+          <button type="button" class="btn-back" (click)="previousStep()">
+            Atrás
+          </button>
+          <button type="button" class="btn-next" [disabled]="!isStep2Valid" (click)="nextStep()">
+            Siguiente
+          </button>
+        </div>
+      }
+      
+      <!-- Step 3: Newsletter and Submit -->
+      @if (currentStep === 3) {
+        <div class="form-group">
+          <label class="checkbox-option">
+            <input type="checkbox" formControlName="newsletter" />
+            <span>Quiero recibir noticias y novedades de SoundHub</span>
+          </label>
+        </div>
+        
+        <div class="btn-group">
+          <button type="button" class="btn-back" (click)="previousStep()">
+            Atrás
+          </button>
+          <button type="submit" [disabled]="registerForm.invalid || loading">
+            {{ loading ? 'Creando cuenta...' : 'Crear Cuenta' }}
+          </button>
+        </div>
+      }
+    </form>
+  </div>
+</div>

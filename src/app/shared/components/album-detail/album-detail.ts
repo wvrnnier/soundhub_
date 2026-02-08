@@ -20,6 +20,7 @@ export class AlbumDetail implements OnInit {
 
   // Para formato de duración
   formatDuration(ms: number): string {
+    if (!ms) return '0:00';
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return minutes + ":" + (Number(seconds) < 10 ? '0' : '') + seconds;
@@ -34,21 +35,15 @@ export class AlbumDetail implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.loadAlbumDetails(Number(id));
+        this.loadAlbumDetails(id);
       }
     });
   }
 
-  loadAlbumDetails(id: number) {
-    this.musicService.getAlbumDetails(id).subscribe(resp => {
-      // El primer resultado es el álbum (wrapperType: collection)
-      // Los siguientes son las canciones (wrapperType: track)
-      const results = resp.results;
-
-      if (results && results.length > 0) {
-        this.album.set(results.filter((item: any) => item.wrapperType === 'collection')[0]);
-        this.tracks.set(results.filter((item: any) => item.wrapperType === 'track'));
-      }
+  loadAlbumDetails(id: string) {
+    this.musicService.getAlbumWithTracks(id).subscribe(resp => {
+      this.album.set(resp.album);
+      this.tracks.set(resp.tracks);
     });
   }
 

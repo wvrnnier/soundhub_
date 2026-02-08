@@ -26,7 +26,7 @@
             </div>
             <!-- Usamos un grid simple para las canciones -->
             <div class="track-grid">
-                @for (track of topTracks().slice(0, 14); track track.trackId) {
+                @for (track of topTracks().slice(0, 14); track track.id) {
                 <app-track-card [track]="track"></app-track-card>
                 }
             </div>

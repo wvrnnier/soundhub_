@@ -1,7 +1,7 @@
 <h2>Canciones</h2>
 
 <div class="track-list">
-  @for (t of tracks(); track t.trackId) {
+  @for (t of tracks(); track t.id) {
   <app-track-card [track]="t"> </app-track-card>
 
   }
