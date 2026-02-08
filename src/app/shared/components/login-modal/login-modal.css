@@ -104,3 +104,21 @@ button[type="submit"]:disabled {
   cursor: not-allowed;
   box-shadow: none;
 }
+
+.register-link {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.register-link a {
+  color: var(--accent);
+  text-decoration: none;
+  margin-left: 0.3rem;
+  transition: text-shadow 0.3s;
+}
+
+.register-link a:hover {
+  text-shadow: 0 0 8px var(--accent);
+}
