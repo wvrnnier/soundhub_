@@ -1,8 +1,10 @@
 import { Component, OnInit, inject, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MusicService } from '../../../core/services/music-service';
 import { TrackCardComponent } from '../track-card/track-card';
 import { AuthService, User } from '../../../core/services/auth.service';
+import { UserService } from '../../../core/services/user-service';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
@@ -17,6 +19,8 @@ export class ProfileComponent implements OnInit {
 
   music = inject(MusicService);
   authService = inject(AuthService);
+  userService = inject(UserService);
+  router = inject(Router);
   isEditing = false;
   currentUser: User | null = null;
 
@@ -24,8 +28,10 @@ export class ProfileComponent implements OnInit {
     username: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
     newsletter: new FormControl(false),
-    password: new FormControl('', [Validators.required, Validators.minLength(8)])
+    password: new FormControl('', [Validators.minLength(8)])
   });
+
+  deletePasswordControl = new FormControl('', [Validators.required]);
 
   dialog = inject(MatDialog);
   @ViewChild('deleteDialog') deleteDialog!: TemplateRef<any>;
@@ -77,18 +83,42 @@ export class ProfileComponent implements OnInit {
   }
   saveProfile() {
     if (this.profileForm.valid) {
-      this.isEditing = false;
-      //LLAMAR AL SERVICIO PARA ACTUALIZAR EL PERFIL
+      const formValue = this.profileForm.value;
+
+      const data = {
+        username: formValue.username!,
+        email: formValue.email!,
+        newsletter: !!formValue.newsletter,
+        ...(formValue.password ? { password: formValue.password } : {})
+      };
+
+      this.userService.updateProfile(data).subscribe({
+        next: () => {
+          this.isEditing = false;
+          this.profileForm.controls.password.reset();
+        },
+        error: (err) => {
+          console.error('Error al actualizar perfil:', err);
+        }
+      });
     }
   }
+
   deleteUser() {
+    this.deletePasswordControl.reset();
     const dialogRef = this.dialog.open(this.deleteDialog);
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result === true) {
-        //LLAMAR AL SERVICIO PARA BORRAR EL PERFIL
+      if (result === true && this.deletePasswordControl.value) {
+        this.userService.deleteAccount(this.deletePasswordControl.value).subscribe({
+          next: () => {
+            this.router.navigate(['/']);
+          },
+          error: (err) => {
+            console.error('Error al eliminar cuenta:', err);
+          }
+        });
       }
-    })
-
+    });
   }
 }

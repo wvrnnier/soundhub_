@@ -358,8 +358,38 @@ button[mat-button] {
 
 .confirm-delete-btn {
     background-color: #e91429 !important;
-    /* Forzar rojo */
     color: white !important;
     padding: 0 16px !important;
     border-radius: 4px;
+}
+
+/* Etiqueta "(opcional)" */
+.optional-label {
+    color: #a7a7a7;
+    font-weight: 400;
+    font-size: 0.75rem;
+}
+
+/* Error de validación */
+.form-error {
+    color: #e91429;
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+/* Password field dentro del diálogo de borrado */
+.dialog-password {
+    margin-top: 16px;
+}
+
+.dialog-password label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.dialog-password input {
+    width: 100%;
+    box-sizing: border-box;
 }
