@@ -1,30 +1,65 @@
 <div class="profile-page">
-    <!-- HEADER CON GRADIENTE -->
+
+    <!-- MODO EDICIÓN: FORMULARIO -->
+    @if (isEditing) {
+    <div class="edit-container">
+        <h2>Editar Perfil</h2>
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="edit-form">
+
+            <div class="form-group">
+                <label>Nombre de usuario</label>
+                <input type="text" formControlName="username" placeholder="Tu nombre">
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" formControlName="email" placeholder="correo@ejemplo.com">
+            </div>
+
+
+
+            <div class="form-checkbox">
+                <input type="checkbox" id="news" formControlName="newsletter">
+                <label for="news">Recibir novedades y ofertas</label>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" (click)="toggleEdit()">Cancelar</button>
+                <button type="submit" class="btn-save" [disabled]="profileForm.invalid">Guardar cambios</button>
+            </div>
+
+        </form>
+    </div>
+    }
+
+    <!-- MODO VISUALIZACIÓN: PERFIL NORMAL -->
+    @else {
     <div class="profile-header">
         <div class="profile-img-container">
-            <img [src]="user.image" alt="Profile" class="profile-img" />
-            <div class="edit-overlay">
-            </div>
+            <img [src]="userView.image" alt="Profile" class="profile-img" />
+            <div class="edit-overlay"></div>
         </div>
 
         <div class="profile-info">
             <span class="label">Perfil</span>
-            <h1 class="name">{{ user.name }}</h1>
+            <h1 class="name">{{ userView.name }}</h1>
             <div class="stats">
-                <span>{{ user.playlists }} listas públicas</span>
+                <span>{{ userView.playlists }} listas públicas</span>
             </div>
         </div>
+
+        <!-- Botón que activa la edición -->
+        <button class="edit-btn" (click)="toggleEdit()">
+            Editar perfil
+        </button>
     </div>
 
-    <!-- CONTENIDO -->
     <div class="content">
-
-        <!-- CANCIONES -->
         <section class="section">
             <div class="section-top">
                 <h2>Canciones más escuchadas de este mes</h2>
             </div>
-            <!-- Usamos un grid simple para las canciones -->
             <div class="track-grid">
                 @for (track of topTracks().slice(0, 14); track track.id) {
                 <app-track-card [track]="track"></app-track-card>
@@ -32,4 +67,33 @@
             </div>
         </section>
     </div>
+
+    <div class="danger-zone">
+        <button type="button" class="btn-delete" (click)="deleteUser()">
+            Eliminar cuenta
+        </button>
+    </div>
+    }
+
 </div>
+
+<!-- ... (resto del HTML) ... -->
+
+<!-- TEMPLATE DEL DIÁLOGO DE CONFIRMACIÓN -->
+<ng-template #deleteDialog>
+    <div class="delete-dialog-container">
+        <h2 mat-dialog-title>¿Eliminar cuenta?</h2>
+        <mat-dialog-content>
+            <p>Esta acción es irreversible. Perderás todos tus datos y listas de reproducción.</p>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+            <!-- Botón Cancelar: Cierra enviando false/null -->
+            <button mat-button mat-dialog-close>Cancelar</button>
+
+            <!-- Botón Eliminar: Cierra enviando true -->
+            <button mat-button [mat-dialog-close]="true" color="warn" class="confirm-delete-btn">
+                Eliminar definitivamente
+            </button>
+        </mat-dialog-actions>
+    </div>
+</ng-template>
