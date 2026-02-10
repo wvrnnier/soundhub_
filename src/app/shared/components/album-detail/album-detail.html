@@ -19,7 +19,9 @@
         </div>
     </header>
     <div class="action-bar">
-        <button class="play-btn-large" (click)="playAlbum()">▶</button>
+        <button class="play-btn-large" (click)="playAlbum()">
+            {{ isAlbumPlaying() ? '⏸' : '▶' }}
+        </button>
     </div>
 
     <!-- LISTA DE CANCIONES -->
@@ -29,11 +31,18 @@
             <div class="col-title">Título</div>
         </div>
 
-        <div class="track-row" *ngFor="let track of tracks(); let i = index"
-            [routerLink]="['/trackDetail', track.id]">
+        <div class="track-row" *ngFor="let track of tracks(); let i = index" [routerLink]="['/trackDetail', track.id]"
+            [class.playing]="audioService.currentTrack()?.id === track.id">
             <div class="col-number">
-                <span class="track-index">{{ i + 1 }}</span>
-                <button class="track-play-btn" (click)="$event.stopPropagation(); playFromTrack(i)">▶</button>
+                <span class="track-index">
+                    <span *ngIf="audioService.currentTrack()?.id === track.id && audioService.isPlaying()"
+                        style="color: #1db954;">⏸</span>
+                    <span *ngIf="!(audioService.currentTrack()?.id === track.id && audioService.isPlaying())">{{ i + 1
+                        }}</span>
+                </span>
+                <button class="track-play-btn" (click)="$event.stopPropagation(); playFromTrack(i)">
+                    {{ (audioService.currentTrack()?.id === track.id && audioService.isPlaying()) ? '⏸' : '▶' }}
+                </button>
             </div>
             <div class="col-title">
                 <span class="track-name">{{ track.title }}</span>

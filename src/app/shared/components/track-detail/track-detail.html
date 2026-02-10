@@ -15,7 +15,9 @@
       </div>
 
       <div class="actions">
-        <button class="play-btn-large" (click)="play()">▶</button>
+        <button class="play-btn-large" (click)="play()">
+          {{ (audioService.currentTrack()?.id === track()!.id && audioService.isPlaying()) ? '⏸' : '▶' }}
+        </button>
       </div>
     </div>
   </div>

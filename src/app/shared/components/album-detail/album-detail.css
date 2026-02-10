@@ -245,6 +245,12 @@
     font-variant-numeric: tabular-nums;
 }
 
+.track-row.playing .track-name,
+.track-row.playing .track-index {
+    color: #1db954;
+    /* Spotify Green */
+}
+
 .col-time svg {
     fill: currentColor;
 }

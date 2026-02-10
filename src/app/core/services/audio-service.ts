@@ -13,13 +13,15 @@ export class AudioService {
   isPlaying = signal(false);
   currentTime = signal(0);
   duration = signal(0);
-  volume = signal(1);
+  volume = signal(0.2);
   isMuted = signal(false);
-  queue = signal<Track[]>([]); 
+  isShuffle = signal(false);
+  queue = signal<Track[]>([]);
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {
     if (isPlatformBrowser(platformId)) {
       this.audio = new Audio();
+      this.audio.volume = 0.2;
       this.attachEvents();
     }
   }
@@ -45,11 +47,25 @@ export class AudioService {
     this.audio.addEventListener('pause', () => this.isPlaying.set(false));
   }
 
+  private originalQueue: Track[] = [];
+
   playTrack(track: Track, queue: Track[] = []) {
     if (!this.audio) return;
 
     if (queue.length > 0) {
-      this.queue.set(queue);
+      if (this.isShuffle()) {
+        this.originalQueue = [...queue];
+        const shuffled = this.shuffleArray([...queue]);
+        const index = shuffled.findIndex(t => t.id === track.id);
+        if (index > -1) {
+          shuffled.splice(index, 1);
+          shuffled.unshift(track);
+        }
+        this.queue.set(shuffled);
+      } else {
+        this.queue.set(queue);
+        this.originalQueue = [];
+      }
     }
 
     // Si es la misma canción, pausar/reanudar
@@ -114,12 +130,51 @@ export class AudioService {
     if (!current || queue.length === 0) return;
 
     const index = queue.findIndex(t => t.id === current.id);
-    // Si no es la última, pasamos a la siguiente
     if (index !== -1 && index < queue.length - 1) {
       this.playTrack(queue[index + 1]);
     }
   }
-  
+
+  toggleShuffle() {
+    const newState = !this.isShuffle();
+    this.isShuffle.set(newState);
+
+    const currentTrack = this.currentTrack();
+    const currentQueue = this.queue();
+
+    if (newState) {
+      // Activar shuffle
+      if (currentQueue.length > 0) {
+        this.originalQueue = [...currentQueue];
+        const shuffled = this.shuffleArray([...currentQueue]);
+
+        // Mantener la canción actual sonando
+        if (currentTrack) {
+          const index = shuffled.findIndex(t => t.id === currentTrack.id);
+          if (index > -1) {
+            shuffled.splice(index, 1);
+            shuffled.unshift(currentTrack);
+          }
+        }
+        this.queue.set(shuffled);
+      }
+    } else {
+      // Desactivar shuffle (restaurar original)
+      if (this.originalQueue.length > 0) {
+        this.queue.set(this.originalQueue);
+        this.originalQueue = [];
+      }
+    }
+  }
+
+  private shuffleArray(array: Track[]): Track[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
 
   prev() {
     const current = this.currentTrack();

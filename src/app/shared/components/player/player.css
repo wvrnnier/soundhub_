@@ -5,7 +5,8 @@
     align-items: center;
     height: 100%;
     padding: 0 24px;
-    background-color: #000000; /* Fondo negro puro o muy oscuro */
+    background-color: #000000;
+    /* Fondo negro puro o muy oscuro */
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -24,7 +25,7 @@
     width: 56px;
     border-radius: 4px;
     object-fit: cover;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .track-details {
@@ -48,9 +49,20 @@
     cursor: pointer;
 }
 
+.track-title-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.track-title-link:hover .track-title {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .track-artist {
     font-size: 12px;
-    color: #b3b3b3; /* Gris claro */
+    color: #b3b3b3;
+    /* Gris claro */
 }
 
 .track-artist:hover {
@@ -59,12 +71,28 @@
     cursor: pointer;
 }
 
+.track-album-link {
+    font-size: 12px;
+    color: #b3b3b3;
+    text-decoration: none;
+}
+
+.track-album-link:hover {
+    color: #fff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+
 /* Botones pequeños (like, etc) */
 .small-btn {
     color: #b3b3b3;
     transform: scale(0.9);
 }
-.small-btn:hover { color: #fff; }
+
+.small-btn:hover {
+    color: #fff;
+}
 
 
 /* --- CENTRO: CONTROLES --- */
@@ -88,7 +116,8 @@
 .icon-btn {
     background: none;
     border: none;
-    color: #b3b3b3; /* Gris inactivo */
+    color: #b3b3b3;
+    /* Gris inactivo */
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -100,16 +129,35 @@
     color: #fff;
 }
 
-.secondary-control {
-    color: #5e5e5e; /* Más oscuro para shuffle/repeat si están inactivos */
+.icon-btn.active {
+    color: #1db954;
+    /* Green color for active state */
+    position: relative;
 }
-.secondary-control:hover { color: #b3b3b3; }
+
+.icon-btn.active::after {
+    content: '•';
+    position: absolute;
+    bottom: -8px;
+    font-size: 20px;
+    color: #1db954;
+}
+
+.secondary-control {
+    color: #5e5e5e;
+    /* Más oscuro para shuffle/repeat si están inactivos */
+}
+
+.secondary-control:hover {
+    color: #b3b3b3;
+}
 
 /* EL BOTÓN PLAY CIRCULAR (Estilo Referencia) */
 .play-btn-circle {
     width: 36px;
     height: 36px;
-    background-color: #ffffff; /* Fondo blanco */
+    background-color: #ffffff;
+    /* Fondo blanco */
     border-radius: 50%;
     border: none;
     display: flex;
@@ -130,9 +178,10 @@
 
 /* El icono dentro del círculo debe ser negro */
 .play-btn-circle .material-symbols-rounded {
-    color: #000000; 
+    color: #000000;
     font-size: 24px;
-    font-variation-settings: 'FILL' 1, 'wght' 700; /* Icono relleno y gordito */
+    font-variation-settings: 'FILL' 1, 'wght' 700;
+    /* Icono relleno y gordito */
 }
 
 /* Tamaño iconos laterales */
@@ -155,7 +204,8 @@
     color: #a7a7a7;
     min-width: 35px;
     text-align: center;
-    font-variant-numeric: tabular-nums; /* Evita salto de números */
+    font-variant-numeric: tabular-nums;
+    /* Evita salto de números */
 }
 
 .progress-bar-container {
@@ -187,7 +237,8 @@
 
 /* Al pasar el ratón, la barra se pone verde (opcional) o se queda blanca */
 .progress-bar-container:hover .progress-fill {
-    background-color: #1db954; /* Verde estilo Spotify */
+    background-color: #1db954;
+    /* Verde estilo Spotify */
 }
 
 /* Input Range Invisible (para funcionalidad) */

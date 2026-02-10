@@ -14,7 +14,7 @@ import { AudioService } from '../../../core/services/audio-service';
 export class AlbumDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private musicService = inject(MusicService);
-  private audioService = inject(AudioService);
+  public audioService = inject(AudioService);
   album = signal<any>(null);
   tracks = signal<any[]>([]);
 
@@ -47,11 +47,29 @@ export class AlbumDetail implements OnInit {
     });
   }
 
+  isAlbumPlaying(): boolean {
+    const currentTrack = this.audioService.currentTrack();
+    if (!currentTrack || !this.tracks().length) return false;
+    // Comprobar si la canción actual pertenece a este álbum (puedes usar ID o comparar listas)
+    // Una forma simple es ver si el ID de la canción actual está en la lista de tracks de este álbum
+    return this.audioService.isPlaying() && this.tracks().some(t => t.id === currentTrack.id);
+  }
+
   playAlbum() {
     const tracks = this.tracks();
     if (tracks.length > 0) {
-      // Reproducir la primera canción y poner el resto en cola
-      this.audioService.playTrack(tracks[0], tracks);
+      if (this.isAlbumPlaying()) {
+        this.audioService.pause();
+      } else {
+        // Si ya hay una canción de este álbum cargada pero pausada, reanudar
+        const currentTrack = this.audioService.currentTrack();
+        if (currentTrack && tracks.some(t => t.id === currentTrack.id)) {
+          this.audioService.play();
+        } else {
+          // Si no, empezar desde el principio
+          this.audioService.playTrack(tracks[0], tracks);
+        }
+      }
     }
   }
 

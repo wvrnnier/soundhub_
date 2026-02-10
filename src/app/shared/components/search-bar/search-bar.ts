@@ -1,8 +1,11 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy, ElementRef, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, OnDestroy, ElementRef, Inject, PLATFORM_ID, ChangeDetectorRef, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { MusicService, Track } from '../../../core/services/music-service';
 import { SearchStateService } from '../../../core/services/search-state';
+import { Subject, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search-bar',
@@ -18,6 +21,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   highlightedIndex: number = -1;
 
   @Output() selectResult: EventEmitter<Track> = new EventEmitter<Track>();
+  private router = inject(Router);
+
+  private searchSubject = new Subject<string>();
 
   constructor(
     private music: MusicService,
@@ -31,6 +37,38 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       document.addEventListener('click', this.onExitClick.bind(this));
       console.log('Añadido listener de click al documento');
+
+      // Configurar búsqueda reactiva
+      this.searchSubject.pipe(
+        debounceTime(300), // Esperar 300ms después de la última tecla
+        distinctUntilChanged(), // Evitar búsquedas repetidas
+        switchMap((term) => {
+          if (term.trim().length > 0) {
+            return this.music.searchTracks(term, 24);
+          } else {
+            return of({ results: [] }); // Retornar vacío si no hay término
+          }
+        })
+      ).subscribe({
+        next: (response: any) => {
+          if (response.results) {
+            this.searchResults = response.results;
+            console.log('Search results:', this.searchResults);
+            this.showDropdown = this.searchResults.length > 0;
+            this.highlightedIndex = this.searchResults.length > 0 ? 0 : -1;
+          } else {
+            this.searchResults = [];
+            this.showDropdown = false;
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al buscar:', err);
+          this.searchResults = [];
+          this.showDropdown = false;
+          this.cdr.detectChanges();
+        }
+      });
     }
   }
 
@@ -38,28 +76,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       document.removeEventListener('click', this.onExitClick.bind(this));
       console.log('Eliminado listener de click del documento');
+      this.searchSubject.complete();
     }
   }
 
   onSearch() {
-    if (this.searchTerm.trim().length > 0) {
-      // Usar searchTracks() que devuelve un Observable
-      this.music.searchTracks(this.searchTerm, 24).subscribe({
-        next: (response) => {
-          this.searchResults = response.results;
-          console.log('Search results:', this.searchResults);
-          this.showDropdown = true;
-          this.highlightedIndex = this.searchResults.length > 0 ? 0 : -1;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error al buscar:', err);
-          this.searchResults = [];
-          this.showDropdown = false;
-        }
-      });
-    } else {
-      this.music.clearSearch(); // Mantenemos esta funcionalidad importante
+    this.searchSubject.next(this.searchTerm);
+    if (this.searchTerm.trim().length === 0) {
+      this.music.clearSearch();
       this.searchResults = [];
       this.showDropdown = false;
       this.highlightedIndex = -1;
@@ -71,6 +95,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.showDropdown = false;
     this.selectResult.emit(result);
     this.searchState.setSelectedTrack(result);
+    this.router.navigate(['/trackDetail', result.id]);
   }
 
   onBlur() {

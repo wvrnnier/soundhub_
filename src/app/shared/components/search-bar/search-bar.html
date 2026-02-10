@@ -17,7 +17,11 @@
       [class.highlighted]="$index === highlightedIndex"
       (click)="onSelectResult(result)"
     >
-      <strong>{{ result.title }} </strong> <span class="artist-name">- {{ result.artist }}</span>
+      <img [src]="result.cover" alt="{{ result.title }}" class="search-result-cover" />
+      <div class="search-result-info">
+        <strong>{{ result.title }}</strong> 
+        <span class="artist-name">{{ result.artist }}</span>
+      </div>
     </div>
     }
   </div>

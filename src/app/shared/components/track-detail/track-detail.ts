@@ -21,7 +21,15 @@ export class TrackDetailComponent implements OnInit {
   track = signal<Track | null>(null);
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id')!;
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.loadTrack(id);
+      }
+    });
+  }
+
+  loadTrack(id: string) {
     this.music.getTrackById(id).subscribe((track) => {
       this.track.set(track);
 
@@ -47,8 +55,13 @@ export class TrackDetailComponent implements OnInit {
   }
 
   play() {
-    if (this.track()?.previewUrl) {
-      this.audioService.playTrack(this.track()!);
+    const track = this.track();
+    if (!track?.previewUrl) return;
+
+    if (this.audioService.currentTrack()?.id === track.id) {
+      this.audioService.togglePlay();
+    } else {
+      this.audioService.playTrack(track);
     }
   }
 }

@@ -1,11 +1,12 @@
-import { Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AudioService } from '../../../core/services/audio-service';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './player.html',
   styleUrl: './player.css'
 })
@@ -39,6 +40,12 @@ export class PlayerComponent {
   toggleMute() {
     this.audioService.toggleMute();
   }
+
+  toggleShuffle() {
+    this.audioService.toggleShuffle();
+  }
+
+  get isShuffle() { return this.audioService.isShuffle(); }
 
   skip(direction: 'next' | 'prev') {
     if (direction === 'next') {

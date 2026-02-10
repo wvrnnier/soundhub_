@@ -1,18 +1,27 @@
-
 <div class="player-container" *ngIf="currentTrack">
-  
+
   <div class="track-info">
     <img [src]="currentTrack.cover" alt="" class="cover-image">
     <div class="track-details">
       <div class="track-title-wrapper">
-        <span class="track-title">{{ currentTrack.title }}</span>
+        <a [routerLink]="['/trackDetail', currentTrack.id]" class="track-title-link">
+          <span class="track-title">{{ currentTrack.title }}</span>
+        </a>
       </div>
       <span class="track-artist">{{ currentTrack.artist }}</span>
+      <a *ngIf="currentTrack.album && currentTrack.albumId" [routerLink]="['/albumDetail', currentTrack.albumId]"
+        class="track-album-link">
+        {{ currentTrack.album }}
+      </a>
     </div>
   </div>
 
   <div class="controls-area">
     <div class="buttons">
+      <button class="icon-btn" [class.active]="isShuffle" (click)="toggleShuffle()" style="margin-right: 10px;">
+        <span class="material-symbols-rounded">shuffle</span>
+      </button>
+
       <button class="icon-btn" (click)="skip('prev')">
         <span class="material-symbols-rounded">skip_previous</span>
       </button>
@@ -33,7 +42,8 @@
       <div class="progress-bar-container">
         <div class="progress-background"></div>
         <div class="progress-fill" [style.width.%]="(currentTime / duration) * 100 || 0"></div>
-        <input type="range" [min]="0" [max]="duration" [value]="currentTime" (change)="seek($event)" class="progress-input">
+        <input type="range" [min]="0" [max]="duration" [value]="currentTime" (change)="seek($event)"
+          class="progress-input">
       </div>
       <span class="time">{{ formatTime(duration) }}</span>
     </div>
@@ -42,7 +52,8 @@
   <div class="volume-area">
     <div class="volume-control">
       <span class="material-symbols-rounded volume-icon" (click)="toggleMute()">{{ getVolumenIcon() }}</span>
-      <input type="range" [min]="0" [max]="1" step="0.1" [value]="volume" (change)="setVolume($event)" class="volume-input">
+      <input type="range" [min]="0" [max]="1" step="0.1" [value]="volume" (change)="setVolume($event)"
+        class="volume-input">
     </div>
   </div>
 
