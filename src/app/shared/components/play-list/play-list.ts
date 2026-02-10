@@ -31,6 +31,7 @@ export class PlayList implements OnInit {
   private readonly audioService = inject(AudioService);
 
   readonly playlists = computed(() => this.playlistService.playlists());
+  readonly username = signal('');
 
   readonly createListForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
@@ -45,12 +46,13 @@ export class PlayList implements OnInit {
   readonly searchingTracks = signal(false);
   readonly creatingPlaylist = signal(false);
   readonly deletingPlaylist = signal(false);
-  readonly addingTrackId = signal<string | null>(null);
-  readonly removingTrackId = signal<string | null>(null);
+  readonly addingTrackId = signal<Set<string>>(new Set());
+  readonly removingTrackId = signal<Set<string>>(new Set());
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
   readonly searchResults = signal<Track[]>([]);
   readonly selectedPlaylist = signal<PlaylistDetail | null>(null);
+  readonly confirmDeletePlaylist = signal<PlaylistDetail | null>(null);
 
   private routePlaylistId: number | null = null;
 
@@ -66,6 +68,7 @@ export class PlayList implements OnInit {
 
     this.authService.currentUser$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
       this.isLoggedIn.set(!!user);
+      this.username.set(user?.username ?? '');
       this.errorMessage.set(null);
       this.successMessage.set(null);
 
@@ -107,7 +110,7 @@ export class PlayList implements OnInit {
       next: (playlist) => {
         this.creatingPlaylist.set(false);
         this.createListForm.reset({ name: '' });
-        this.successMessage.set('Lista creada correctamente');
+        this.successMessage.set('Lista creada');
         this.openPlaylist(playlist.id);
       },
       error: (error) => {
@@ -124,9 +127,12 @@ export class PlayList implements OnInit {
   deleteCurrentPlaylist(): void {
     const playlist = this.selectedPlaylist();
     if (!playlist) return;
+    this.confirmDeletePlaylist.set(playlist);
+  }
 
-    const shouldDelete = confirm(`Quieres borrar la lista "${playlist.listName}"?`);
-    if (!shouldDelete) return;
+  confirmDelete(): void {
+    const playlist = this.confirmDeletePlaylist();
+    if (!playlist) return;
 
     this.clearFeedback();
     this.deletingPlaylist.set(true);
@@ -134,6 +140,7 @@ export class PlayList implements OnInit {
     this.playlistService.deletePlaylist(playlist.id).subscribe({
       next: () => {
         this.deletingPlaylist.set(false);
+        this.confirmDeletePlaylist.set(null);
         this.selectedPlaylist.set(null);
         this.searchResults.set([]);
         this.successMessage.set('Lista eliminada');
@@ -141,9 +148,14 @@ export class PlayList implements OnInit {
       },
       error: (error) => {
         this.deletingPlaylist.set(false);
+        this.confirmDeletePlaylist.set(null);
         this.handleHttpError(error, 'No se pudo borrar la lista');
       },
     });
+  }
+
+  cancelDelete(): void {
+    this.confirmDeletePlaylist.set(null);
   }
 
   searchTracksToAdd(): void {
@@ -182,20 +194,28 @@ export class PlayList implements OnInit {
     if (!playlist) return;
 
     this.clearFeedback();
-    this.addingTrackId.set(track.id);
+    this.addingTrackId.update((ids) => new Set(ids).add(track.id));
 
     this.playlistService.addSongToPlaylist(playlist.id, track).subscribe({
       next: () => {
-        this.addingTrackId.set(null);
+        this.addingTrackId.update((ids) => {
+          const next = new Set(ids);
+          next.delete(track.id);
+          return next;
+        });
         this.searchResults.update((tracks) =>
           tracks.filter((searchTrack) => searchTrack.id !== track.id),
         );
-        this.successMessage.set('Cancion anadida a la lista');
+        this.successMessage.set('Cancion agregada');
         this.loadPlaylist(playlist.id, false);
         this.loadSidebarLibrarySongs();
       },
       error: (error) => {
-        this.addingTrackId.set(null);
+        this.addingTrackId.update((ids) => {
+          const next = new Set(ids);
+          next.delete(track.id);
+          return next;
+        });
         this.handleHttpError(error, 'No se pudo anadir la cancion');
       },
     });
@@ -206,17 +226,25 @@ export class PlayList implements OnInit {
     if (!playlist) return;
 
     this.clearFeedback();
-    this.removingTrackId.set(song.trackId);
+    this.removingTrackId.update((ids) => new Set(ids).add(song.trackId));
 
     this.playlistService.removeSongFromPlaylist(playlist.id, song.trackId).subscribe({
       next: () => {
-        this.removingTrackId.set(null);
+        this.removingTrackId.update((ids) => {
+          const next = new Set(ids);
+          next.delete(song.trackId);
+          return next;
+        });
         this.successMessage.set('Cancion eliminada de la lista');
         this.loadPlaylist(playlist.id, false);
         this.loadSidebarLibrarySongs();
       },
       error: (error) => {
-        this.removingTrackId.set(null);
+        this.removingTrackId.update((ids) => {
+          const next = new Set(ids);
+          next.delete(song.trackId);
+          return next;
+        });
         this.handleHttpError(error, 'No se pudo eliminar la cancion');
       },
     });

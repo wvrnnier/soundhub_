@@ -1,14 +1,16 @@
 <section class="playlist-page">
   <header class="hero">
-    <p class="eyebrow">Biblioteca</p>
-    <h1>Tus playlists</h1>
-    <p>Construye tu coleccion, anade canciones y reproducelas cuando quieras.</p>
+    <div class="hero-text">
+      <p class="eyebrow">Biblioteca</p>
+      <h1>@if (username()) {<span class="username">{{ username() }}</span> } playlists</h1>
+      <p class="hero-desc">Construye tu colección, agrega canciones y reprodúcelas cuando quieras.</p>
+    </div>
   </header>
 
   @if (!isLoggedIn()) {
   <section class="state-card">
-    <h2>Inicia sesion para gestionar tus listas</h2>
-    <p>Las playlists se guardan en tu cuenta y se sincronizan con backend.</p>
+    <h2>Inicia sesión para gestionar tus listas</h2>
+    <p>Las playlists se guardan en tu cuenta y se sincronizan con nuestro servidor.</p>
   </section>
   } @else {
   <div class="workspace">
@@ -16,7 +18,7 @@
       <h2>Crear lista</h2>
       <form class="create-form" [formGroup]="createListForm" (ngSubmit)="createPlaylist()">
         <label for="playlistName">Nombre de la lista</label>
-        <input id="playlistName" type="text" formControlName="name" placeholder="Ej: Ruta de noche" />
+        <input id="playlistName" type="text" formControlName="name" placeholder="Introduce un nombre para tu lista" />
 
         @if (createListForm.controls.name.invalid && createListForm.controls.name.touched) {
         <span class="field-error">Usa un nombre entre 2 y 60 caracteres.</span>
@@ -40,7 +42,7 @@
           <span class="meta">{{ playlist.songCount }} canciones</span>
         </button>
         } @empty {
-        <p class="empty">Todavia no tienes listas creadas.</p>
+        <p class="empty">Todavía no tienes listas creadas.</p>
         }
       </div>
     </aside>
@@ -64,7 +66,7 @@
       </div>
 
       <form class="search-form" [formGroup]="searchForm" (ngSubmit)="searchTracksToAdd()">
-        <label for="trackQuery">Busca una cancion para anadir</label>
+        <label for="trackQuery">Busca una canción para añadir</label>
         <div class="search-row">
           <input id="trackQuery" type="text" formControlName="query" placeholder="Nombre del tema o artista" />
           <button type="submit" [disabled]="searchForm.invalid || searchingTracks()">
@@ -79,12 +81,12 @@
         @for (track of searchResults(); track track.id) {
         <article class="result-item">
           <img [src]="track.cover" alt="Cover de {{ track.title }}" />
-          <div>
+          <div class="track-info">
             <strong>{{ track.title }}</strong>
             <span>{{ track.artist }}</span>
           </div>
-          <button type="button" (click)="addTrack(track)" [disabled]="addingTrackId() === track.id">
-            {{ addingTrackId() === track.id ? 'Anadiendo...' : 'Anadir cancion' }}
+          <button type="button" (click)="addTrack(track)" [disabled]="addingTrackId().has(track.id)">
+            {{ addingTrackId().has(track.id) ? 'Añadiendo...' : 'Añadir canción' }}
           </button>
         </article>
         }
@@ -95,7 +97,7 @@
         <h3>Canciones en esta lista</h3>
 
         @if (playlist.songs.length === 0) {
-        <p class="empty">Aun no hay canciones. Usa "Anadir cancion" para empezar.</p>
+        <p class="empty">Aún no hay canciones. Usa "Agregar canción" para empezar.</p>
         } @else {
         @for (song of playlist.songs; track song.id) {
         <article class="song-item">
@@ -113,9 +115,9 @@
               type="button"
               class="remove"
               (click)="removeTrack(song)"
-              [disabled]="removingTrackId() === song.trackId"
+              [disabled]="removingTrackId().has(song.trackId)"
             >
-              {{ removingTrackId() === song.trackId ? 'Quitando...' : 'Quitar' }}
+              {{ removingTrackId().has(song.trackId) ? 'Quitando...' : 'Quitar' }}
             </button>
           </div>
         </article>
@@ -138,5 +140,21 @@
 
   @if (successMessage()) {
   <p class="feedback success">{{ successMessage() }}</p>
+  }
+
+  @if (confirmDeletePlaylist()) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="cancelDelete()">&times;</button>
+      <h2>Eliminar lista</h2>
+      <p class="modal-message">¿Quieres borrar la lista "{{ confirmDeletePlaylist()!.listName }}"? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="modal-cancel" type="button" (click)="cancelDelete()">Cancelar</button>
+        <button class="modal-confirm" type="button" (click)="confirmDelete()" [disabled]="deletingPlaylist()">
+          {{ deletingPlaylist() ? 'Borrando...' : 'Borrar lista' }}
+        </button>
+      </div>
+    </div>
+  </div>
   }
 </section>

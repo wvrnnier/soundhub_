@@ -31,10 +31,10 @@ async function getOwnedPlaylist(userId, playlistId) {
       ul.list_name AS "listName",
       ul.date AS "createdAt",
       COUNT(sl.id)::int AS "songCount"
-    FROM user_lists ul
-    LEFT JOIN songs_list sl ON sl.list_id = ul.id
-    WHERE ul.user_id = ${userId} AND ul.id = ${playlistId}
-    GROUP BY ul.id
+      FROM user_lists ul
+      LEFT JOIN songs_list sl ON sl.list_id = ul.id
+      WHERE ul.user_id = ${userId} AND ul.id = ${playlistId}
+      GROUP BY ul.id
   `;
   return playlist ?? null;
 }
@@ -119,11 +119,11 @@ router.get('/', async (req, res) => {
         ul.list_name AS "listName",
         ul.date AS "createdAt",
         COUNT(sl.id)::int AS "songCount"
-      FROM user_lists ul
-      LEFT JOIN songs_list sl ON sl.list_id = ul.id
-      WHERE ul.user_id = ${userId}
-      GROUP BY ul.id
-      ORDER BY ul.date DESC, ul.id DESC
+        FROM user_lists ul
+        LEFT JOIN songs_list sl ON sl.list_id = ul.id
+        WHERE ul.user_id = ${userId}
+        GROUP BY ul.id
+        ORDER BY ul.date DESC, ul.id DESC
     `;
 
     res.json(playlists);
@@ -186,11 +186,11 @@ router.get('/library/songs', async (req, res) => {
         sl.song_name AS "title",
         sl.artist,
         sl.cover_url AS "cover"
-      FROM songs_list sl
-      INNER JOIN user_lists ul ON ul.id = sl.list_id
-      WHERE ul.user_id = ${userId}
-      ORDER BY sl.id DESC
-      LIMIT ${limit}
+        FROM songs_list sl
+        INNER JOIN user_lists ul ON ul.id = sl.list_id
+        WHERE ul.user_id = ${userId}
+        ORDER BY sl.id DESC
+        LIMIT ${limit}
     `;
 
     const enrichedSongs = await enrichSongs(songs);
@@ -227,10 +227,10 @@ router.get('/:playlistId', async (req, res) => {
         sl.song_name AS "title",
         sl.artist,
         sl.cover_url AS "cover"
-      FROM songs_list sl
-      INNER JOIN user_lists ul ON ul.id = sl.list_id
-      WHERE sl.list_id = ${playlistId} AND ul.user_id = ${userId}
-      ORDER BY sl.id DESC
+        FROM songs_list sl
+        INNER JOIN user_lists ul ON ul.id = sl.list_id
+        WHERE sl.list_id = ${playlistId} AND ul.user_id = ${userId}
+        ORDER BY sl.id DESC
     `;
 
     const enrichedSongs = await enrichSongs(songs);
@@ -272,20 +272,29 @@ router.post('/:playlistId/songs', async (req, res) => {
       });
     }
 
-    const [alreadyExists] = await sql`
-      SELECT id
-      FROM songs_list
-      WHERE list_id = ${playlistId} AND itunes_track_id = ${trackId}
-      LIMIT 1
-    `;
-
-    if (alreadyExists) {
-      return res.status(409).json({ error: 'La cancion ya esta en la playlist' });
+    if (trackId.length > 50) {
+      return res.status(400).json({
+        error: 'trackId no puede superar los 50 caracteres',
+      });
     }
 
+    if (title.length > 255) {
+      return res.status(400).json({
+        error: 'El titulo no puede superar los 255 caracteres',
+      });
+    }
+
+    if (artist.length > 255) {
+      return res.status(400).json({
+        error: 'El artista no puede superar los 255 caracteres',
+      });
+    }
+
+    // ON CONFLICT requiere UNIQUE(list_id, itunes_track_id) en songs_list
     const [song] = await sql`
       INSERT INTO songs_list (list_id, itunes_track_id, song_name, artist, cover_url)
       VALUES (${playlistId}, ${trackId}, ${title}, ${artist}, ${cover})
+      ON CONFLICT (list_id, itunes_track_id) DO NOTHING
       RETURNING
         id,
         list_id AS "playlistId",
@@ -294,6 +303,10 @@ router.post('/:playlistId/songs', async (req, res) => {
         artist,
         cover_url AS "cover"
     `;
+
+    if (!song) {
+      return res.status(409).json({ error: 'La cancion ya esta en la playlist' });
+    }
 
     const [enrichedSong] = await enrichSongs([
       {
@@ -365,7 +378,7 @@ router.delete('/:playlistId', async (req, res) => {
       return res.status(404).json({ error: 'Playlist no encontrada' });
     }
 
-    await sql`DELETE FROM songs_list WHERE list_id = ${playlistId}`;
+    // ON DELETE CASCADE en songs_list.list_id elimina las canciones automaticamente
     await sql`DELETE FROM user_lists WHERE id = ${playlistId} AND user_id = ${userId}`;
 
     res.status(204).send();

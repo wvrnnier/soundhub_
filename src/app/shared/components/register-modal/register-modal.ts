@@ -71,13 +71,17 @@ export class RegisterModal {
     if (this.registerForm.valid) {
       this.loading = true;
       this.errorMessage = null;
-      this.authService.register(this.registerForm.value).subscribe({
+      this.registerForm.disable();
+
+      this.authService.register(this.registerForm.getRawValue()).subscribe({
         next: () => {
           this.loading = false;
+          this.registerForm.enable();
           this.closeModal();
         },
         error: (err) => {
           this.loading = false;
+          this.registerForm.enable();
           this.errorMessage = err.error?.message || 'Error al registrarse';
         }
       });

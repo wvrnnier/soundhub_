@@ -32,14 +32,17 @@ export class LoginModal {
     if (this.loginForm.valid) {
       this.loading = true;
       this.errorMessage = null;
+      this.loginForm.disable();
 
-      this.authService.login(this.loginForm.value).subscribe({
+      this.authService.login(this.loginForm.getRawValue()).subscribe({
         next: () => {
           this.loading = false;
+          this.loginForm.enable();
           this.closeModal();
         },
         error: (err) => {
           this.loading = false;
+          this.loginForm.enable();
           this.errorMessage = err.error?.message || 'Error al iniciar sesión';
         }
       });
