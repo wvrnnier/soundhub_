@@ -4,13 +4,13 @@ import { MusicService } from '../../../core/services/music-service';
 import { CarruselComponent } from '../carrusel/carrusel';
 
 @Component({
-  selector: 'app-portada',
+  selector: 'app-home',
   standalone: true,
   imports: [CommonModule, CarruselComponent],
-  templateUrl: './portada.html',
-  styleUrls: ['./portada.css'],
+  templateUrl: './home.html',
+  styleUrls: ['./home.css'],
 })
-export class PortadaComponent implements OnInit {
+export class HomeComponent implements OnInit {
   music = inject(MusicService);
 
   // signals para datos fijos

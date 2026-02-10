@@ -1,8 +1,10 @@
 import { Component, OnInit, inject, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MusicService } from '../../../core/services/music-service';
 import { TrackCardComponent } from '../track-card/track-card';
 import { AuthService, User } from '../../../core/services/auth.service';
+import { UserService } from '../../../core/services/user-service';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
@@ -17,6 +19,8 @@ export class ProfileComponent implements OnInit {
 
   music = inject(MusicService);
   authService = inject(AuthService);
+  userService = inject(UserService);
+  router = inject(Router);
   isEditing = false;
   currentUser: User | null = null;
 
@@ -24,8 +28,10 @@ export class ProfileComponent implements OnInit {
     username: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
     newsletter: new FormControl(false),
-    password: new FormControl('', [Validators.required, Validators.minLength(8)])
+    password: new FormControl('', [Validators.minLength(8)])
   });
+
+  deletePasswordControl = new FormControl('', [Validators.required]);
 
   dialog = inject(MatDialog);
   @ViewChild('deleteDialog') deleteDialog!: TemplateRef<any>;
@@ -52,14 +58,28 @@ export class ProfileComponent implements OnInit {
           image: 'https://i.scdn.co/image/ab6761610000e5eb55d39ab9c22d51e4d94380f2', // Placeholder style
           playlists: user.userLists ? user.userLists.length : 0
         };
+        this.updateUserView(user);
 
         this.profileForm.patchValue({
           username: user.username,
           email: user.email,
           newsletter: user.newsletter
-        });
+        }, { emitEvent: false });
       }
     });
+    this.profileForm.valueChanges.subscribe(val => {
+      if (this.isEditing) {
+        // Solo actualizamos lo que se ve en la UI (el nombre en este caso)
+        this.userView.name = val.username || this.userView.name;
+      }
+    });
+  }
+  updateUserView(user: User) {
+    this.userView = {
+      name: user.username,
+      image: 'https://i.scdn.co/image/ab6761610000e5eb55d39ab9c22d51e4d94380f2',
+      playlists: user.userLists ? user.userLists.length : 0
+    };
   }
   toggleEdit() {
     this.isEditing = !this.isEditing;
@@ -67,28 +87,55 @@ export class ProfileComponent implements OnInit {
     // Si cancelamos, reseteamos el formulario a los valores originales
 
     if (this.isEditing && this.currentUser) {
+
+      this.updateUserView(this.currentUser);
+
       this.profileForm.patchValue({
         username: this.currentUser.username,
         email: this.currentUser.email,
         newsletter: this.currentUser.newsletter,
         //password: this.currentUser.password
-      });
+      }, { emitEvent: false });
     }
   }
   saveProfile() {
     if (this.profileForm.valid) {
-      this.isEditing = false;
-      //LLAMAR AL SERVICIO PARA ACTUALIZAR EL PERFIL
+      const formValue = this.profileForm.value;
+
+      const data = {
+        username: formValue.username!,
+        email: formValue.email!,
+        newsletter: !!formValue.newsletter,
+        ...(formValue.password ? { password: formValue.password } : {})
+      };
+
+      this.userService.updateProfile(data).subscribe({
+        next: () => {
+          this.isEditing = false;
+          this.profileForm.controls.password.reset();
+        },
+        error: (err) => {
+          console.error('Error al actualizar perfil:', err);
+        }
+      });
     }
   }
+
   deleteUser() {
+    this.deletePasswordControl.reset();
     const dialogRef = this.dialog.open(this.deleteDialog);
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result === true) {
-        //LLAMAR AL SERVICIO PARA BORRAR EL PERFIL
+      if (result === true && this.deletePasswordControl.value) {
+        this.userService.deleteAccount(this.deletePasswordControl.value).subscribe({
+          next: () => {
+            this.router.navigate(['/']);
+          },
+          error: (err) => {
+            console.error('Error al eliminar cuenta:', err);
+          }
+        });
       }
-    })
-
+    });
   }
 }

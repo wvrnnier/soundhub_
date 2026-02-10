@@ -12,10 +12,12 @@ app.use(bodyParser.json());
 const musicRoutes = require('./routes/music');
 const authRoutes = require('./routes/auth');
 const playlistRoutes = require('./routes/playlists');
+const usersRoutes = require('./routes/users');
 
 app.use('/api/music', musicRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/playlists', playlistRoutes);
+app.use('/api/users', usersRoutes);
 
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from server!' });

@@ -1,40 +1,47 @@
 <div class="profile-page">
 
-    <!-- MODO EDICIÓN: FORMULARIO -->
+    <!-- MODO EDICIÓN: MODAL -->
     @if (isEditing) {
-    <div class="edit-container">
-        <h2>Editar Perfil</h2>
+    <div class="modal-overlay" (click)="toggleEdit()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <button class="close-btn" (click)="toggleEdit()">&times;</button>
+            <h2>Editar Perfil</h2>
 
-        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="edit-form">
+            <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="edit-form">
 
-            <div class="form-group">
-                <label>Nombre de usuario</label>
-                <input type="text" formControlName="username" placeholder="Tu nombre">
-            </div>
+                <div class="form-group">
+                    <label>Nombre de usuario</label>
+                    <input type="text" formControlName="username" placeholder="Tu nombre">
+                </div>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" formControlName="email" placeholder="correo@ejemplo.com">
-            </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" formControlName="email" placeholder="correo@ejemplo.com">
+                </div>
 
+                <div class="form-checkbox">
+                    <input type="checkbox" id="news" formControlName="newsletter">
+                    <label for="news">Recibir novedades y ofertas</label>
+                </div>
 
+                <div class="form-group">
+                    <label>Nueva contraseña <span class="optional-label">(opcional)</span></label>
+                    <input type="password" formControlName="password" placeholder="Dejar vacío para no cambiar">
+                    @if (profileForm.controls.password.touched && profileForm.controls.password.errors?.['minlength']) {
+                    <span class="form-error">Mínimo 8 caracteres</span>
+                    }
+                </div>
 
-            <div class="form-checkbox">
-                <input type="checkbox" id="news" formControlName="newsletter">
-                <label for="news">Recibir novedades y ofertas</label>
-            </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" (click)="toggleEdit()">Cancelar</button>
+                    <button type="submit" class="btn-save" [disabled]="profileForm.invalid">Guardar cambios</button>
+                </div>
 
-            <div class="form-actions">
-                <button type="button" class="btn-cancel" (click)="toggleEdit()">Cancelar</button>
-                <button type="submit" class="btn-save" [disabled]="profileForm.invalid">Guardar cambios</button>
-            </div>
-
-        </form>
+            </form>
+        </div>
     </div>
     }
 
-    <!-- MODO VISUALIZACIÓN: PERFIL NORMAL -->
-    @else {
     <div class="profile-header">
         <div class="profile-img-container">
             <img [src]="userView.image" alt="Profile" class="profile-img" />
@@ -73,7 +80,6 @@
             Eliminar cuenta
         </button>
     </div>
-    }
 
 </div>
 
@@ -85,13 +91,15 @@
         <h2 mat-dialog-title>¿Eliminar cuenta?</h2>
         <mat-dialog-content>
             <p>Esta acción es irreversible. Perderás todos tus datos y listas de reproducción.</p>
+            <div class="form-group dialog-password">
+                <label>Introduce tu contraseña para confirmar</label>
+                <input type="password" [formControl]="deletePasswordControl" placeholder="Tu contraseña">
+            </div>
         </mat-dialog-content>
         <mat-dialog-actions align="end">
-            <!-- Botón Cancelar: Cierra enviando false/null -->
             <button mat-button mat-dialog-close>Cancelar</button>
-
-            <!-- Botón Eliminar: Cierra enviando true -->
-            <button mat-button [mat-dialog-close]="true" color="warn" class="confirm-delete-btn">
+            <button mat-button [mat-dialog-close]="true" color="warn" class="confirm-delete-btn"
+                [disabled]="deletePasswordControl.invalid">
                 Eliminar definitivamente
             </button>
         </mat-dialog-actions>

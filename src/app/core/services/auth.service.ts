@@ -82,6 +82,12 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  /** Actualiza el usuario en el BehaviorSubject y localStorage */
+  updateCurrentUser(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
   private handleAuthSuccess(response: AuthResponse): void {
     localStorage.setItem('token', response.token);
     localStorage.setItem('user', JSON.stringify(response.user));

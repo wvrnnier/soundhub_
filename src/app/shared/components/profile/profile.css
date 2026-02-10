@@ -358,8 +358,100 @@ button[mat-button] {
 
 .confirm-delete-btn {
     background-color: #e91429 !important;
-    /* Forzar rojo */
     color: white !important;
     padding: 0 16px !important;
     border-radius: 4px;
+}
+
+/* Etiqueta "(opcional)" */
+.optional-label {
+    color: #a7a7a7;
+    font-weight: 400;
+    font-size: 0.75rem;
+}
+
+/* Error de validación */
+.form-error {
+    color: #e91429;
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+/* Password field dentro del diálogo de borrado */
+.dialog-password {
+    margin-top: 16px;
+}
+
+.dialog-password label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.dialog-password input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- ESTILOS DE MODAL (Copiados del Login) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 15, 16, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    padding: 2rem 2.5rem;
+    min-width: 340px;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    border-radius: 8px;
+    /* Opcional, para suavizar bordes */
+}
+
+/* Botón de cerrar (X) */
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: var(--accent);
+}
+
+/* Ajustes para el formulario dentro del modal */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Asegurar que el título del modal se vea bien */
+.modal-content h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    color: var(--base);
+    /* O white, según prefieras */
+    text-align: center;
 }
