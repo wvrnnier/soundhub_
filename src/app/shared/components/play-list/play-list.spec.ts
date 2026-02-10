@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
 import { PlayList } from './play-list';
 
@@ -8,7 +10,8 @@ describe('PlayList', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayList]
+      imports: [PlayList],
+      providers: [provideHttpClient(), provideRouter([])],
     })
     .compileComponents();
 

@@ -1,1 +1,142 @@
-<h1>AQUI IRA LA LISTA</h1>
+<section class="playlist-page">
+  <header class="hero">
+    <p class="eyebrow">Biblioteca</p>
+    <h1>Tus playlists</h1>
+    <p>Construye tu coleccion, anade canciones y reproducelas cuando quieras.</p>
+  </header>
+
+  @if (!isLoggedIn()) {
+  <section class="state-card">
+    <h2>Inicia sesion para gestionar tus listas</h2>
+    <p>Las playlists se guardan en tu cuenta y se sincronizan con backend.</p>
+  </section>
+  } @else {
+  <div class="workspace">
+    <aside class="panel">
+      <h2>Crear lista</h2>
+      <form class="create-form" [formGroup]="createListForm" (ngSubmit)="createPlaylist()">
+        <label for="playlistName">Nombre de la lista</label>
+        <input id="playlistName" type="text" formControlName="name" placeholder="Ej: Ruta de noche" />
+
+        @if (createListForm.controls.name.invalid && createListForm.controls.name.touched) {
+        <span class="field-error">Usa un nombre entre 2 y 60 caracteres.</span>
+        }
+
+        <button type="submit" [disabled]="createListForm.invalid || creatingPlaylist()">
+          {{ creatingPlaylist() ? 'Creando...' : 'Crear lista' }}
+        </button>
+      </form>
+
+      <div class="playlist-summary">
+        <h3>Mis listas</h3>
+        @for (playlist of playlists(); track playlist.id) {
+        <button
+          type="button"
+          class="playlist-item"
+          [class.active]="selectedPlaylist()?.id === playlist.id"
+          (click)="openPlaylist(playlist.id)"
+        >
+          <span class="name">{{ playlist.listName }}</span>
+          <span class="meta">{{ playlist.songCount }} canciones</span>
+        </button>
+        } @empty {
+        <p class="empty">Todavia no tienes listas creadas.</p>
+        }
+      </div>
+    </aside>
+
+    <main class="panel detail">
+      @if (loadingPlaylist()) {
+      <p class="loading">Cargando lista...</p>
+      }
+
+      @if (selectedPlaylist(); as playlist) {
+      <div class="playlist-header">
+        <div>
+          <p class="eyebrow">Lista activa</p>
+          <h2>{{ playlist.listName }}</h2>
+          <span>{{ playlist.songCount }} canciones guardadas</span>
+        </div>
+
+        <button class="danger" type="button" (click)="deleteCurrentPlaylist()" [disabled]="deletingPlaylist()">
+          {{ deletingPlaylist() ? 'Borrando...' : 'Borrar lista' }}
+        </button>
+      </div>
+
+      <form class="search-form" [formGroup]="searchForm" (ngSubmit)="searchTracksToAdd()">
+        <label for="trackQuery">Busca una cancion para anadir</label>
+        <div class="search-row">
+          <input id="trackQuery" type="text" formControlName="query" placeholder="Nombre del tema o artista" />
+          <button type="submit" [disabled]="searchForm.invalid || searchingTracks()">
+            {{ searchingTracks() ? 'Buscando...' : 'Buscar' }}
+          </button>
+        </div>
+      </form>
+
+      @if (searchResults().length > 0) {
+      <section class="results">
+        <h3>Resultados</h3>
+        @for (track of searchResults(); track track.id) {
+        <article class="result-item">
+          <img [src]="track.cover" alt="Cover de {{ track.title }}" />
+          <div>
+            <strong>{{ track.title }}</strong>
+            <span>{{ track.artist }}</span>
+          </div>
+          <button type="button" (click)="addTrack(track)" [disabled]="addingTrackId() === track.id">
+            {{ addingTrackId() === track.id ? 'Anadiendo...' : 'Anadir cancion' }}
+          </button>
+        </article>
+        }
+      </section>
+      }
+
+      <section class="songs">
+        <h3>Canciones en esta lista</h3>
+
+        @if (playlist.songs.length === 0) {
+        <p class="empty">Aun no hay canciones. Usa "Anadir cancion" para empezar.</p>
+        } @else {
+        @for (song of playlist.songs; track song.id) {
+        <article class="song-item">
+          <img [src]="song.cover" alt="Cover de {{ song.title }}" />
+          <div class="song-info">
+            <strong>{{ song.title }}</strong>
+            <span>{{ song.artist }}</span>
+          </div>
+
+          <div class="song-actions">
+            <button type="button" (click)="playSong(song)" [disabled]="!song.previewUrl">
+              Reproducir
+            </button>
+            <button
+              type="button"
+              class="remove"
+              (click)="removeTrack(song)"
+              [disabled]="removingTrackId() === song.trackId"
+            >
+              {{ removingTrackId() === song.trackId ? 'Quitando...' : 'Quitar' }}
+            </button>
+          </div>
+        </article>
+        }
+        }
+      </section>
+      } @else {
+      <section class="state-card">
+        <h2>No hay lista seleccionada</h2>
+        <p>Crea una lista nueva o selecciona una de la barra lateral.</p>
+      </section>
+      }
+    </main>
+  </div>
+  }
+
+  @if (errorMessage()) {
+  <p class="feedback error">{{ errorMessage() }}</p>
+  }
+
+  @if (successMessage()) {
+  <p class="feedback success">{{ successMessage() }}</p>
+  }
+</section>
