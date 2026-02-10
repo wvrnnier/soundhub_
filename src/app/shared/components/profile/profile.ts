@@ -58,14 +58,28 @@ export class ProfileComponent implements OnInit {
           image: 'https://i.scdn.co/image/ab6761610000e5eb55d39ab9c22d51e4d94380f2', // Placeholder style
           playlists: user.userLists ? user.userLists.length : 0
         };
+        this.updateUserView(user);
 
         this.profileForm.patchValue({
           username: user.username,
           email: user.email,
           newsletter: user.newsletter
-        });
+        }, { emitEvent: false });
       }
     });
+    this.profileForm.valueChanges.subscribe(val => {
+      if (this.isEditing) {
+        // Solo actualizamos lo que se ve en la UI (el nombre en este caso)
+        this.userView.name = val.username || this.userView.name;
+      }
+    });
+  }
+  updateUserView(user: User) {
+    this.userView = {
+      name: user.username,
+      image: 'https://i.scdn.co/image/ab6761610000e5eb55d39ab9c22d51e4d94380f2',
+      playlists: user.userLists ? user.userLists.length : 0
+    };
   }
   toggleEdit() {
     this.isEditing = !this.isEditing;
@@ -73,12 +87,15 @@ export class ProfileComponent implements OnInit {
     // Si cancelamos, reseteamos el formulario a los valores originales
 
     if (this.isEditing && this.currentUser) {
+
+      this.updateUserView(this.currentUser);
+
       this.profileForm.patchValue({
         username: this.currentUser.username,
         email: this.currentUser.email,
         newsletter: this.currentUser.newsletter,
         //password: this.currentUser.password
-      });
+      }, { emitEvent: false });
     }
   }
   saveProfile() {
