@@ -1,14 +1,43 @@
-<button (click)="openLoginModal()"><span class="log-text">Login</span><iconify-icon class="log-icon" icon="teenyicons:keyboard-outline"></iconify-icon></button>
+@if (currentUser$ | async; as user) {
+<div class="user-info" style="display: flex; gap: 10px; align-items: center;">
+  <span class="user-name" style="color: white; font-weight: bold;">
+    {{ user.username }}
+  </span>
+
+  <button (click)="startLogout()" class="logout-btn"
+    style="background: transparent; border: 1px solid #fff; color: #fff; padding: 5px 10px; border-radius: 20px; cursor: pointer;">
+    <span class="log-text">Logout</span>
+  </button>
+</div>
+} @else {
+<button (click)="openLoginModal()">
+  <span class="log-text">Login</span>
+  <iconify-icon class="log-icon" icon="teenyicons:keyboard-outline"></iconify-icon>
+</button>
+}
 
 @if (isLoginModalOpen) {
-  <app-login-modal 
-    (close)="closeLoginModal()" 
-    (openRegister)="openRegisterModal()">
-  </app-login-modal>
+<app-login-modal (close)="closeLoginModal()" (openRegister)="openRegisterModal()">
+</app-login-modal>
 }
 
 @if (isRegisterModalOpen) {
-  <app-register-modal 
-    (close)="closeRegisterModal()">
-  </app-register-modal>
+<app-register-modal (close)="closeRegisterModal()">
+</app-register-modal>
+}
+
+@if (isLoggingOut) {
+<div class="modal-overlay" (click)="cancelLogout()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="cancelLogout()">&times;</button>
+
+    <h2>Cerrar sesión</h2>
+    <p class="modal-message">¿Estás seguro de que quieres salir de tu cuenta?</p>
+
+    <div class="modal-actions">
+      <button class="btn-cancel-modal" (click)="cancelLogout()">Cancelar</button>
+      <button class="btn-confirm-modal" (click)="confirmLogout()">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
 }

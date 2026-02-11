@@ -1,8 +1,9 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA   } from "@angular/core";
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
 import { LoginModal } from "../login-modal/login-modal";
 import { RegisterModal } from "../register-modal/register-modal";
+import { AuthService } from "../../../core/services/auth.service";
 
 @Component({
     selector: 'app-login-btn',
@@ -13,8 +14,14 @@ import { RegisterModal } from "../register-modal/register-modal";
     standalone: true
 })
 export class LoginBtnComponent {
+
+    authService = inject(AuthService);
+    currentUser$ = this.authService.currentUser$;
+
     isLoginModalOpen = false;
     isRegisterModalOpen = false;
+    isLoggingOut = false;
+
 
     openLoginModal() {
         this.isLoginModalOpen = true;
@@ -31,6 +38,19 @@ export class LoginBtnComponent {
 
     closeRegisterModal() {
         this.isRegisterModalOpen = false;
+    }
+
+    startLogout() {
+        this.isLoggingOut = true;
+    }
+
+    cancelLogout() {
+        this.isLoggingOut = false;
+    }
+
+    confirmLogout() {
+        this.authService.logout();
+        this.isLoggingOut = false;
     }
 }
 
