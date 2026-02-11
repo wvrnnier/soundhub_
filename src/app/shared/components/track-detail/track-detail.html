@@ -16,7 +16,17 @@
 
       <div class="actions">
         <button class="play-btn-large" (click)="play()">
-          {{ (audioService.currentTrack()?.id === track()!.id && audioService.isPlaying()) ? '⏸' : '▶' }}
+          @if (!(audioService.currentTrack()?.id === track()!.id && audioService.isPlaying())) {
+          <!-- PLAY -->
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          } @else {
+          <!-- PAUSE -->
+          <svg viewBox="0 0 24 24">
+            <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+          </svg>
+          }
         </button>
         @if (playlistService.playlists().length > 0) {
         <div class="playlist-action-container">

@@ -20,7 +20,17 @@
     </header>
     <div class="action-bar">
         <button class="play-btn-large" (click)="playAlbum()">
-            {{ isAlbumPlaying() ? '⏸' : '▶' }}
+            @if (!isAlbumPlaying()) {
+            <!-- PLAY -->
+            <svg viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+            </svg>
+            } @else {
+            <!-- PAUSE -->
+            <svg viewBox="0 0 24 24">
+                <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+            </svg>
+            }
         </button>
     </div>
 
@@ -36,12 +46,24 @@
             <div class="col-number">
                 <span class="track-index">
                     <span *ngIf="audioService.currentTrack()?.id === track.id && audioService.isPlaying()"
-                        style="color: #1db954;">⏸</span>
+                        style="color: var(--accent);">
+                        <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;">
+                            <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                        </svg>
+                    </span>
                     <span *ngIf="!(audioService.currentTrack()?.id === track.id && audioService.isPlaying())">{{ i + 1
                         }}</span>
                 </span>
                 <button class="track-play-btn" (click)="$event.stopPropagation(); playFromTrack(i)">
-                    {{ (audioService.currentTrack()?.id === track.id && audioService.isPlaying()) ? '⏸' : '▶' }}
+                    @if (!(audioService.currentTrack()?.id === track.id && audioService.isPlaying())) {
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    } @else {
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                    </svg>
+                    }
                 </button>
             </div>
             <div class="col-title">
