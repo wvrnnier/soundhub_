@@ -130,7 +130,7 @@
 }
 
 .icon-btn.active {
-    color: #1db954;
+    color: var(--accent);
     /* Green color for active state */
     position: relative;
 }
@@ -140,7 +140,7 @@
     position: absolute;
     bottom: -8px;
     font-size: 20px;
-    color: #1db954;
+    color: var(--accent);
 }
 
 .secondary-control {
@@ -252,7 +252,6 @@
     margin: 0;
 }
 
-
 /* --- DERECHA: VOLUMEN --- */
 .volume-area {
     width: 30%;
@@ -301,7 +300,7 @@
     );
 }
 
-/* Ocultar el thumb (el círculo) */
+/* Ocultar el thumb */
 .volume-input::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -324,6 +323,7 @@
     height: 4px;
     border-radius: 999px;
     background: var(--accent, #1db954);
+    box-shadow: 0 4px 8px var(--accent);
 }
 
 /* Firefox: ocultar thumb */

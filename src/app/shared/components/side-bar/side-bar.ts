@@ -5,6 +5,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  CUSTOM_ELEMENTS_SCHEMA
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -16,6 +17,7 @@ import { PlaylistService, PlaylistSong } from '../../../core/services/playlist-s
 
 @Component({
   selector: 'app-side-bar',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
   templateUrl: './side-bar.html',
   styleUrls: ['./side-bar.css'],

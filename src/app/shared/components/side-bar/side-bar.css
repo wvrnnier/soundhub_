@@ -9,7 +9,7 @@
 .sidebar {
   width: 72px;
   height: 100%;
-  background: #141414;
+  background: var(--surface);
   padding: 16px 8px;
   display: flex;
   flex-direction: column;
@@ -17,6 +17,11 @@
   transition: width 0.25s ease;
   box-sizing: border-box;
   overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+
+nav div {
+  margin-top: 0.8rem;
 }
 
 :host(.expanded) .sidebar {
@@ -37,16 +42,23 @@
 }
 
 .icon {
-  font-size: 20px;
+  font-size: 1.5rem;
   text-shadow: 0 0 8px var(--accent);
-  color: var(--accent);
+  color: var(--text);
 }
 
 .label {
   opacity: 0;
   transition: opacity 0.2s ease;
   text-shadow: 0 0 8px var(--accent);
+  color: var(--text);
+  font-weight: 400;
+}
+
+.icon:hover,
+.label:hover {
   color: var(--accent);
+  text-shadow: 0 0 12px var(--accent);
 }
 
 :host(.expanded) .label {

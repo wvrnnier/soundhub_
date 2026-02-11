@@ -5,9 +5,11 @@
     (mouseleave)="onMouseLeaveLibrary()"
     (click)="goToPlaylistHome($event)"
   >
-    <span class="icon">*</span>
+    <span class="icon"><iconify-icon class="headphones" icon="teenyicons:headphones-outline"></iconify-icon></span>
     <span class="label">Biblioteca</span>
-
+<!-- Esto de aquí hay que cambiarlo no tiene sentido que sólo puedas acceder 
+     a las listas cuando la barra lateral esté abierta, si pinchas el icono deberías 
+     poder acceder al panel de playslist -->
     @if (isLibraryMenuOpen && isExpanded) {
     <div class="submenu library-submenu" (click)="$event.stopPropagation()">
       <button class="submenu-action" type="button" (click)="goToPlaylistHome($event)">
@@ -30,7 +32,7 @@
 <!-- Solo visible si el usuario ha iniciado sesión -->
   @if (isLoggedIn) {
   <div class="item" routerLink="/profile">
-    <span class="icon">*</span>
+    <span class="icon"><iconify-icon class="alien" icon="teenyicons:alien-outline"></iconify-icon></span>
     <span class="label">Perfil</span>
   </div>
   }

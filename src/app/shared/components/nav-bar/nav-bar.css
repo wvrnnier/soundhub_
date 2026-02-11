@@ -1,7 +1,7 @@
 header {
     background-color: var(--nav-bar);
     color: white;
-    padding: 1rem 2rem;
+    padding: 0.5rem 2rem;
     width: 100%;
     top: 0;
     left: 0;
@@ -22,7 +22,7 @@ app-side-bar.expanded ~ header {
 }
 
 .logo {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
     color: var(--text);
     text-decoration: none;
@@ -30,6 +30,11 @@ app-side-bar.expanded ~ header {
     white-space: nowrap;
 }
 
+.logo-icon {
+    color: var(--accent);
+    font-size: 2rem;
+    margin-right: 2px;
+}
 .nav-links {
     font-size: 14px;
     display: flex;
@@ -44,10 +49,17 @@ app-side-bar.expanded ~ header {
     text-decoration: none;
     transition: color 0.3s;
     white-space: nowrap;
+    transition: all 0.3s ease-in-out;
 }
 
 .nav-links a:hover,
 .nav-links a.active {
     text-shadow: 0 0 8px var(--accent);
     color: var(--accent);
+}
+.home-icon {
+    font-size: 2.5rem;
+}
+.explore-icon {
+    font-size: 2.5rem;
 }
