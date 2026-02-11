@@ -3,25 +3,24 @@
     <div class="hero-text">
       <p class="eyebrow">Biblioteca</p>
       <h1>@if (username()) {<span class="username">{{ username() }}</span> } playlists</h1>
-      <p class="hero-desc">Construye tu colección, agrega canciones y reprodúcelas cuando quieras.</p>
+      <p class="hero-desc">Crea tu colección, agrega canciones y escúchalas cuando quieras</p>
     </div>
   </header>
 
   @if (!isLoggedIn()) {
   <section class="state-card">
     <h2>Inicia sesión para gestionar tus listas</h2>
-    <p>Las playlists se guardan en tu cuenta y se sincronizan con nuestro servidor.</p>
+    <p>Las playlists se guardan y se sincronizan con tu cuenta.</p>
   </section>
   } @else {
   <div class="workspace">
     <aside class="panel">
       <h2>Crear lista</h2>
       <form class="create-form" [formGroup]="createListForm" (ngSubmit)="createPlaylist()">
-        <label for="playlistName">Nombre de la lista</label>
-        <input id="playlistName" type="text" formControlName="name" placeholder="Introduce un nombre para tu lista" />
+        <input id="playlistName" type="text" formControlName="name" placeholder="Nombre para tu lista" />
 
         @if (createListForm.controls.name.invalid && createListForm.controls.name.touched) {
-        <span class="field-error">Usa un nombre entre 2 y 60 caracteres.</span>
+        <span class="field-error">Nombre demasiado corto</span>
         }
 
         <button type="submit" [disabled]="createListForm.invalid || creatingPlaylist()">
@@ -68,7 +67,7 @@
       <form class="search-form" [formGroup]="searchForm" (ngSubmit)="searchTracksToAdd()">
         <label for="trackQuery">Busca una canción para añadir</label>
         <div class="search-row">
-          <input id="trackQuery" type="text" formControlName="query" placeholder="Nombre del tema o artista" />
+          <input id="trackQuery" type="text" formControlName="query" placeholder="Artista o canción" />
           <button type="submit" [disabled]="searchForm.invalid || searchingTracks()">
             {{ searchingTracks() ? 'Buscando...' : 'Buscar' }}
           </button>
@@ -86,7 +85,7 @@
             <span>{{ track.artist }}</span>
           </div>
           <button type="button" (click)="addTrack(track)" [disabled]="addingTrackId().has(track.id)">
-            {{ addingTrackId().has(track.id) ? 'Añadiendo...' : 'Añadir canción' }}
+            {{ addingTrackId().has(track.id) ? 'Añadiendo...' : 'Agregar canción' }}
           </button>
         </article>
         }

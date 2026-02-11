@@ -24,7 +24,7 @@ app-side-bar.expanded ~ header {
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--base);
+    color: var(--text);
     text-decoration: none;
     flex-shrink: 0;
     white-space: nowrap;
@@ -40,7 +40,7 @@ app-side-bar.expanded ~ header {
 }
 
 .nav-links a {
-    color: var(--base);
+    color: var(--text);
     text-decoration: none;
     transition: color 0.3s;
     white-space: nowrap;

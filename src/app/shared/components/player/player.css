@@ -237,7 +237,7 @@
 
 /* Al pasar el ratón, la barra se pone verde (opcional) o se queda blanca */
 .progress-bar-container:hover .progress-fill {
-    background-color: #1db954;
+    background-color: var(--accent);
     /* Verde estilo Spotify */
 }
 
@@ -267,32 +267,69 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    width: 100px;
+    width: 200px;
 }
 
 .volume-icon {
     color: #b3b3b3;
     font-size: 20px;
+    cursor: pointer;
 }
 
-.volume-bar {
+/* === Input Range de Volumen === */
+.volume-input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
     height: 4px;
-    width: 100%;
-    background-color: #4d4d4d;
-    border-radius: 2px;
-    position: relative;
+    background: var(--muted, #4d4d4d);
+    border-radius: 999px;
+    outline: none;
+    cursor: pointer;
 }
 
-/* Simulación de volumen al 70% */
-.volume-bar::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: #b3b3b3;
-    border-radius: 2px;
+/* Parte rellena (solo WebKit: Chrome, Edge, Safari) */
+.volume-input::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(
+        to right,
+        var(--accent, #1db954) 0%,
+        var(--accent, #1db954) var(--volume-percent, 70%),
+        var(--muted, #4d4d4d) var(--volume-percent, 70%),
+        var(--muted, #4d4d4d) 100%
+    );
 }
 
-.volume-bar:hover::after {
-    background-color: #1db954;
+/* Ocultar el thumb (el círculo) */
+.volume-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0;
+    height: 0;
+    border: none;
+    background: transparent;
+}
+
+/* Firefox: track */
+.volume-input::-moz-range-track {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--muted, #4d4d4d);
+    border: none;
+}
+
+/* Firefox: parte rellena */
+.volume-input::-moz-range-progress {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--accent, #1db954);
+}
+
+/* Firefox: ocultar thumb */
+.volume-input::-moz-range-thumb {
+    width: 0;
+    height: 0;
+    border: none;
+    background: transparent;
 }

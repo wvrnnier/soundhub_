@@ -49,27 +49,29 @@
         </div>
 
         <div class="profile-info">
-            <span class="label">Perfil</span>
             <h1 class="name">{{ userView.name }}</h1>
             <div class="stats">
-                <span>{{ userView.playlists }} listas públicas</span>
+                <span>{{ playlistCount() }} listas</span>
             </div>
         </div>
 
         <!-- Botón que activa la edición -->
         <button class="edit-btn" (click)="toggleEdit()">
-            Editar perfil
+            editar
         </button>
     </div>
 
     <div class="content">
         <section class="section">
             <div class="section-top">
-                <h2>Canciones más escuchadas de este mes</h2>
+                <h2>{{ sectionTitle() }}</h2>
             </div>
             <div class="track-grid">
-                @for (track of topTracks().slice(0, 14); track track.id) {
+                @for (track of displayTracks().slice(0, 14); track track.id) {
                 <app-track-card [track]="track"></app-track-card>
+                }
+                @empty {
+                <p class="empty-message">Aún no tienes canciones. ¡Crea una lista y añade temas!</p>
                 }
             </div>
         </section>
@@ -83,25 +85,22 @@
 
 </div>
 
-<!-- ... (resto del HTML) ... -->
-
-<!-- TEMPLATE DEL DIÁLOGO DE CONFIRMACIÓN -->
-<ng-template #deleteDialog>
-    <div class="delete-dialog-container">
-        <h2 mat-dialog-title>¿Eliminar cuenta?</h2>
-        <mat-dialog-content>
-            <p>Esta acción es irreversible. Perderás todos tus datos y listas de reproducción.</p>
-            <div class="form-group dialog-password">
-                <label>Introduce tu contraseña para confirmar</label>
-                <input type="password" [formControl]="deletePasswordControl" placeholder="Tu contraseña">
-            </div>
-        </mat-dialog-content>
-        <mat-dialog-actions align="end">
-            <button mat-button mat-dialog-close>Cancelar</button>
-            <button mat-button [mat-dialog-close]="true" color="warn" class="confirm-delete-btn"
-                [disabled]="deletePasswordControl.invalid">
-                Eliminar definitivamente
+<!-- MODAL DE CONFIRMACIÓN DE BORRADO -->
+@if (isDeleting) {
+<div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="cancelDelete()">&times;</button>
+        <h2>¿Eliminar cuenta?</h2>
+        <p class="modal-message">Esta acción es irreversible. Perderás todos tus datos y listas de reproducción.</p>
+        <div class="form-group">
+            <input type="password" [formControl]="deletePasswordControl" placeholder="Contraseña para confirmar">
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel" (click)="cancelDelete()">Cancelar</button>
+            <button class="modal-confirm" [disabled]="deletePasswordControl.invalid" (click)="confirmDelete()">
+                Eliminar cuenta
             </button>
-        </mat-dialog-actions>
+        </div>
     </div>
-</ng-template>
+</div>
+}

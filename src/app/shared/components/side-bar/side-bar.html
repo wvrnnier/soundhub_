@@ -23,41 +23,15 @@
       } @empty {
       <span class="submenu-empty">Sin listas creadas</span>
       }
-
-      @if (librarySongs().length > 0) {
-      <p class="submenu-heading">Canciones anadidas</p>
-      @for (song of librarySongs(); track song.id) {
-      <button
-        class="library-song"
-        type="button"
-        (click)="playFromLibrary(song, $event)"
-        [disabled]="!song.previewUrl"
-      >
-        <span>{{ song.title }}</span>
-        <small>{{ song.artist }}</small>
-      </button>
-      }
-      }
-      } @else {
-      <span class="submenu-empty">Inicia sesion para guardar playlists</span>
       }
     </div>
     }
   </div>
-
+<!-- Solo visible si el usuario ha iniciado sesión -->
+  @if (isLoggedIn) {
   <div class="item" routerLink="/profile">
     <span class="icon">*</span>
     <span class="label">Perfil</span>
   </div>
-
-  <div class="item" (mouseenter)="onMouseEnterSearch()" (mouseleave)="onMouseLeaveSearch()">
-    <span class="icon">*</span>
-    <span class="label">Buscar</span>
-
-    @if (isSearchMenuOpen) {
-    <div class="submenu">
-      <button routerLink="/tracks">Canciones</button>
-    </div>
-    }
-  </div>
+  }
 </nav>

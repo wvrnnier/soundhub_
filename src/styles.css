@@ -1,4 +1,5 @@
 :root{
+  color-scheme: dark;
   --header-h: 64px;
   --sb-collapsed: 72px;   /* ancho lateral cerrada */
   --sb-expanded: 300px;   /* ancho lateral abierta (solo hover, no empuja) */
@@ -11,7 +12,8 @@
   --muted: #a3a3a3;
   --base: #00b3ff;
   --accent: #00ffbf;
-  --nav-bar: #1e1e1e;     
+  --nav-bar: #1e1e1e;
+  --error: #ff4d4d;     
 }
 
 *{ box-sizing: border-box; }
@@ -27,8 +29,28 @@ body{
 a{ color: #a78bfa; text-decoration: none; }
 a:hover{ text-decoration: underline; }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Corrección de fondo blanco en autocompletado de Chrome/Edge */
+@keyframes autofill-fix {
+    0%, 100% {
+        background-color: var(--bg) !important;
+        color: var(--text) !important;
+    }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px var(--bg) inset !important;
+    -webkit-text-fill-color: var(--text) !important;
+    -webkit-animation: autofill-fix 0s forwards;
+    animation: autofill-fix 0s forwards;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+input {
+    transition: background-color 5000s ease-in-out 0s;
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,11 +1,20 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SearchResponse, Track } from './music-service';
 
 const PLAYLIST_API_URL = '/api/playlists';
 const MUSIC_API_URL = '/api/music';
+
+// Claves de caché en localStorage
+const CACHE_KEYS = {
+  PLAYLISTS: 'cache_playlists',
+  LIBRARY_SONGS: 'cache_library_songs',
+  PLAYLIST_DETAIL: (id: number) => `cache_playlist_${id}`,
+} as const;
+
+const CACHE_TTL_MS = 10 * 60 * 1000;
 
 export interface PlaylistSummary {
   id: number;
@@ -45,31 +54,68 @@ export class PlaylistService {
   constructor(
     private readonly http: HttpClient,
     private readonly authService: AuthService,
-  ) {}
+  ) {
+    // Restaurar estado desde caché al iniciar
+    this.restoreFromCache();
+  }
 
   clearState(): void {
     this.playlistsState.set([]);
     this.librarySongsState.set([]);
+    this.clearAllCache();
   }
 
   loadPlaylists(): Observable<PlaylistSummary[]> {
+    // Si la caché es válida y ya tenemos datos, no hacemos petición
+    if (this.playlistsState().length > 0 && this.isCacheValid(CACHE_KEYS.PLAYLISTS)) {
+      return of(this.playlistsState());
+    }
+
     return this.http
       .get<PlaylistSummary[]>(PLAYLIST_API_URL, {
         headers: this.getAuthHeaders(),
       })
-      .pipe(tap((playlists) => this.playlistsState.set(playlists)));
+      .pipe(
+        tap((playlists) => {
+          this.playlistsState.set(playlists);
+          this.saveToCache(CACHE_KEYS.PLAYLISTS, playlists);
+        }),
+      );
   }
 
   loadLibrarySongs(limit = 8): Observable<PlaylistSong[]> {
+    if (this.librarySongsState().length > 0 && this.isCacheValid(CACHE_KEYS.LIBRARY_SONGS)) {
+      return of(this.librarySongsState());
+    }
+
     return this.http
       .get<PlaylistSong[]>(`${PLAYLIST_API_URL}/library/songs`, {
         headers: this.getAuthHeaders(),
         params: new HttpParams().set('limit', limit.toString()),
       })
-      .pipe(tap((songs) => this.librarySongsState.set(songs)));
+      .pipe(
+        tap((songs) => {
+          this.librarySongsState.set(songs);
+          this.saveToCache(CACHE_KEYS.LIBRARY_SONGS, songs);
+        }),
+      );
   }
 
   loadPlaylist(playlistId: number): Observable<PlaylistDetail> {
+    const cacheKey = CACHE_KEYS.PLAYLIST_DETAIL(playlistId);
+    const cached = this.loadFromCache<PlaylistDetail>(cacheKey);
+
+    if (cached) {
+      // Actualizar el estado inmediatamente con la caché
+      this.upsertPlaylist({
+        id: cached.id,
+        listName: cached.listName,
+        createdAt: cached.createdAt,
+        songCount: cached.songCount,
+      });
+      return of(cached);
+    }
+
     return this.http
       .get<PlaylistDetail>(`${PLAYLIST_API_URL}/${playlistId}`, {
         headers: this.getAuthHeaders(),
@@ -82,6 +128,7 @@ export class PlaylistService {
             createdAt: playlist.createdAt,
             songCount: playlist.songCount,
           });
+          this.saveToCache(cacheKey, playlist);
         }),
       );
   }
@@ -96,6 +143,7 @@ export class PlaylistService {
       .pipe(
         tap((playlist) => {
           this.playlistsState.update((playlists) => [playlist, ...playlists]);
+          this.invalidateCache(CACHE_KEYS.PLAYLISTS);
         }),
       );
   }
@@ -114,6 +162,10 @@ export class PlaylistService {
           this.librarySongsState.update((songs) =>
             songs.filter((song) => song.playlistId !== playlistId),
           );
+
+          this.invalidateCache(CACHE_KEYS.PLAYLISTS);
+          this.invalidateCache(CACHE_KEYS.LIBRARY_SONGS);
+          this.invalidateCache(CACHE_KEYS.PLAYLIST_DETAIL(playlistId));
         }),
       );
   }
@@ -153,6 +205,11 @@ export class PlaylistService {
             );
             return [song, ...withoutDuplicate];
           });
+
+          // Invalidar cachés afectadas por la mutación
+          this.invalidateCache(CACHE_KEYS.PLAYLISTS);
+          this.invalidateCache(CACHE_KEYS.LIBRARY_SONGS);
+          this.invalidateCache(CACHE_KEYS.PLAYLIST_DETAIL(playlistId));
         }),
       );
   }
@@ -181,6 +238,11 @@ export class PlaylistService {
                 !(song.playlistId === playlistId && song.trackId === trackId),
             ),
           );
+
+          // Invalidar cachés afectadas por la mutación
+          this.invalidateCache(CACHE_KEYS.PLAYLISTS);
+          this.invalidateCache(CACHE_KEYS.LIBRARY_SONGS);
+          this.invalidateCache(CACHE_KEYS.PLAYLIST_DETAIL(playlistId));
         }),
       );
   }
@@ -218,5 +280,79 @@ export class PlaylistService {
     return token
       ? new HttpHeaders({ Authorization: `Bearer ${token}` })
       : new HttpHeaders();
+  }
+
+  // ========================
+  // CACHÉ — localStorage
+  // ========================
+
+  /** Guarda datos en localStorage con timestamp */
+  private saveToCache<T>(key: string, data: T): void {
+    try {
+      const entry = { data, timestamp: Date.now() };
+      localStorage.setItem(key, JSON.stringify(entry));
+    } catch {
+      // localStorage lleno o no disponible — no bloquear la app
+    }
+  }
+
+  /** Lee datos de localStorage si no han expirado */
+  private loadFromCache<T>(key: string): T | null {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+
+      const entry = JSON.parse(raw) as { data: T; timestamp: number };
+      if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+        localStorage.removeItem(key);
+        return null;
+      }
+      return entry.data;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Comprueba si una clave de caché sigue siendo válida */
+  private isCacheValid(key: string): boolean {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return false;
+
+      const entry = JSON.parse(raw) as { timestamp: number };
+      return Date.now() - entry.timestamp <= CACHE_TTL_MS;
+    } catch {
+      return false;
+    }
+  }
+
+  /** Invalida una clave de caché concreta */
+  private invalidateCache(key: string): void {
+    localStorage.removeItem(key);
+  }
+
+  /** Limpia toda la caché de playlists */
+  private clearAllCache(): void {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('cache_')) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((key) => localStorage.removeItem(key));
+  }
+
+  /** Restaura el estado de signals desde la caché al arrancar */
+  private restoreFromCache(): void {
+    const cachedPlaylists = this.loadFromCache<PlaylistSummary[]>(CACHE_KEYS.PLAYLISTS);
+    if (cachedPlaylists) {
+      this.playlistsState.set(cachedPlaylists);
+    }
+
+    const cachedSongs = this.loadFromCache<PlaylistSong[]>(CACHE_KEYS.LIBRARY_SONGS);
+    if (cachedSongs) {
+      this.librarySongsState.set(cachedSongs);
+    }
   }
 }

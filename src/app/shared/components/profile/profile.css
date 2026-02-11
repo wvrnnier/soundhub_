@@ -331,36 +331,54 @@ select:focus {
     color: white;
 }
 
-.delete-dialog-container {
-    background-color: #242424;
-    /* Fondo oscuro */
-    color: white;
-    padding: 24px;
-    border-radius: 8px;
-    /* Si Material no lo pone */
+/* --- Modal de borrado (estilo playlist) --- */
+.modal-message {
+    text-align: center;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
 }
 
-.delete-dialog-container h2 {
-    color: white;
-    margin-top: 0;
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 4px;
 }
 
-.delete-dialog-container p {
-    color: #b3b3b3;
+.modal-cancel {
+    background: var(--border);
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    min-height: 38px;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-/* Botones del diálogo */
-button[mat-button] {
-    color: white;
-    font-weight: 700;
-    text-transform: uppercase;
+.modal-cancel:hover {
+    background: #3a3a3a;
 }
 
-.confirm-delete-btn {
-    background-color: #e91429 !important;
-    color: white !important;
-    padding: 0 16px !important;
-    border-radius: 4px;
+.modal-confirm {
+    background: #e53935;
+    color: #fff;
+    border: none;
+    padding: 0 20px;
+    min-height: 38px;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.modal-confirm:hover:not(:disabled) {
+    background: #c62828;
+}
+
+.modal-confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Etiqueta "(opcional)" */
@@ -375,23 +393,6 @@ button[mat-button] {
     color: #e91429;
     font-size: 0.75rem;
     margin-top: 4px;
-}
-
-/* Password field dentro del diálogo de borrado */
-.dialog-password {
-    margin-top: 16px;
-}
-
-.dialog-password label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.dialog-password input {
-    width: 100%;
-    box-sizing: border-box;
 }
 
 /* --- ESTILOS DE MODAL (Copiados del Login) --- */
@@ -419,8 +420,7 @@ button[mat-button] {
     flex-direction: column;
     gap: 1.5rem;
     position: relative;
-    border-radius: 8px;
-    /* Opcional, para suavizar bordes */
+    border-radius: 16px;
 }
 
 /* Botón de cerrar (X) */
@@ -451,7 +451,7 @@ button[mat-button] {
 .modal-content h2 {
     margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
-    color: var(--base);
+    color: var(--text);
     /* O white, según prefieras */
     text-align: center;
 }

@@ -40,7 +40,7 @@
 h2 {
   margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
-  color: var(--base);
+  color: var(--text);
   text-align: center;
 }
 
@@ -119,12 +119,13 @@ select {
   padding: 0.7rem 1rem;
   font-size: 1rem;
   outline: none;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 5000s ease-in-out 0s;
 }
 
 input:focus,
 select:focus {
-  box-shadow: 0 0 10px var(--accent);
+  box-shadow: inset 0 0 10px var(--accent);
+  border-color: var(--accent);
 }
 
 select {
@@ -137,15 +138,15 @@ select option {
 }
 
 .error {
-  color: var(--accent);
+  color: var(--error);
   font-size: 0.85rem;
   margin-top: 0.2rem;
 }
 
 .alert-error {
   background: rgba(255, 77, 77, 0.1);
-  border: 1px solid var(--accent);
-  color: var(--accent);
+  border: 1px solid var(--error);
+  color: var(--error);
   padding: 0.75rem 1rem;
   font-size: 0.9rem;
   text-align: center;
@@ -213,21 +214,19 @@ select option {
 button[type="submit"],
 .btn-next {
   background: var(--border);
-  color: #fff;
+  color: var(--text);
   border: none;
   padding: 0.8rem 0;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+  transition: box-shadow 0.3s ease-in-out;
   margin-top: 0.5rem;
 }
 
 button[type="submit"]:hover:not(:disabled),
 .btn-next:hover:not(:disabled) {
-  background: var(--accent);
-  color: var(--surface);
-  box-shadow: 0 0 16px var(--accent);
+  box-shadow: inset 0 0 16px var(--accent);
 }
 
 button:disabled {
