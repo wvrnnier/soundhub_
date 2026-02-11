@@ -1,19 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
-import { PlaylistCard } from './playlist-card';
+import { PlaylistCardComponent } from './playlist-card';
 
 describe('PlaylistCard', () => {
-  let component: PlaylistCard;
-  let fixture: ComponentFixture<PlaylistCard>;
+  let component: PlaylistCardComponent;
+  let fixture: ComponentFixture<PlaylistCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlaylistCard]
+      imports: [PlaylistCardComponent],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PlaylistCard);
+    fixture = TestBed.createComponent(PlaylistCardComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('playlist', {
+      id: 1,
+      listName: 'Test Playlist',
+      createdAt: '2026-01-01',
+      songCount: 5
+    });
     fixture.detectChanges();
   });
 
