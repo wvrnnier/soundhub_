@@ -16,6 +16,7 @@ export class AudioService {
   volume = signal(0.2);
   isMuted = signal(false);
   isShuffle = signal(false);
+  isLoop = signal(false);
   queue = signal<Track[]>([]);
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {
@@ -120,10 +121,6 @@ export class AudioService {
     }
   }
 
-  toggleMute() {
-    this.isMuted() ? this.unmute() : this.mute();
-  }
-
   next() {
     const current = this.currentTrack();
     const queue = this.queue();
@@ -132,7 +129,13 @@ export class AudioService {
     const index = queue.findIndex(t => t.id === current.id);
     if (index !== -1 && index < queue.length - 1) {
       this.playTrack(queue[index + 1]);
+    } else if (this.isLoop() && queue.length > 0) {
+      this.playTrack(queue[0]);
     }
+  }
+
+  toggleMute() {
+    this.isMuted() ? this.unmute() : this.mute();
   }
 
   toggleShuffle() {
@@ -165,6 +168,10 @@ export class AudioService {
         this.originalQueue = [];
       }
     }
+  }
+
+  toggleLoop() {
+    this.isLoop.set(!this.isLoop());
   }
 
   private shuffleArray(array: Track[]): Track[] {

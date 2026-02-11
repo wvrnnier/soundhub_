@@ -23,6 +23,7 @@ export class PlayerComponent {
   get duration() { return this.audioService.duration(); }
   get volume() { return this.audioService.volume(); }
   get isMuted() { return this.audioService.isMuted(); }
+  get isLoop() { return this.audioService.isLoop(); }
 
   // Los botones ahora llaman al servicio
   playPause() {
@@ -43,6 +44,10 @@ export class PlayerComponent {
 
   toggleShuffle() {
     this.audioService.toggleShuffle();
+  }
+
+  toggleLoop() {
+    this.audioService.toggleLoop();
   }
 
   get isShuffle() { return this.audioService.isShuffle(); }

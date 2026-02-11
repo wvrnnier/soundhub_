@@ -35,6 +35,10 @@
       <button class="icon-btn" (click)="skip('next')">
         <span class="material-symbols-rounded">skip_next</span>
       </button>
+
+      <button class="icon-btn" [class.active]="isLoop" (click)="toggleLoop()">
+        <span class="material-symbols-rounded">repeat</span>
+      </button>
     </div>
 
     <div class="progress-wrapper">
