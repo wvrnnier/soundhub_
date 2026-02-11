@@ -7,11 +7,12 @@ import { AuthService, User } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/user-service';
 import { PlaylistService } from '../../../core/services/playlist-service';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { PlaylistCardComponent } from '../playlist-card/playlist-card';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, TrackCardComponent, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, PlaylistCardComponent, TrackCardComponent],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })

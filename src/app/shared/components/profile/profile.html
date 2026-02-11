@@ -62,6 +62,20 @@
     </div>
 
     <div class="content">
+        @if (hasPlaylists()) {
+        <section class="section">
+            <div class="section-top">
+                <h2>Tus Listas de Reproducción</h2>
+            </div>
+            <div class="track-grid">
+                @for (list of playlistService.playlists(); track list.id) {
+                <app-playlist-card [playlist]="list"></app-playlist-card>
+                }
+            </div>
+        </section>
+        }
+
+        <!-- SECCIÓN DE CANCIONES -->
         <section class="section">
             <div class="section-top">
                 <h2>{{ sectionTitle() }}</h2>
@@ -76,6 +90,7 @@
             </div>
         </section>
     </div>
+
 
     <div class="danger-zone">
         <button type="button" class="btn-delete" (click)="deleteUser()">

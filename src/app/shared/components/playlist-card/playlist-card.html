@@ -1,0 +1,8 @@
+<article class="playlist-card" [routerLink]="['/playlist', playlist().id]">
+    <!-- Imagen genérica o placeholder para la lista -->
+    <div class="img-container">
+        <img src="https://misc.scdn.co/liked-songs/liked-songs-300.png" alt="{{ playlist().listName }}" />
+    </div>
+    <h3>{{ playlist().listName }}</h3>
+    <p>{{ playlist().songCount }} canciones</p>
+</article>
