@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MusicService, Track } from '../../../core/services/music-service';
 import { AudioService } from '../../../core/services/audio-service';
 import { LyricsService } from '../../../core/services/lyrics-service';
+import { PlaylistService } from '../../../core/services/playlist-service';
 
 @Component({
   selector: 'app-track-detail',
@@ -17,6 +18,8 @@ export class TrackDetailComponent implements OnInit {
   audioService = inject(AudioService);
   lyricsService = inject(LyricsService);
   lyrics = signal<string>('');
+  playlistService = inject(PlaylistService);
+  showPlaylistMenu = signal(false);
 
   track = signal<Track | null>(null);
 
@@ -63,5 +66,25 @@ export class TrackDetailComponent implements OnInit {
     } else {
       this.audioService.playTrack(track);
     }
+  }
+
+  togglePlaylistMenu() {
+    this.showPlaylistMenu.update(v => !v);
+  }
+
+  addToPlaylist(playlistId: number) {
+    const track = this.track();
+    if (!track) return;
+    this.playlistService.addSongToPlaylist(playlistId, track).subscribe(() => {
+      this.showPlaylistMenu.set(false);
+    });
+  }
+
+  isSongInPlaylist(playlistId: number): boolean {
+    const trackId = this.track()?.id;
+    if (!trackId) return false;
+    return this.playlistService.librarySongs().some(
+      song => song.playlistId === playlistId && song.trackId === trackId
+    )
   }
 }

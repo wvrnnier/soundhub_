@@ -16,7 +16,27 @@
       </svg>
       }
     </button>
+    @if (playlistService.playlists().length > 0) {
+    <button class="add-to-list-btn" (click)="togglePlaylistMenu($event)">
+      +
+    </button>
+    }
+
   </div>
+
+  @if (playlistService.playlists().length > 0 && showPlaylistMenu) {
+  <div class="playlist-dropdown" (click)="$event.stopPropagation()">
+    <h6>Añadir a...</h6>
+    @for (list of playlistService.playlists(); track list.id) {
+    <button class="playlist-option" (click)="addToPlaylist($event, list.id)" [disabled]="isSongInPlaylist(list.id)">
+      {{ list.listName }}
+      @if (isSongInPlaylist(list.id)) {
+      <span class="exists-badge">✓</span>
+      }
+    </button>
+    }
+  </div>
+  }
 
   <h3>{{ track().title }}</h3>
   <p>{{ track().artist }}</p>

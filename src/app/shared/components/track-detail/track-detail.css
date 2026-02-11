@@ -1,7 +1,6 @@
 :host {
   display: block;
   padding-bottom: 100px;
-  /* Espacio para el player */
 }
 
 .track-detail-container {
@@ -10,14 +9,11 @@
   gap: 20px;
 }
 
-/* --- Banner Styles --- */
 .track-banner {
   display: flex;
   align-items: flex-end;
-  /* Alinea el contenido abajo */
   gap: 24px;
   padding: 40px 30px;
-  /* Degradado sutil de fondo */
   background: linear-gradient(to bottom, #444, #121212);
   border-radius: 8px 8px 0 0;
 }
@@ -46,7 +42,6 @@
 
 .track-title {
   font-size: 3rem;
-  /* Título grande */
   font-weight: 900;
   margin: 0;
   line-height: 1;
@@ -81,9 +76,10 @@
   font-size: 0.8rem;
 }
 
-/* --- Action Buttons --- */
 .actions {
   margin-top: 20px;
+  display: flex;
+  align-items: center;
 }
 
 .play-btn-large {
@@ -106,7 +102,6 @@
   background-color: #1ed760;
 }
 
-/* --- Lyrics Section --- */
 .lyrics-section {
   padding: 0 30px;
   max-width: 800px;
@@ -124,4 +119,99 @@
   font-size: 1.1rem;
   line-height: 1.6;
   color: #b3b3b3;
+}
+
+.playlist-action-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.add-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 2px solid #b3b3b3;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  border-color: white;
+  transform: scale(1.05);
+}
+
+/* Dropdown Animation */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.playlist-dropdown {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background-color: #282828;
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 220px;
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.3), 0 6px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  animation: fadeInSlide 0.2s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.playlist-dropdown h6 {
+  margin: 8px 12px 8px;
+  color: #b3b3b3;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+
+.playlist-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.playlist-option:hover:not(:disabled) {
+  background-color: #3e3e3e;
+}
+
+.playlist-option:disabled {
+  opacity: 0.6;
+  cursor: default;
+  color: #1ed760;
+  /* Spotify Green for already added */
+}
+
+/* Checkmark styling */
+.exists-badge {
+  color: #1ed760;
+  font-weight: bold;
+  margin-left: 8px;
 }

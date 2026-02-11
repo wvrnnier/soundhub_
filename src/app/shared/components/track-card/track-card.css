@@ -5,6 +5,8 @@
   background: #181818;
   cursor: pointer;
   transition: background 0.3s;
+  position: relative;
+  /* Ensure positioning context for dropdown */
 }
 
 .track-card:hover {
@@ -74,4 +76,106 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.add-to-list-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+  z-index: 10;
+}
+
+.track-card:hover .add-to-list-btn {
+  opacity: 1;
+}
+
+.add-to-list-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: white;
+}
+
+/* Dropdown Animation */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.playlist-dropdown {
+  position: absolute;
+  top: 50px;
+  /* Adjusted to sit below the button (12px padding + 8px top + 28px height + gap) */
+  right: 12px;
+  background-color: #282828;
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 180px;
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.3), 0 6px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  animation: fadeInSlide 0.2s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.playlist-dropdown h6 {
+  margin: 8px 12px 8px;
+  color: #b3b3b3;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+
+.playlist-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.playlist-option:hover:not(:disabled) {
+  background-color: #3e3e3e;
+}
+
+.playlist-option:disabled {
+  opacity: 0.6;
+  cursor: default;
+  color: #1ed760;
+}
+
+/* Checkmark styling */
+.exists-badge {
+  color: #1ed760;
+  font-weight: bold;
+  margin-left: 8px;
 }

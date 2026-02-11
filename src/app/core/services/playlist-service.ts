@@ -225,9 +225,9 @@ export class PlaylistService {
             playlists.map((playlist) =>
               playlist.id === playlistId
                 ? {
-                    ...playlist,
-                    songCount: Math.max(playlist.songCount - 1, 0),
-                  }
+                  ...playlist,
+                  songCount: Math.max(playlist.songCount - 1, 0),
+                }
                 : playlist,
             ),
           );
