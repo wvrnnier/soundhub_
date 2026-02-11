@@ -10,4 +10,4 @@ import { LoginBtnComponent } from '../login-btn/login-btn';
     styleUrls: ['./nav-bar.css'],
     imports: [SearchBarComponent, RouterLink, RouterLinkActive, LoginBtnComponent]
 })
-export class NavBarComponent {}
+export class NavBarComponent { }

@@ -9,7 +9,7 @@ header {
     z-index: 1000;
 }
 
-app-side-bar.expanded ~ header {
+app-side-bar.expanded~header {
     left: var(--sidebar-w-expanded);
 }
 
@@ -35,6 +35,7 @@ app-side-bar.expanded ~ header {
     font-size: 2rem;
     margin-right: 2px;
 }
+
 .nav-links {
     font-size: 14px;
     display: flex;
@@ -57,9 +58,11 @@ app-side-bar.expanded ~ header {
     text-shadow: 0 0 8px var(--accent);
     color: var(--accent);
 }
+
 .home-icon {
     font-size: 2.5rem;
 }
+
 .explore-icon {
     font-size: 2.5rem;
 }

@@ -291,13 +291,11 @@
 .volume-input::-webkit-slider-runnable-track {
     height: 4px;
     border-radius: 999px;
-    background: linear-gradient(
-        to right,
-        var(--accent, #1db954) 0%,
-        var(--accent, #1db954) var(--volume-percent, 70%),
-        var(--muted, #4d4d4d) var(--volume-percent, 70%),
-        var(--muted, #4d4d4d) 100%
-    );
+    background: linear-gradient(to right,
+            var(--accent, #1db954) 0%,
+            var(--accent, #1db954) var(--volume-percent, 70%),
+            var(--muted, #4d4d4d) var(--volume-percent, 70%),
+            var(--muted, #4d4d4d) 100%);
 }
 
 /* Ocultar el thumb */
