@@ -151,6 +151,35 @@
     padding: 0 32px;
 }
 
+.track-list-container.is-scrollable {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.track-list-container.is-scrollable .track-list-header {
+    top: 0;
+    z-index: 10;
+    background-color: #121212;
+}
+
+.track-list-container.is-scrollable::-webkit-scrollbar {
+    width: 8px;
+}
+
+.track-list-container.is-scrollable::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.track-list-container.is-scrollable::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.track-list-container.is-scrollable::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
 .track-list-header {
     display: grid;
     grid-template-columns: 48px minmax(120px, 4fr) minmax(120px, 1fr);

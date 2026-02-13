@@ -35,7 +35,7 @@
     </div>
 
     <!-- LISTA DE CANCIONES -->
-    <div class="track-list-container">
+    <div class="track-list-container" [class.is-scrollable]="tracks().length > 15">
         <div class="track-list-header">
             <div class="col-number">#</div>
             <div class="col-title">Título</div>
