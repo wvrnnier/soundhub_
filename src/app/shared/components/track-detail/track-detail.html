@@ -52,7 +52,7 @@
     </div>
   </div>
   @if (lyrics()) {
-  <div class="lyrics-section">
+  <div class="lyrics-section" [class.is-scrollable]="lyrics().length > 500">
     <h3>Letra</h3>
     <p class="lyrics-text">{{ lyrics() }}</p>
   </div>

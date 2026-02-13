@@ -119,6 +119,30 @@
   color: white;
 }
 
+.lyrics-section.is-scrollable {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.lyrics-section.is-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lyrics-section.is-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lyrics-section.is-scrollable::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.lyrics-section.is-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
 .lyrics-text {
   white-space: pre-wrap;
   font-family: 'Circular', sans-serif;
