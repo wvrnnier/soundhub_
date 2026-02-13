@@ -1,4 +1,4 @@
-import { Component, input, inject, signal } from '@angular/core';
+import { Component, input, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Track } from '../../../core/services/music-service';
 import { RouterLink } from '@angular/router';
@@ -17,6 +17,7 @@ export class TrackCardComponent {
   private audioService = inject(AudioService);
   playlistService = inject(PlaylistService);
   showPlaylistMenu = false;
+  private static activeCard: TrackCardComponent | null = null;
 
   isPlaying = false;
 
@@ -35,8 +36,29 @@ export class TrackCardComponent {
   togglePlaylistMenu(event: Event) {
     event.stopPropagation();
     event.preventDefault();
+
+    if (TrackCardComponent.activeCard && TrackCardComponent.activeCard !== this) {
+      TrackCardComponent.activeCard.showPlaylistMenu = false;
+    }
+
     this.showPlaylistMenu = !this.showPlaylistMenu;
+    if (this.showPlaylistMenu) {
+      TrackCardComponent.activeCard = this;
+    } else {
+      TrackCardComponent.activeCard = null;
+    }
   }
+
+  @HostListener('document:click')
+  closeMenu() {
+    if (this.showPlaylistMenu) {
+      this.showPlaylistMenu = false;
+      if (TrackCardComponent.activeCard === this) {
+        TrackCardComponent.activeCard = null;
+      }
+    }
+  }
+
   addToPlaylist(event: Event, playlistId: number) {
     event.stopPropagation();
     const track = this.track();
