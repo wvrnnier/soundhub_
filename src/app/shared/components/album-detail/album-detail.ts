@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MusicService } from '../../../core/services/music-service';
 import { AudioService } from '../../../core/services/audio-service';
-import { PlaylistService } from '../../../core/services/playlist-service';
 
 @Component({
   selector: 'app-album-detail',
@@ -16,7 +15,6 @@ export class AlbumDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private musicService = inject(MusicService);
   public audioService = inject(AudioService);
-  private playlistService = inject(PlaylistService);
   album = signal<any>(null);
   tracks = signal<any[]>([]);
 
@@ -36,13 +34,8 @@ export class AlbumDetail implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      const type = this.route.snapshot.data['type'];
       if (id) {
-        if (type === 'playlist') {
-          this.loadPlaylistDetails(Number(id));
-        } else {
-          this.loadAlbumDetails(id);
-        }
+        this.loadAlbumDetails(id);
       }
     });
   }
@@ -52,35 +45,6 @@ export class AlbumDetail implements OnInit {
       this.album.set(resp.album);
       this.tracks.set(resp.tracks);
     });
-  }
-
-  loadPlaylistDetails(id: number) {
-    this.playlistService.loadPlaylist(id).subscribe(details => {
-      this.album.set({
-        id: details.id,
-        title: details.listName,
-        artist: 'Tu Lista',
-        releaseDate: details.createdAt,
-        trackCount: details.songCount,
-        cover: details.songs.length > 0
-          ? details.songs[0].cover
-          : 'https://misc.scdn.co/liked-songs/liked-songs-300.png'
-      });
-
-      this.tracks.set(details.songs.map(s => ({
-        id: s.trackId,
-        title: s.title,
-        artist: s.artist,
-        album: s.album,
-        cover: s.cover,
-        duration: s.duration,
-        url: s.previewUrl
-      })));
-    });
-  }
-
-  isPlaylist(): boolean {
-    return this.route.snapshot.data['type'] === 'playlist';
   }
 
   isAlbumPlaying(): boolean {

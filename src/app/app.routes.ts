@@ -18,7 +18,6 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
       { path: 'playlist', component: PlayList, canActivate: [authGuard] },
       { path: 'playlist/:id', component: PlayList, canActivate: [authGuard] },
-      { path: 'playlist-view/:id', component: AlbumDetail, data: { type: 'playlist' }, canActivate: [authGuard] },
 
 
       // DENTRO DEL MISMO LAYOUT
