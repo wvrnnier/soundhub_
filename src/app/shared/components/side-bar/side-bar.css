@@ -36,7 +36,7 @@
   row-gap: 8px;
   padding: 10px;
   border-radius: 8px;
-  color: #fff;
+  color: var(--text);
   cursor: pointer;
   white-space: nowrap;
 }

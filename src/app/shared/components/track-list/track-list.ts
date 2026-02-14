@@ -21,7 +21,7 @@ export class TrackListComponent implements OnInit {
   });
 
   ngOnInit() {
-    // 3) Pido los datos
-    this.music.loadHomeSongs();
+    // Reutilizo las homeTracks (trending ES) si ya están cargadas
+    this.music.getTrendingSongs();
   }
 }

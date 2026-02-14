@@ -116,7 +116,7 @@ export class ProfileComponent implements OnInit {
             } else {
               // Si no tiene listas, cargar topTracks como fallback
               if (this.topTracks().length === 0) {
-                this.music.loadHomeSongs();
+                this.music.getTrendingSongs();
               }
             }
           }

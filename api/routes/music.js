@@ -228,4 +228,85 @@ router.get('/album/:id', async (req, res) => {
   }
 });
 
+// Cachear en memoria trending, evitar llamadas innecesarias
+const CACHE_TTL = 60 * 60 * 1000; // 1 hora en ms
+const trendingCache = {
+  songs: { data: null, timestamp: 0 },
+  albums: { data: null, timestamp: 0 }
+};
+
+function isCacheValid(key) {
+  return trendingCache[key].data && (Date.now() - trendingCache[key].timestamp < CACHE_TTL);
+}
+
+// Trending songs (proxy Apple RSS para evitar CORS + caché)
+router.get('/trending/songs', async (req, res) => {
+  try {
+    if (isCacheValid('songs')) {
+      return res.json({ results: trendingCache.songs.data, cached: true });
+    }
+
+    const rssUrl = 'https://rss.applemarketingtools.com/api/v2/es/music/most-played/24/songs.json';
+    const rssResponse = await axios.get(rssUrl);
+    const ids = rssResponse.data.feed.results.map(item => item.id);
+
+    if (ids.length === 0) return res.json({ results: [] });
+
+    const lookups = await Promise.all(
+      ids.map(async (id) => {
+        try {
+          const resp = await axios.get(ITUNES_LOOKUP, { params: { id, entity: 'song' } });
+          if (resp.data.resultCount > 0) {
+            return transformByEntity(resp.data.results[0], 'song');
+          }
+          return null;
+        } catch { return null; }
+      })
+    );
+
+    const results = lookups.filter(Boolean);
+    trendingCache.songs = { data: results, timestamp: Date.now() };
+
+    res.json({ results });
+  } catch (error) {
+    console.error('Error en trending songs:', error.message);
+    res.status(500).json({ error: 'Error al obtener trending songs' });
+  }
+});
+
+// Trending albums (proxy Apple RSS para evitar CORS + caché)
+router.get('/trending/albums', async (req, res) => {
+  try {
+    if (isCacheValid('albums')) {
+      return res.json({ results: trendingCache.albums.data, cached: true });
+    }
+
+    const rssUrl = 'https://rss.marketingtools.apple.com/api/v2/es/music/most-played/24/albums.json';
+    const rssResponse = await axios.get(rssUrl);
+    const ids = rssResponse.data.feed.results.map(item => item.id);
+
+    if (ids.length === 0) return res.json({ results: [] });
+
+    const lookups = await Promise.all(
+      ids.map(async (id) => {
+        try {
+          const resp = await axios.get(ITUNES_LOOKUP, { params: { id, entity: 'song' } });
+          if (resp.data.resultCount > 0) {
+            return transformByEntity(resp.data.results[0], 'album');
+          }
+          return null;
+        } catch { return null; }
+      })
+    );
+
+    const results = lookups.filter(Boolean);
+    trendingCache.albums = { data: results, timestamp: Date.now() };
+
+    res.json({ results });
+  } catch (error) {
+    console.error('Error en trending albums:', error.message);
+    res.status(500).json({ error: 'Error al obtener trending albums' });
+  }
+});
+
 module.exports = router;

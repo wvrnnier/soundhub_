@@ -65,25 +65,6 @@ export class MusicService {
   homeAlbums = signal<Album[]>([]);
 
   // DATOS PARA PORTADA
-
-  loadHomeSongs(limit = 24) {
-    this.http.get<SearchResponse>(`${API_URL}/search`, {
-      params: { term: 'a', entity: 'song', limit: limit.toString() }
-    }).subscribe((resp) => {
-      this.homeTracks.set(resp.results as Track[]);
-    });
-  }
-
-  loadHomeAlbums(limit = 24) {
-    this.http.get<SearchResponse>(`${API_URL}/search`, {
-      params: { term: 'a', entity: 'album', limit: limit.toString() }
-    }).subscribe((resp) => {
-      this.homeAlbums.set(resp.results as Album[]);
-    });
-  }
-
-  // BÚSQUEDAS DINÁMICAS
-
   searchSongs(query: string, limit = 24) {
     this.isSearching.set(true);
     this.http.get<SearchResponse>(`${API_URL}/search`, {
@@ -146,22 +127,22 @@ export class MusicService {
     return this.tracks().find(t => t.id === id) ?? null;
   }
 
-  // TRENDING (Apple RSS + lookup vía backend)
+  // TRENDING (via backend proxy para evitar CORS, con caché local)
   getTrendingSongs() {
-    const rssUrl = 'https://rss.applemarketingtools.com/api/v2/us/music/most-played/24/songs.json';
-
+    if (this.homeTracks().length > 0) return; // ya cargados
     this.http
-      .get<any>(rssUrl)
-      .pipe(
-        map((response) => response.feed.results.map((track: any) => track.id)),
-        switchMap((ids: string[]) => {
-          if (ids.length === 0) return of([]);
-          const lookups = ids.map((id: string) => this.getTrackById(id));
-          return forkJoin(lookups);
-        })
-      )
-      .subscribe((tracks) => {
-        this.tracks.set(tracks as Track[]);
+      .get<{ results: Track[] }>(`${API_URL}/trending/songs`)
+      .subscribe((resp) => {
+        this.homeTracks.set(resp.results);
+      });
+  }
+
+  getTrendingAlbums() {
+    if (this.homeAlbums().length > 0) return; // ya cargados
+    this.http
+      .get<{ results: Album[] }>(`${API_URL}/trending/albums`)
+      .subscribe((resp) => {
+        this.homeAlbums.set(resp.results);
       });
   }
 }

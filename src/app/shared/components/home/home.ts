@@ -18,8 +18,7 @@ export class HomeComponent implements OnInit {
   tracks = this.music.homeTracks;
 
   ngOnInit() {
-    // cargo los datos fijos
-    this.music.loadHomeAlbums();
-    this.music.loadHomeSongs();
+    this.music.getTrendingSongs();
+    this.music.getTrendingAlbums();
   }
 }
