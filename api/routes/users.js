@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { neon } = require('@neondatabase/serverless');
+const { del } = require('@vercel/blob');
 const authenticateToken = require('../middleware/auth');
 
 const sql = neon(process.env.SHDB_DATABASE_URL);
@@ -13,7 +14,7 @@ router.use(authenticateToken);
 router.get('/profile', async (req, res) => {
     try {
         const [user] = await sql`
-            SELECT id, username, email, gender, birth_year as "birthYear", newsletter
+            SELECT id, username, email, gender, birth_year as "birthYear", newsletter, profile_image_url as "profileImageUrl"
             FROM users 
             WHERE id = ${req.user.id}
         `;
@@ -44,7 +45,7 @@ router.put('/profile', async (req, res) => {
                     password = ${hashedPassword}, 
                     newsletter = ${newsletter}
                 WHERE id = ${req.user.id}
-                RETURNING id, username, email, gender, birth_year as "birthYear", newsletter
+                RETURNING id, username, email, gender, birth_year as "birthYear", newsletter, profile_image_url as "profileImageUrl"
             `;
             return res.json({ 
                 message: 'Perfil actualizado con éxito',
@@ -59,7 +60,7 @@ router.put('/profile', async (req, res) => {
                 email = ${email}, 
                 newsletter = ${newsletter}
             WHERE id = ${req.user.id}
-            RETURNING id, username, email, gender, birth_year as "birthYear", newsletter
+            RETURNING id, username, email, gender, birth_year as "birthYear", newsletter, profile_image_url as "profileImageUrl"
         `;
 
         res.json({ 
@@ -77,7 +78,7 @@ router.delete('/account', async (req, res) => {
     try {
         const { password } = req.body;
 
-        const [user] = await sql`SELECT password FROM users WHERE id = ${req.user.id}`;
+        const [user] = await sql`SELECT password, profile_image_url FROM users WHERE id = ${req.user.id}`;
 
         const validPass = await bcrypt.compare(password, user.password);
         if (!validPass) {
@@ -99,6 +100,15 @@ router.delete('/account', async (req, res) => {
 
         // 4. Eliminar el usuario
         await sql`DELETE FROM users WHERE id = ${req.user.id}`;
+
+        // 5. Borrar avatar del Blob de Vercel (si existía)
+        if (user.profile_image_url && user.profile_image_url.includes('blob.vercel-storage.com')) {
+            try {
+                await del(user.profile_image_url, { token: process.env.BLOB_READ_WRITE_TOKEN });
+            } catch (e) {
+                console.warn('No se pudo borrar el avatar del blob:', e.message);
+            }
+        }
 
         res.json({ message: 'Cuenta eliminada con éxito' });
     } catch (error) {

@@ -25,7 +25,7 @@ router.post('/register', async (req, res) => {
         const [newUser] = await sql`
             INSERT INTO users (email, username, password, gender, birth_year, newsletter)
             VALUES (${email}, ${username}, ${hashedPassword}, ${gender}, ${birthYear}, ${newsletter})
-            RETURNING id, email, username, gender, birth_year as "birthYear", newsletter
+            RETURNING id, email, username, gender, birth_year as "birthYear", newsletter, profile_image_url as "profileImageUrl"
         `;
 
         const token = jwt.sign(
@@ -87,6 +87,7 @@ router.post('/login', async (req, res) => {
                 gender: user.gender,
                 birthYear: user.birth_year,
                 newsletter: user.newsletter,
+                profileImageUrl: user.profile_image_url,
                 userLists
             }
         });

@@ -24,6 +24,12 @@ export class TrackListComponent implements OnInit {
     return this.music.isSearching() ? this.music.albums() : this.music.homeAlbums();
   });
 
+  // Skeleton placeholders mientras cargan los datos
+  isLoadingTracks = computed(() => this.tracks().length === 0);
+  isLoadingAlbums = computed(() => this.albums().length === 0);
+  trackPlaceholders = Array(12).fill(0);
+  albumPlaceholders = Array(6).fill(0);
+
   ngOnInit() {
     // Reutilizo las homeTracks (trending ES) si ya están cargadas
     this.music.getTrendingSongs();

@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../../core/services/audio-service';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService, User } from '../../../core/services/auth.service';
 import { Track } from '../../../core/services/music-service';
 import { PlaylistService, PlaylistSong } from '../../../core/services/playlist-service';
 
@@ -35,6 +35,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
   isSearchMenuOpen = false;
   isLibraryMenuOpen = false;
   isLoggedIn = false;
+  currentUser: User | null = null;
   loadingPlaylistId: number | null = null;
   currentPlayingPlaylistId: number | null = null;
   private currentPlayingTrackIds = new Set<string>();
@@ -46,6 +47,7 @@ export class SideBarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.authSubscription = this.authService.currentUser$.subscribe((user) => {
       this.isLoggedIn = !!user;
+      this.currentUser = user;
       if (this.isLoggedIn) {
         this.refreshLibraryData();
       } else {

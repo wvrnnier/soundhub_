@@ -15,6 +15,12 @@ export interface ProfileResponse {
   user: User;
 }
 
+export interface AvatarResponse {
+  message: string;
+  url: string;
+  user: User;
+}
+
 export interface MessageResponse {
   message: string;
 }
@@ -67,6 +73,35 @@ export class UserService {
         tap(() => {
           // Limpiar sesión tras eliminar la cuenta
           this.authService.logout();
+        })
+      );
+  }
+
+  /** POST /api/avatar/upload — subir imagen de perfil al Blob de Vercel */
+  uploadAvatar(file: File): Observable<AvatarResponse> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders()
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', file.type);
+
+    return this.http
+      .post<AvatarResponse>('/api/avatar/upload', file, { headers })
+      .pipe(
+        tap((response) => {
+          this.authService.updateCurrentUser(response.user);
+        })
+      );
+  }
+
+  /** DELETE /api/avatar/upload — borrar imagen de perfil del Blob de Vercel */
+  deleteAvatar(): Observable<{ message: string; user: User }> {
+    return this.http
+      .delete<{ message: string; user: User }>('/api/avatar/upload', {
+        headers: this.getAuthHeaders(),
+      })
+      .pipe(
+        tap((response) => {
+          this.authService.updateCurrentUser(response.user);
         })
       );
   }

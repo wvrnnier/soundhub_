@@ -34,6 +34,7 @@
     "@angular/router": "^20.3.0",
     "@angular/ssr": "^20.3.7",
     "@neondatabase/serverless": "^1.0.2",
+    "@vercel/blob": "^2.2.0",
     "axios": "^1.13.4",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",

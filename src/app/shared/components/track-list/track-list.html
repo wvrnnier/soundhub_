@@ -1,17 +1,34 @@
 <h2>Canciones</h2>
 
 <div class="track-list">
-  @for (t of tracks(); track t.id) {
-  <app-track-card [track]="t"> </app-track-card>
-
+  @if (isLoadingTracks()) {
+    @for (p of trackPlaceholders; track $index) {
+      <div class="shimmer-card">
+        <div class="shimmer-img"></div>
+        <div class="shimmer-line title"></div>
+        <div class="shimmer-line subtitle"></div>
+      </div>
+    }
+  } @else {
+    @for (t of tracks(); track t.id) {
+      <app-track-card [track]="t"></app-track-card>
+    }
   }
 </div>
 
-@if (albums().length > 0) {
 <h2 style="margin-top: 30px;">Álbumes</h2>
 <div class="album-grid">
-  @for (album of albums(); track album.id) {
-  <app-album [album]="album"></app-album>
+  @if (isLoadingAlbums()) {
+    @for (p of albumPlaceholders; track $index) {
+      <div class="shimmer-card">
+        <div class="shimmer-img"></div>
+        <div class="shimmer-line title"></div>
+        <div class="shimmer-line subtitle"></div>
+      </div>
+    }
+  } @else {
+    @for (album of albums(); track album.id) {
+      <app-album [album]="album"></app-album>
+    }
   }
 </div>
-}

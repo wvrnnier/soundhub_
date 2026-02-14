@@ -45,7 +45,23 @@
     <div class="profile-header">
         <div class="profile-img-container">
             <img [src]="userView.image" alt="Profile" class="profile-img" />
-            <div class="edit-overlay"></div>
+            <div class="edit-overlay">
+                @if (isUploadingAvatar()) {
+                  <span class="upload-spinner"></span>
+                } @else {
+                  <div class="avatar-actions">
+                    <button class="avatar-action-btn" (click)="avatarInput.click(); $event.stopPropagation()" title="Cambiar imagen">
+                      <iconify-icon icon="teenyicons:image-solid"></iconify-icon>
+                    </button>
+                    @if (currentUser?.profileImageUrl) {
+                      <button class="avatar-action-btn delete" (click)="deleteAvatar(); $event.stopPropagation()" title="Eliminar imagen">
+                        <iconify-icon icon="teenyicons:bin-solid"></iconify-icon>
+                      </button>
+                    }
+                  </div>
+                }
+            </div>
+            <input #avatarInput type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden (change)="onAvatarSelected($event)" />
         </div>
 
         <div class="profile-info">
@@ -100,7 +116,21 @@
 
 </div>
 
-<!-- MODAL DE CONFIRMACIÓN DE BORRADO -->
+<!-- MODAL DE CONFIRMACIÓN DE BORRADO DE AVATAR -->
+@if (isDeletingAvatar) {
+<div class="modal-overlay" (click)="cancelDeleteAvatar()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="cancelDeleteAvatar()">&times;</button>
+        <p class="modal-message" style="font-size:bold;color:white;">¿Eliminar la imagen de perfil?</p>
+        <div class="modal-actions">
+            <button class="modal-cancel" (click)="cancelDeleteAvatar()">Cancelar</button>
+            <button class="modal-confirm" (click)="confirmDeleteAvatar()">Eliminar imagen</button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- MODAL DE CONFIRMACIÓN DE BORRADO DE CUENTA -->
 @if (isDeleting) {
 <div class="modal-overlay" (click)="cancelDelete()">
     <div class="modal-content" (click)="$event.stopPropagation()">

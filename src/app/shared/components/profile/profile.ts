@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, computed } from '@angular/core';
+import { Component, OnInit, inject, computed, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MusicService, Track } from '../../../core/services/music-service';
@@ -11,6 +11,7 @@ import { PlaylistCardComponent } from '../playlist-card/playlist-card';
 
 @Component({
   selector: 'app-profile',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, PlaylistCardComponent, TrackCardComponent],
   templateUrl: './profile.html',
@@ -25,7 +26,10 @@ export class ProfileComponent implements OnInit {
   router = inject(Router);
   isEditing = false;
   isDeleting = false;
+  isDeletingAvatar = false;
   currentUser: User | null = null;
+  isUploadingAvatar = signal(false);
+  defaultAvatar = 'https://i.scdn.co/image/ab6761610000e5eb55d39ab9c22d51e4d94380f2';
 
   profileForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
@@ -133,7 +137,7 @@ export class ProfileComponent implements OnInit {
   updateUserView(user: User) {
     this.userView = {
       name: user.username,
-      image: 'https://i.scdn.co/image/ab6761610000e5eb55d39ab9c22d51e4d94380f2',
+      image: user.profileImageUrl || this.defaultAvatar,
       playlists: user.userLists ? user.userLists.length : 0
     };
   }
@@ -198,5 +202,82 @@ export class ProfileComponent implements OnInit {
         }
       });
     }
+  }
+
+  onAvatarSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    // Validar tipo MIME estricto
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Solo se permiten imágenes (JPEG, PNG, WebP, GIF)');
+      input.value = '';
+      return;
+    }
+
+    // Validar tamaño (máx 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen no puede superar los 5MB');
+      input.value = '';
+      return;
+    }
+
+    // Validar dimensiones (máx 900x900)
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      if (img.width > 900 || img.height > 900) {
+        alert(`La imagen debe ser de máximo 900×900px (actual: ${img.width}×${img.height})`);
+        input.value = '';
+        return;
+      }
+      this.uploadFile(file);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      alert('No se pudo leer la imagen');
+      input.value = '';
+    };
+    img.src = objectUrl;
+  }
+
+  private uploadFile(file: File) {
+    this.isUploadingAvatar.set(true);
+    this.userService.uploadAvatar(file).subscribe({
+      next: (resp) => {
+        this.userView.image = resp.url;
+        this.isUploadingAvatar.set(false);
+      },
+      error: (err) => {
+        console.error('Error al subir avatar:', err);
+        this.isUploadingAvatar.set(false);
+      }
+    });
+  }
+
+  deleteAvatar() {
+    this.isDeletingAvatar = true;
+  }
+
+  cancelDeleteAvatar() {
+    this.isDeletingAvatar = false;
+  }
+
+  confirmDeleteAvatar() {
+    this.isDeletingAvatar = false;
+    this.isUploadingAvatar.set(true);
+    this.userService.deleteAvatar().subscribe({
+      next: () => {
+        this.userView.image = this.defaultAvatar;
+        this.isUploadingAvatar.set(false);
+      },
+      error: (err) => {
+        console.error('Error al borrar avatar:', err);
+        this.isUploadingAvatar.set(false);
+      }
+    });
   }
 }

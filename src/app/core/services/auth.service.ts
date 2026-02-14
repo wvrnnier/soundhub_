@@ -32,6 +32,7 @@ export interface User {
   gender?: Gender;
   birthYear?: number;
   newsletter?: boolean;
+  profileImageUrl?: string;
   userLists?: UserList[];
 }
 

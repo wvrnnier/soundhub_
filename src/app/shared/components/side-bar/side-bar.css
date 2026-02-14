@@ -45,6 +45,29 @@
   font-size: 1.5rem;
   text-shadow: 0 0 8px var(--accent);
   color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alien,
+.headphones {
+  width: 36px;
+  height: 36px;
+}
+
+.sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 5px solid rgba(255, 255, 255, 0.402);
+  transition: box-shadow 0.2s ease;
+}
+
+.sidebar-avatar:hover {
+  box-shadow: 0 0 14px rgba(30, 215, 96, 0.5);
 }
 
 .label {
@@ -53,6 +76,7 @@
   text-shadow: 0 0 8px var(--accent);
   color: var(--text);
   font-weight: 400;
+  margin-left: 10px;
 }
 
 .icon:hover,

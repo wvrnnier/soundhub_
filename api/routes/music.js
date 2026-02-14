@@ -5,6 +5,25 @@ const router = express.Router();
 const ITUNES_API = 'https://itunes.apple.com/search';
 const ITUNES_LOOKUP = 'https://itunes.apple.com/lookup';
 
+// Caché en memoria para búsquedas (TTL 5 min)
+const searchCache = new Map();
+const SEARCH_CACHE_TTL = 5 * 60 * 1000;
+
+function getCachedSearch(key) {
+  const entry = searchCache.get(key);
+  if (entry && Date.now() - entry.timestamp < SEARCH_CACHE_TTL) return entry.data;
+  searchCache.delete(key);
+  return null;
+}
+
+function setCachedSearch(key, data) {
+  if (searchCache.size > 100) {
+    const oldest = searchCache.keys().next().value;
+    searchCache.delete(oldest);
+  }
+  searchCache.set(key, { data, timestamp: Date.now() });
+}
+
 // Búsqueda flexible por entity type
 router.get('/search', async (req, res) => {
   try {
@@ -31,7 +50,13 @@ router.get('/search', async (req, res) => {
         validEntities 
       });
     }
-// Cambiar a fetch nativo de Node.js si es necesario
+    // Comprobar caché
+    const cacheKey = `${term}|${entity}|${limit}|${country}`;
+    const cached = getCachedSearch(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const response = await axios.get(ITUNES_API, {
       params: {
         term,
@@ -47,11 +72,14 @@ router.get('/search', async (req, res) => {
       transformByEntity(item, entity)
     );
     
-    res.json({
+    const payload = {
       resultCount: response.data.resultCount,
       entity,
       results
-    });
+    };
+
+    setCachedSearch(cacheKey, payload);
+    res.json(payload);
     
   } catch (error) {
     console.error('Error en iTunes API:', error.message);

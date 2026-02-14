@@ -9,6 +9,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-evenly;
+  gap: 20px;
 }
 
 .album-grid {
@@ -16,4 +17,49 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-evenly;
+  gap: 20px;
+}
+
+/* ===== SHIMMER / SKELETON LOADING ===== */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.shimmer-card {
+  width: 200px;
+  padding: 12px;
+  border-radius: 4px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.shimmer-img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.shimmer-line {
+  height: 12px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.shimmer-line.title {
+  width: 80%;
+  margin-top: 4px;
+}
+
+.shimmer-line.subtitle {
+  width: 55%;
 }

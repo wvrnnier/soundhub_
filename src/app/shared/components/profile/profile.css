@@ -5,39 +5,117 @@
     color: white;
 }
 
-/* --- HEADER --- */
+/* --- CABECERA --- */
 .profile-header {
-    /* Gradiente "Spotify style" */
-    background: linear-gradient(to bottom, #535353 0%, #2b2b2b 100%);
-    padding: 80px 32px 24px;
     display: flex;
     align-items: flex-end;
     gap: 24px;
+    padding: 80px 32px 24px;
     max-height: 400px;
-    /* Altura visual máxima */
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        /* Resalte cálido — esquina superior derecha */
+        radial-gradient(ellipse at 80% 15%, rgba(255, 255, 255, 0.04) 0%, transparent 55%),
+        /* Bolsillo de sombra fría — esquina inferior izquierda */
+        radial-gradient(ellipse at 15% 90%, rgba(0, 0, 0, 0.3) 0%, transparent 50%),
+        /* Grano de profundidad — centro-derecha */
+        radial-gradient(ellipse at 65% 60%, rgba(255, 255, 255, 0.015) 0%, transparent 40%),
+        /* Gradiente base */
+        linear-gradient(180deg, #0d0d0d 0%, #090909 50%, #070707 100%);
 }
 
-/* Contenedor de imagen (para el overlay de editar en el futuro) */
+/* Fragmento de cristal — panel esmerilado inclinado, lado derecho */
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: 50%;
+    height: 120%;
+    background: linear-gradient(
+        165deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.01) 20%,
+        rgba(255, 255, 255, 0.035) 45%,
+        rgba(255, 255, 255, 0.05) 60%,
+        rgba(255, 255, 255, 0.025) 75%,
+        transparent 100%
+    );
+    border: none;
+    backdrop-filter: blur(24px) saturate(1.2);
+    -webkit-backdrop-filter: blur(24px) saturate(1.2);
+    transform: skewX(-3deg);
+    mask-image:
+        linear-gradient(to left, black 30%, transparent 100%),
+        linear-gradient(to bottom, black 20%, transparent 95%);
+    -webkit-mask-image:
+        linear-gradient(to left, black 30%, transparent 100%),
+        linear-gradient(to bottom, black 20%, transparent 95%);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Neblina blanca suave — resalte del borde superior */
+.profile-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+        to right,
+        transparent 5%,
+        rgba(255, 255, 255, 0.08) 30%,
+        rgba(255, 255, 255, 0.15) 60%,
+        rgba(255, 255, 255, 0.06) 80%,
+        transparent 95%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Mantener todos los hijos del header sobre los pseudo-elementos */
+.profile-header > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Contenedor de imagen de perfil */
 .profile-img-container {
     position: relative;
     width: 232px;
     height: 232px;
     min-width: 232px;
-    /* Evitar compresión */
-    border-radius: 50%;
-    box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+    border-radius: 999px;
+    box-shadow:
+        0 4px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 0 30px rgba(255, 255, 255, 0.03);
     cursor: pointer;
+    transition: box-shadow 0.4s ease;
+}
+
+.profile-img-container:hover {
+    box-shadow:
+        0 8px 80px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.14),
+        0 0 40px rgba(29, 185, 84, 0.06);
 }
 
 .profile-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 999px;
     transition: opacity 0.3s;
 }
 
-/* Overlay simple al hacer hover */
+/* Superposición al pasar el ratón */
 .profile-img-container:hover .profile-img {
     opacity: 0.7;
 }
@@ -52,28 +130,84 @@
     color: white;
     font-weight: 700;
     font-size: 3rem;
-    /* Emojis grandes */
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 999px;
     transition: opacity 0.3s;
-    pointer-events: none;
+    cursor: pointer;
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+}
+
+.avatar-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.avatar-action-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.avatar-action-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: white;
+    transform: scale(1.1);
+}
+
+.avatar-action-btn.delete:hover {
+    background: rgba(255, 70, 70, 0.3);
+    border-color: #ff4d4d;
+    color: #ff4d4d;
+}
+
+.upload-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 .edit-btn {
-    background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: white;
     border-radius: 50px;
-    padding: 8px 16px;
+    padding: 8px 20px;
     font-size: 0.875rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     text-transform: uppercase;
     margin-bottom: 12px;
+    letter-spacing: 0.05em;
 }
 
 .edit-btn:hover {
-    border-color: white;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
     transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .profile-img-container:hover .edit-overlay {
@@ -85,7 +219,7 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    /* Ocupa el espacio restante */
+    /* Ocupa el espacio restante en el header */
 }
 
 .label {
@@ -97,15 +231,18 @@
 
 .name {
     font-size: 6rem;
-    /* Gigante como en Spotify */
     font-weight: 900;
     letter-spacing: -0.04em;
     margin: 0;
     padding: 0.08em 0;
     line-height: 1;
+    background: linear-gradient(180deg, #ffffff 30%, rgba(255, 255, 255, 0.65) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* Ajuste responsive para el nombre si es muy largo */
+/* Ajuste responsive para nombres largos */
 @media (max-width: 900px) {
     .name {
         font-size: 3rem;
@@ -133,11 +270,18 @@
 .stats {
     font-size: 0.875rem;
     font-weight: 400;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.7);
     display: flex;
     align-items: center;
     gap: 6px;
     margin-top: 16px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    width: fit-content;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .dot {
@@ -145,12 +289,11 @@
     vertical-align: middle;
 }
 
-/* --- CONTENT --- */
+/* --- CONTENIDO --- */
 .content {
     padding: 24px 32px;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, #121212 100%);
-    /* Transición suave del header */
-    /* background-color: #121212; */
+    /* Transición suave desde el header */
 }
 
 .section {
@@ -173,19 +316,19 @@
     font-size: 0.875rem;
 }
 
-/* Grid de canciones e items */
+/* Cuadrícula de canciones y elementos */
 .track-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
 }
 
-/* --- ESTILOS DEL MODO EDICIÓN --- */
+/* --- ESTILOS DE EDICIÓN --- */
 .edit-container {
     padding: 32px;
     max-width: 500px;
     margin: 0 auto;
-    /* Centrado */
+    /* Centrado horizontal */
     background: #181818;
     border-radius: 8px;
     margin-top: 40px;
@@ -223,7 +366,7 @@
     flex: 1;
 }
 
-/* Inputs estilo Spotify/Dark */
+/* Inputs de estilo oscuro */
 input[type="text"],
 input[type="email"],
 input[type="number"],
@@ -245,7 +388,7 @@ select:focus {
     background: #2a2a2a;
 }
 
-/* Checkbox */
+/* Casilla de verificación */
 .form-checkbox {
     display: flex;
     align-items: center;
@@ -259,7 +402,7 @@ select:focus {
     accent-color: #1bd760;
 }
 
-/* Botones */
+/* Acciones del formulario */
 .form-actions {
     display: flex;
     justify-content: flex-end;
@@ -281,7 +424,7 @@ select:focus {
 .btn-cancel:hover {
     color: white;
     transform: scale(1.05);
-    /* Efecto hover */
+    /* Efecto al pasar el ratón */
 }
 
 .btn-save {
@@ -290,7 +433,7 @@ select:focus {
     border: none;
     padding: 12px 32px;
     border-radius: 500px;
-    /* Pill shape */
+    /* Forma de pastilla */
     font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
@@ -331,7 +474,7 @@ select:focus {
     color: white;
 }
 
-/* --- Modal de borrado (estilo playlist) --- */
+/* --- Modal de confirmación de borrado --- */
 .modal-message {
     text-align: center;
     color: var(--muted);
@@ -381,21 +524,21 @@ select:focus {
     cursor: not-allowed;
 }
 
-/* Etiqueta "(opcional)" */
+/* Etiqueta de campo opcional */
 .optional-label {
     color: #a7a7a7;
     font-weight: 400;
     font-size: 0.75rem;
 }
 
-/* Error de validación */
+/* Mensaje de error de validación */
 .form-error {
     color: #e91429;
     font-size: 0.75rem;
     margin-top: 4px;
 }
 
-/* --- ESTILOS DE MODAL (Copiados del Login) --- */
+/* --- ESTILOS DEL MODAL --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -423,7 +566,7 @@ select:focus {
     border-radius: 16px;
 }
 
-/* Botón de cerrar (X) */
+/* Botón de cerrar */
 .close-btn {
     position: absolute;
     top: 1rem;
@@ -440,18 +583,18 @@ select:focus {
     color: var(--accent);
 }
 
-/* Ajustes para el formulario dentro del modal */
+/* Formulario dentro del modal */
 .edit-form {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
 }
 
-/* Asegurar que el título del modal se vea bien */
+/* Título del modal */
 .modal-content h2 {
     margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
     color: var(--text);
-    /* O white, según prefieras */
+
     text-align: center;
 }

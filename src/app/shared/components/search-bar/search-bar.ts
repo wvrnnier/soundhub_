@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { MusicService, Track, Album } from '../../../core/services/music-service';
 import { SearchStateService } from '../../../core/services/search-state';
-import { Subject, of } from 'rxjs';
+import { Subject, of, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -39,56 +39,58 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       console.log('Añadido listener de click al documento');
       // Configurar búsqueda reactiva
       this.searchSubject.pipe(
-        debounceTime(300),
+        debounceTime(250),
         distinctUntilChanged(),
         switchMap((term) => {
-          if (term.trim().length > 0) {
-            return this.music.searchTracks(term, 24);
+          if (term.trim().length >= 2) {
+            // Ambas peticiones en PARALELO con forkJoin
+            return forkJoin({
+              songs: this.music.searchTracks(term, 18),
+              albums: this.music.searchAlbums(term, 12)
+            });
           } else {
-            return of({ results: [] });
+            return of({ songs: { results: [] }, albums: { results: [] } });
           }
         })
       ).subscribe({
         next: (response: any) => {
-          const songs = response.results || [];
+          const songs = response.songs.results || [];
+          const albums = response.albums.results || [];
           const term = this.searchTerm.trim().toLowerCase();
 
           if (term.length > 0) {
-            this.music.searchAlbums(this.searchTerm, 16).subscribe(albumResponse => {
-              const albums = albumResponse.results || [];
+            // 1. MEZCLAMOS
+            let mixedResults = [...songs, ...albums];
 
-              // 1. MEZCLAMOS
-              let mixedResults = [...songs, ...albums];
+            // 2. ORDENAMOS POR RELEVANCIA
+            mixedResults.sort((a: any, b: any) => {
+              const titleA = a.title.toLowerCase();
+              const titleB = b.title.toLowerCase();
 
-              // 2. ORDENAMOS POR RELEVANCIA
-              mixedResults.sort((a, b) => {
-                const titleA = a.title.toLowerCase();
-                const titleB = b.title.toLowerCase();
+              // Prioridad 1: Coincidencia EXACTA
+              if (titleA === term && titleB !== term) return -1;
+              if (titleB === term && titleA !== term) return 1;
 
-                // Prioridad 1: Coincidencia EXACTA
-                if (titleA === term && titleB !== term) return -1;
-                if (titleB === term && titleA !== term) return 1;
+              // Prioridad 2: Empieza con el término
+              const aStarts = titleA.startsWith(term);
+              const bStarts = titleB.startsWith(term);
 
-                // Prioridad 2: Empieza con el término
-                const aStarts = titleA.startsWith(term);
-                const bStarts = titleB.startsWith(term);
+              if (aStarts && !bStarts) return -1;
+              if (bStarts && !aStarts) return 1;
 
-                if (aStarts && !bStarts) return -1;
-                if (bStarts && !aStarts) return 1;
-
-                // Por defecto: orden alfabético si ambos tienen la misma prioridad
-                return 0;
-              });
-              this.searchResults = mixedResults;
-
-              this.showDropdown = this.searchResults.length > 0;
-              this.highlightedIndex = this.searchResults.length > 0 ? 0 : -1;
-              this.cdr.detectChanges();
+              // Por defecto: orden alfabético si ambos tienen la misma prioridad
+              return 0;
             });
+
+            // Limitar el dropdown a 12 resultados (los signals ya tienen todos para la página)
+            this.searchResults = mixedResults.slice(0, 12);
+            this.showDropdown = this.searchResults.length > 0;
+            this.highlightedIndex = this.searchResults.length > 0 ? 0 : -1;
           } else {
             this.searchResults = [];
             this.showDropdown = false;
           }
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Error al buscar:', err);

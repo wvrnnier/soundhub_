@@ -2,6 +2,17 @@
   <!-- Solo visible si el usuario ha iniciado sesion -->
   @if (isLoggedIn) {
     <div class="item" routerLink="/profile">
+      <span class="icon">
+        <img
+          class="sidebar-avatar"
+          [src]="currentUser?.profileImageUrl"
+          alt="Avatar"
+        />
+      </span>
+      <span class="label">Perfil</span>
+    </div>
+  } @else {
+    <div class="item" routerLink="/profile">
       <span class="icon"
         ><iconify-icon class="alien" icon="teenyicons:alien-outline"></iconify-icon
       ></span>
