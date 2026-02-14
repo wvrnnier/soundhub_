@@ -40,9 +40,13 @@ export class PlayList implements OnInit {
   private readonly audioService = inject(AudioService);
 
   readonly playlists = computed(() => this.playlistService.playlists());
+  readonly playlistsForView = computed(() => [...this.playlists()].reverse());
   readonly username = signal('');
 
   readonly createListForm = this.fb.nonNullable.group({
+    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
+  });
+  readonly renameListForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
   });
 
@@ -50,11 +54,13 @@ export class PlayList implements OnInit {
   readonly loadingPlaylist = signal(false);
   readonly creatingPlaylist = signal(false);
   readonly deletingPlaylist = signal(false);
+  readonly renamingPlaylist = signal(false);
   readonly addingTrackId = signal<Set<string>>(new Set());
   readonly removingTrackId = signal<Set<string>>(new Set());
   readonly toastMessage = signal<string | null>(null);
   readonly toastType = signal<'success' | 'error'>('success');
   readonly selectedPlaylist = signal<PlaylistDetail | null>(null);
+  readonly renamePlaylistTarget = signal<PlaylistDetail | null>(null);
   readonly confirmDeletePlaylist = signal<PlaylistDetail | null>(null);
 
   private routePlaylistId: number | null = null;
@@ -81,6 +87,7 @@ export class PlayList implements OnInit {
       } else {
         this.playlistService.clearState();
         this.selectedPlaylist.set(null);
+        this.cancelRename();
       }
     });
   }
@@ -133,6 +140,49 @@ export class PlayList implements OnInit {
     this.confirmDeletePlaylist.set(playlist);
   }
 
+  startRenamePlaylist(): void {
+    const playlist = this.selectedPlaylist();
+    if (!playlist) return;
+    this.renamePlaylistTarget.set(playlist);
+    this.renameListForm.reset({ name: playlist.listName });
+  }
+
+  confirmRename(): void {
+    const playlist = this.renamePlaylistTarget();
+    if (!playlist) return;
+
+    if (this.renameListForm.invalid) {
+      this.renameListForm.markAllAsTouched();
+      return;
+    }
+
+    const name = this.renameListForm.controls.name.value.trim();
+    if (!name || name === playlist.listName) {
+      this.cancelRename();
+      return;
+    }
+
+    this.clearFeedback();
+    this.renamingPlaylist.set(true);
+
+    this.playlistService.renamePlaylist(playlist.id, name).subscribe({
+      next: (updatedSummary) => {
+        this.renamingPlaylist.set(false);
+        this.selectedPlaylist.update((current) =>
+          current && current.id === playlist.id
+            ? { ...current, listName: updatedSummary.listName }
+            : current,
+        );
+        this.showSuccess('Nombre de lista actualizado');
+        this.cancelRename();
+      },
+      error: (error) => {
+        this.renamingPlaylist.set(false);
+        this.handleHttpError(error, 'No se pudo editar el nombre de la lista');
+      },
+    });
+  }
+
   confirmDelete(): void {
     const playlist = this.confirmDeletePlaylist();
     if (!playlist) return;
@@ -158,6 +208,11 @@ export class PlayList implements OnInit {
 
   cancelDelete(): void {
     this.confirmDeletePlaylist.set(null);
+  }
+
+  cancelRename(): void {
+    this.renamePlaylistTarget.set(null);
+    this.renameListForm.reset({ name: '' });
   }
 
   addTrack(track: Track): void {

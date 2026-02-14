@@ -10,6 +10,20 @@
   margin: 0;
 }
 
+.panel-title,
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title iconify-icon,
+.section-title iconify-icon,
+.state-icon {
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+
 button {
   min-height: 38px;
   border-radius: 999px;
@@ -31,6 +45,12 @@ button:disabled {
   color: #fff;
 }
 
+.secondary {
+  background: #202020;
+  color: #efefef;
+  border: 1px solid #3a3a3a;
+}
+
 .playlist-header {
   display: flex;
   justify-content: space-between;
@@ -38,6 +58,12 @@ button:disabled {
   flex-wrap: wrap;
   margin-bottom: 16px;
   gap: 10px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .playlist-header h2 {
@@ -50,6 +76,10 @@ button:disabled {
 }
 
 .songs h3 {
+  margin: 12px 0 10px;
+}
+
+.section-title {
   margin: 12px 0 10px;
 }
 
@@ -154,6 +184,10 @@ button:disabled {
   padding: 18px;
 }
 
+.state-icon {
+  margin-bottom: 8px;
+}
+
 .state-card h2 {
   margin: 0 0 8px;
 }
@@ -167,4 +201,3 @@ button:disabled {
     grid-column: 1 / -1;
   }
 }
-

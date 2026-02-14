@@ -1,4 +1,7 @@
-<h2>Crear lista</h2>
+<div class="panel-title">
+  <iconify-icon icon="solar:playlist-minimalistic-2-line-duotone"></iconify-icon>
+  <h2>Crear lista</h2>
+</div>
 <form class="create-form" [formGroup]="createListForm()" (ngSubmit)="onCreatePlaylist()">
   <input id="playlistName" type="text" formControlName="name" placeholder="Nombre para tu lista" />
 
@@ -12,7 +15,10 @@
 </form>
 
 <div class="playlist-summary">
-  <h3>Mis listas</h3>
+  <h3 class="subheading">
+    <iconify-icon icon="solar:music-library-2-line-duotone"></iconify-icon>
+    <span>Mis listas</span>
+  </h3>
   <div class="playlist-list-scroll">
     @for (playlist of playlists(); track playlist.id) {
     <button

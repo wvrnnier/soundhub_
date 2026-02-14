@@ -6,17 +6,28 @@
 <div class="playlist-header">
   <div>
     <p class="eyebrow">Lista activa</p>
-    <h2>{{ playlist.listName }}</h2>
+    <h2 class="panel-title">
+      <iconify-icon icon="solar:playback-speed-line-duotone"></iconify-icon>
+      <span>{{ playlist.listName }}</span>
+    </h2>
     <span>{{ playlist.songCount }} canciones guardadas</span>
   </div>
 
-  <button class="danger" type="button" (click)="onDeletePlaylist()" [disabled]="deletingPlaylist()">
-    {{ deletingPlaylist() ? 'Borrando...' : 'Borrar lista' }}
-  </button>
+  <div class="header-actions">
+    <button type="button" class="secondary" (click)="onRenamePlaylist()" [disabled]="deletingPlaylist() || renamingPlaylist()">
+      {{ renamingPlaylist() ? 'Guardando...' : 'Editar nombre' }}
+    </button>
+    <button class="danger" type="button" (click)="onDeletePlaylist()" [disabled]="deletingPlaylist() || renamingPlaylist()">
+      {{ deletingPlaylist() ? 'Borrando...' : 'Borrar lista' }}
+    </button>
+  </div>
 </div>
 
 <section class="songs">
-  <h3>Canciones en esta lista</h3>
+  <h3 class="section-title">
+    <iconify-icon icon="solar:playlist-2-line-duotone"></iconify-icon>
+    <span>Canciones en esta lista</span>
+  </h3>
 
   @if (playlist.songs.length === 0) {
   <p class="empty">Aún no hay canciones. Usa "Agregar canción" para empezar.</p>
@@ -50,6 +61,7 @@
 </section>
 } @else {
 <section class="state-card">
+  <iconify-icon class="state-icon" icon="solar:music-library-2-line-duotone"></iconify-icon>
   <h2>No hay lista seleccionada</h2>
   <p>Crea una lista nueva o selecciona una de la barra lateral</p>
 </section>

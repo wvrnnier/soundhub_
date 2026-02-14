@@ -1,41 +1,88 @@
-<nav class="sidebar" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+﻿<nav class="sidebar" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+  <!-- Solo visible si el usuario ha iniciado sesion -->
+  @if (isLoggedIn) {
+    <div class="item" routerLink="/profile">
+      <span class="icon"
+        ><iconify-icon class="alien" icon="teenyicons:alien-outline"></iconify-icon
+      ></span>
+      <span class="label">Perfil</span>
+    </div>
+  }
+
   <div
     class="item"
     (mouseenter)="onMouseEnterLibrary()"
     (mouseleave)="onMouseLeaveLibrary()"
     (click)="goToPlaylistHome($event)"
   >
-    <span class="icon"><iconify-icon class="headphones" icon="teenyicons:headphones-outline"></iconify-icon></span>
+    <span class="icon"
+      ><iconify-icon class="headphones" icon="teenyicons:headphones-outline"></iconify-icon
+    ></span>
     <span class="label">Biblioteca</span>
-<!-- Esto de aquí hay que cambiarlo no tiene sentido que sólo puedas acceder 
-     a las listas cuando la barra lateral esté abierta, si pinchas el icono deberías 
-     poder acceder al panel de playslist -->
+
     @if (isLibraryMenuOpen && isExpanded) {
-    <div class="submenu library-submenu" (click)="$event.stopPropagation()">
-      <button class="submenu-action" type="button" (click)="goToPlaylistHome($event)">
-        Crear listas
-      </button>
+      <div class="submenu library-submenu" (click)="$event.stopPropagation()">
+        <button class="submenu-action" type="button" (click)="goToPlaylistHome($event)">
+          Crear listas
+        </button>
 
       @if (isLoggedIn) {
       <div class="submenu-playlist-scroll">
-        @for (playlist of playlists(); track playlist.id) {
-        <button class="submenu-item" type="button" (click)="openPlaylist(playlist.id, $event)">
-          <span>{{ playlist.listName }}</span>
-          <small>{{ playlist.songCount }}</small>
-        </button>
-        } @empty {
-        <span class="submenu-empty">Sin listas creadas</span>
+        @for (playlist of playlistsForView(); track playlist.id) {
+        <div
+          class="submenu-item playlist-row"
+          [class.playing]="isPlaylistPlaying(playlist.id)"
+          (click)="openPlaylist(playlist.id, $event)"
+        >
+                <div
+                  class="playlist-thumb"
+                  [style.background-image]="
+                    getPlaylistCover(playlist.id)
+                      ? 'url(' + getPlaylistCover(playlist.id) + ')'
+                      : 'none'
+                  "
+                >
+                  @if (!getPlaylistCover(playlist.id)) {
+                    <iconify-icon
+                      class="playlist-thumb-icon"
+                      icon="teenyicons:headphones-outline"
+                    ></iconify-icon>
+                  }
+
+            <button
+              class="playlist-play-btn"
+              type="button"
+              (click)="playPlaylist(playlist.id, $event)"
+              [disabled]="playlist.songCount === 0 || loadingPlaylistId === playlist.id"
+              title="Reproducir lista"
+            >
+              @if (loadingPlaylistId === playlist.id) {
+              <span>...</span>
+              } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+                    }
+                  </button>
+                </div>
+
+          <div class="playlist-meta">
+            <span>{{ playlist.listName }}</span>
+            <small class="playlist-count">{{ playlist.songCount }} canciones</small>
+            @if (isPlaylistPlaying(playlist.id)) {
+            <small class="playing-badge">
+              <iconify-icon icon="teenyicons:play-circle-outline"></iconify-icon>
+              Reproduciendo
+            </small>
+            }
+          </div>
+        </div>
+            } @empty {
+              <span class="submenu-empty">Sin listas creadas</span>
+            }
+          </div>
         }
       </div>
-      }
-    </div>
     }
   </div>
-<!-- Solo visible si el usuario ha iniciado sesión -->
-  @if (isLoggedIn) {
-  <div class="item" routerLink="/profile">
-    <span class="icon"><iconify-icon class="alien" icon="teenyicons:alien-outline"></iconify-icon></span>
-    <span class="label">Perfil</span>
-  </div>
-  }
 </nav>

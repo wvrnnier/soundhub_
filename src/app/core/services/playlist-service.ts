@@ -4,6 +4,7 @@ import { map, Observable, of, tap } from 'rxjs';
 import { AuthService } from './auth.service';
 import { SearchResponse, Track } from './music-service';
 
+// Endpoints HTTP usados por este servicio.
 const PLAYLIST_API_URL = '/api/playlists';
 const MUSIC_API_URL = '/api/music';
 
@@ -16,6 +17,7 @@ const CACHE_KEYS = {
 
 const CACHE_TTL_MS = 10 * 60 * 1000;
 
+// Tipos de respuesta/estado para playlist.
 export interface PlaylistSummary {
   id: number;
   listName: string;
@@ -45,9 +47,11 @@ export interface PlaylistDetail extends PlaylistSummary {
   providedIn: 'root',
 })
 export class PlaylistService {
+  // Estado interno mutable.
   private readonly playlistsState = signal<PlaylistSummary[]>([]);
   private readonly librarySongsState = signal<PlaylistSong[]>([]);
 
+  // Estado publico (solo lectura).
   readonly playlists = this.playlistsState.asReadonly();
   readonly librarySongs = this.librarySongsState.asReadonly();
 
@@ -58,6 +62,10 @@ export class PlaylistService {
     // Restaurar estado desde caché al iniciar
     this.restoreFromCache();
   }
+
+  // ========================
+  // Lectura de datos
+  // ========================
 
   clearState(): void {
     this.playlistsState.set([]);
@@ -133,17 +141,57 @@ export class PlaylistService {
       );
   }
 
+  // ========================
+  // Mutaciones de datos
+  // ========================
+
   createPlaylist(name: string): Observable<PlaylistSummary> {
     return this.http
-      .post<PlaylistSummary>(
-        PLAYLIST_API_URL,
-        { name },
-        { headers: this.getAuthHeaders() },
-      )
+      .post<PlaylistSummary>(PLAYLIST_API_URL, { name }, { headers: this.getAuthHeaders() })
       .pipe(
         tap((playlist) => {
           this.playlistsState.update((playlists) => [playlist, ...playlists]);
           this.invalidateCache(CACHE_KEYS.PLAYLISTS);
+        }),
+      );
+  }
+
+  renamePlaylist(playlistId: number, name: string): Observable<PlaylistSummary> {
+    //usa PATCH /api/playlists/:id sino hay en backend no vale
+    const currentSummary = this.playlistsState().find((playlist) => playlist.id === playlistId);
+
+    return this.http
+      .patch<Partial<PlaylistSummary> | null>(
+        `${PLAYLIST_API_URL}/${playlistId}`,
+        { name },
+        { headers: this.getAuthHeaders() },
+      )
+      .pipe(
+        map((response) => {
+          const payload = response ?? {};
+          const payloadWithName = payload as Partial<PlaylistSummary> & { name?: string };
+
+          return {
+            id: playlistId,
+            listName: payloadWithName.listName ?? payloadWithName.name ?? name,
+            createdAt: payload.createdAt ?? currentSummary?.createdAt ?? new Date().toISOString(),
+            songCount: payload.songCount ?? currentSummary?.songCount ?? 0,
+          } as PlaylistSummary;
+        }),
+        tap((updatedSummary) => {
+          this.upsertPlaylist(updatedSummary);
+
+          this.librarySongsState.update((songs) =>
+            songs.map((song) =>
+              song.playlistId === playlistId
+                ? { ...song, playlistName: updatedSummary.listName }
+                : song,
+            ),
+          );
+
+          this.invalidateCache(CACHE_KEYS.PLAYLISTS);
+          this.invalidateCache(CACHE_KEYS.LIBRARY_SONGS);
+          this.invalidateCache(CACHE_KEYS.PLAYLIST_DETAIL(playlistId));
         }),
       );
   }
@@ -170,10 +218,7 @@ export class PlaylistService {
       );
   }
 
-  addSongToPlaylist(
-    playlistId: number,
-    track: Track,
-  ): Observable<PlaylistSong> {
+  addSongToPlaylist(playlistId: number, track: Track): Observable<PlaylistSong> {
     return this.http
       .post<PlaylistSong>(
         `${PLAYLIST_API_URL}/${playlistId}/songs`,
@@ -199,8 +244,7 @@ export class PlaylistService {
             const withoutDuplicate = songs.filter(
               (currentSong) =>
                 !(
-                  currentSong.playlistId === song.playlistId &&
-                  currentSong.trackId === song.trackId
+                  currentSong.playlistId === song.playlistId && currentSong.trackId === song.trackId
                 ),
             );
             return [song, ...withoutDuplicate];
@@ -225,18 +269,15 @@ export class PlaylistService {
             playlists.map((playlist) =>
               playlist.id === playlistId
                 ? {
-                  ...playlist,
-                  songCount: Math.max(playlist.songCount - 1, 0),
-                }
+                    ...playlist,
+                    songCount: Math.max(playlist.songCount - 1, 0),
+                  }
                 : playlist,
             ),
           );
 
           this.librarySongsState.update((songs) =>
-            songs.filter(
-              (song) =>
-                !(song.playlistId === playlistId && song.trackId === trackId),
-            ),
+            songs.filter((song) => !(song.playlistId === playlistId && song.trackId === trackId)),
           );
 
           // Invalidar cachés afectadas por la mutación
@@ -259,11 +300,13 @@ export class PlaylistService {
       .pipe(map((response) => response.results as Track[]));
   }
 
+  // ========================
+  // Helpers internos de estado
+  // ========================
+
   private upsertPlaylist(playlistSummary: PlaylistSummary): void {
     this.playlistsState.update((playlists) => {
-      const playlistExists = playlists.some(
-        (playlist) => playlist.id === playlistSummary.id,
-      );
+      const playlistExists = playlists.some((playlist) => playlist.id === playlistSummary.id);
 
       if (!playlistExists) {
         return [playlistSummary, ...playlists];
@@ -275,11 +318,10 @@ export class PlaylistService {
     });
   }
 
+  // Header Authorization para rutas protegidas.
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
-    return token
-      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
-      : new HttpHeaders();
+    return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
   }
 
   // ========================

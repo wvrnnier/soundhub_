@@ -3,6 +3,7 @@ const axios = require('axios');
 const { neon } = require('@neondatabase/serverless');
 const authenticateToken = require('../middleware/auth');
 
+// Configuracion base del router y conexion.
 const router = express.Router();
 const sql = neon(process.env.SHDB_DATABASE_URL);
 const ITUNES_LOOKUP = 'https://itunes.apple.com/lookup';
@@ -10,6 +11,10 @@ const ITUNES_LOOKUP = 'https://itunes.apple.com/lookup';
 router.use(authenticateToken);
 
 const LOOKUP_CHUNK_SIZE = 100;
+
+// ========================
+// Helpers de validacion/auth
+// ========================
 
 function getUserId(req) {
   const userId = Number(req.user?.id);
@@ -23,6 +28,39 @@ function parsePlaylistId(rawValue) {
   }
   return playlistId;
 }
+
+function requireAuthenticatedUserId(req, res) {
+  const userId = getUserId(req);
+  if (!userId) {
+    res.status(401).json({ error: 'Usuario no autenticado' });
+    return null;
+  }
+  return userId;
+}
+
+function requirePlaylistId(rawValue, res) {
+  const playlistId = parsePlaylistId(rawValue);
+  if (!playlistId) {
+    res.status(400).json({ error: 'ID de playlist invalido' });
+    return null;
+  }
+  return playlistId;
+}
+
+function requirePlaylistName(rawValue, res) {
+  const listName = String(rawValue ?? '').trim();
+  if (listName.length < 2 || listName.length > 60) {
+    res.status(400).json({
+      error: 'El nombre de la lista debe tener entre 2 y 60 caracteres',
+    });
+    return null;
+  }
+  return listName;
+}
+
+// ========================
+// Helpers de acceso a datos
+// ========================
 
 async function getOwnedPlaylist(userId, playlistId) {
   const [playlist] = await sql`
@@ -38,6 +76,19 @@ async function getOwnedPlaylist(userId, playlistId) {
   `;
   return playlist ?? null;
 }
+
+async function requireOwnedPlaylist(userId, playlistId, res) {
+  const playlist = await getOwnedPlaylist(userId, playlistId);
+  if (!playlist) {
+    res.status(404).json({ error: 'Playlist no encontrada' });
+    return null;
+  }
+  return playlist;
+}
+
+// ========================
+// Helpers de metadata iTunes
+// ========================
 
 function chunk(array, size) {
   const out = [];
@@ -106,12 +157,15 @@ async function enrichSongs(songRows) {
   });
 }
 
+// ========================
+// Rutas de playlists
+// ========================
+
+// GET - Obtener todas las playlists del usuario autenticado.
 router.get('/', async (req, res) => {
   try {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ error: 'Usuario no autenticado' });
-    }
+    const userId = requireAuthenticatedUserId(req, res);
+    if (!userId) return;
 
     const playlists = await sql`
       SELECT
@@ -133,21 +187,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+// POST - Crear una nueva playlist.
 router.post('/', async (req, res) => {
   try {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ error: 'Usuario no autenticado' });
-    }
+    const userId = requireAuthenticatedUserId(req, res);
+    if (!userId) return;
 
-    const listNameRaw = req.body?.name ?? req.body?.listName ?? '';
-    const listName = String(listNameRaw).trim();
-
-    if (listName.length < 2 || listName.length > 60) {
-      return res.status(400).json({
-        error: 'El nombre de la lista debe tener entre 2 y 60 caracteres',
-      });
-    }
+    const listName = requirePlaylistName(
+      req.body?.name ?? req.body?.listName,
+      res,
+    );
+    if (!listName) return;
 
     const [playlist] = await sql`
       INSERT INTO user_lists (user_id, list_name, date)
@@ -165,12 +215,11 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET - Obtener canciones recientes de la biblioteca de playlists.
 router.get('/library/songs', async (req, res) => {
   try {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ error: 'Usuario no autenticado' });
-    }
+    const userId = requireAuthenticatedUserId(req, res);
+    if (!userId) return;
 
     const limitRaw = Number(req.query.limit ?? 8);
     const limit = Number.isInteger(limitRaw)
@@ -201,22 +250,17 @@ router.get('/library/songs', async (req, res) => {
   }
 });
 
+// GET - Obtener el detalle de una playlist con sus canciones.
 router.get('/:playlistId', async (req, res) => {
   try {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ error: 'Usuario no autenticado' });
-    }
+    const userId = requireAuthenticatedUserId(req, res);
+    if (!userId) return;
 
-    const playlistId = parsePlaylistId(req.params.playlistId);
-    if (!playlistId) {
-      return res.status(400).json({ error: 'ID de playlist invalido' });
-    }
+    const playlistId = requirePlaylistId(req.params.playlistId, res);
+    if (!playlistId) return;
 
-    const playlist = await getOwnedPlaylist(userId, playlistId);
-    if (!playlist) {
-      return res.status(404).json({ error: 'Playlist no encontrada' });
-    }
+    const playlist = await requireOwnedPlaylist(userId, playlistId, res);
+    if (!playlist) return;
 
     const songs = await sql`
       SELECT
@@ -244,22 +288,17 @@ router.get('/:playlistId', async (req, res) => {
   }
 });
 
+// POST - Anadir una cancion a una playlist.
 router.post('/:playlistId/songs', async (req, res) => {
   try {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ error: 'Usuario no autenticado' });
-    }
+    const userId = requireAuthenticatedUserId(req, res);
+    if (!userId) return;
 
-    const playlistId = parsePlaylistId(req.params.playlistId);
-    if (!playlistId) {
-      return res.status(400).json({ error: 'ID de playlist invalido' });
-    }
+    const playlistId = requirePlaylistId(req.params.playlistId, res);
+    if (!playlistId) return;
 
-    const ownedPlaylist = await getOwnedPlaylist(userId, playlistId);
-    if (!ownedPlaylist) {
-      return res.status(404).json({ error: 'Playlist no encontrada' });
-    }
+    const ownedPlaylist = await requireOwnedPlaylist(userId, playlistId, res);
+    if (!ownedPlaylist) return;
 
     const trackId = String(req.body?.trackId ?? req.body?.id ?? '').trim();
     const title = String(req.body?.title ?? req.body?.songName ?? '').trim();
@@ -322,22 +361,16 @@ router.post('/:playlistId/songs', async (req, res) => {
   }
 });
 
+// DELETE - Eliminar una cancion de una playlist.
 router.delete('/:playlistId/songs/:trackId', async (req, res) => {
   try {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ error: 'Usuario no autenticado' });
-    }
+    const userId = requireAuthenticatedUserId(req, res);
+    if (!userId) return;
 
-    const playlistId = parsePlaylistId(req.params.playlistId);
-    if (!playlistId) {
-      return res.status(400).json({ error: 'ID de playlist invalido' });
-    }
+    const playlistId = requirePlaylistId(req.params.playlistId, res);
+    if (!playlistId) return;
 
-    const ownedPlaylist = await getOwnedPlaylist(userId, playlistId);
-    if (!ownedPlaylist) {
-      return res.status(404).json({ error: 'Playlist no encontrada' });
-    }
+    if (!(await requireOwnedPlaylist(userId, playlistId, res))) return;
 
     const trackId = String(req.params.trackId ?? '').trim();
     if (!trackId) {
@@ -361,22 +394,58 @@ router.delete('/:playlistId/songs/:trackId', async (req, res) => {
   }
 });
 
-router.delete('/:playlistId', async (req, res) => {
+// PATCH - Editar el nombre de una playlist.
+router.patch('/:playlistId', async (req, res) => {
   try {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ error: 'Usuario no autenticado' });
-    }
+    const userId = requireAuthenticatedUserId(req, res);
+    if (!userId) return;
 
-    const playlistId = parsePlaylistId(req.params.playlistId);
-    if (!playlistId) {
-      return res.status(400).json({ error: 'ID de playlist invalido' });
-    }
+    const playlistId = requirePlaylistId(req.params.playlistId, res);
+    if (!playlistId) return;
 
-    const ownedPlaylist = await getOwnedPlaylist(userId, playlistId);
-    if (!ownedPlaylist) {
+    const listName = requirePlaylistName(
+      req.body?.name ?? req.body?.listName,
+      res,
+    );
+    if (!listName) return;
+
+    const ownedPlaylist = await requireOwnedPlaylist(userId, playlistId, res);
+    if (!ownedPlaylist) return;
+
+    const [updatedPlaylist] = await sql`
+      UPDATE user_lists
+      SET list_name = ${listName}
+      WHERE id = ${playlistId} AND user_id = ${userId}
+      RETURNING
+        id,
+        list_name AS "listName",
+        date AS "createdAt"
+    `;
+
+    if (!updatedPlaylist) {
       return res.status(404).json({ error: 'Playlist no encontrada' });
     }
+
+    res.json({
+      ...updatedPlaylist,
+      songCount: ownedPlaylist.songCount,
+    });
+  } catch (error) {
+    console.error('Error al editar nombre de playlist:', error);
+    res.status(500).json({ error: 'No se pudo editar la playlist' });
+  }
+});
+
+// DELETE - Eliminar una playlist completa.
+router.delete('/:playlistId', async (req, res) => {
+  try {
+    const userId = requireAuthenticatedUserId(req, res);
+    if (!userId) return;
+
+    const playlistId = requirePlaylistId(req.params.playlistId, res);
+    if (!playlistId) return;
+
+    if (!(await requireOwnedPlaylist(userId, playlistId, res))) return;
 
     // ON DELETE CASCADE en songs_list.list_id elimina las canciones automaticamente
     await sql`DELETE FROM user_lists WHERE id = ${playlistId} AND user_id = ${userId}`;

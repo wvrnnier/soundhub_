@@ -35,8 +35,12 @@ export class SideBarComponent implements OnInit, OnDestroy {
   isSearchMenuOpen = false;
   isLibraryMenuOpen = false;
   isLoggedIn = false;
+  loadingPlaylistId: number | null = null;
+  currentPlayingPlaylistId: number | null = null;
+  private currentPlayingTrackIds = new Set<string>();
 
   playlists = computed(() => this.playlistService.playlists());
+  playlistsForView = computed(() => [...this.playlists()].reverse());
   librarySongs = computed(() => this.playlistService.librarySongs());
 
   ngOnInit(): void {
@@ -93,9 +97,56 @@ export class SideBarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/playlist', playlistId]);
   }
 
+  playPlaylist(playlistId: number, event: Event): void {
+    event.stopPropagation();
+    if (this.loadingPlaylistId === playlistId) return;
+
+    this.loadingPlaylistId = playlistId;
+
+    this.playlistService.loadPlaylist(playlistId).subscribe({
+      next: (playlist) => {
+        const queue = playlist.songs
+          .filter((song) => !!song.previewUrl)
+          .map((song) => this.toTrack(song));
+
+        if (queue.length > 0) {
+          this.currentPlayingPlaylistId = playlistId;
+          this.currentPlayingTrackIds = new Set(queue.map((track) => track.id));
+          this.audioService.playTrack(queue[0], queue);
+        }
+
+        this.loadingPlaylistId = null;
+      },
+      error: () => {
+        this.loadingPlaylistId = null;
+      },
+    });
+  }
+
+  isPlaylistPlaying(playlistId: number): boolean {
+    const currentTrackId = this.audioService.currentTrack()?.id;
+    if (!currentTrackId) return false;
+
+    return (
+      this.currentPlayingPlaylistId === playlistId &&
+      this.audioService.isPlaying() &&
+      this.currentPlayingTrackIds.has(currentTrackId)
+    );
+  }
+
+  getPlaylistCover(playlistId: number): string | null {
+    const song = this.librarySongs().find(
+      (librarySong) => librarySong.playlistId === playlistId && !!librarySong.cover,
+    );
+    return song?.cover ?? null;
+  }
+
   playFromLibrary(song: PlaylistSong, event: Event): void {
     event.stopPropagation();
     if (!song.previewUrl) return;
+
+    this.currentPlayingPlaylistId = null;
+    this.currentPlayingTrackIds = new Set<string>();
 
     const queue = this.librarySongs()
       .filter((librarySong) => !!librarySong.previewUrl)

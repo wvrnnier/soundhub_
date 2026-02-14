@@ -2,7 +2,10 @@
 <div class="panel-header">
   <div>
     <p class="eyebrow">Agregar canciones</p>
-    <h2>Buscar y añadir</h2>
+    <h2 class="panel-title">
+      <iconify-icon icon="solar:music-note-2-line-duotone"></iconify-icon>
+      <span>Buscar y añadir</span>
+    </h2>
     <span>Lista activa: {{ playlist.listName }}</span>
   </div>
 </div>
@@ -26,7 +29,10 @@
 
 @if (searchResults().length > 0) {
 <section class="results playlist-search-results">
-  <h3>Resultados</h3>
+  <h3 class="section-title">
+    <iconify-icon icon="solar:minimalistic-magnifer-line-duotone"></iconify-icon>
+    <span>Resultados</span>
+  </h3>
   <div class="results-scroll">
     @for (track of searchResults(); track track.id) {
     <article class="result-item playlist-result-item">
@@ -47,6 +53,7 @@
 }
 } @else {
 <section class="state-card">
+  <iconify-icon class="state-icon" icon="solar:music-library-2-line-duotone"></iconify-icon>
   <h2>Sin lista activa</h2>
   <p>Selecciona una lista para buscar canciones y agregarlas.</p>
 </section>

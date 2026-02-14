@@ -18,7 +18,7 @@
       class="panel sidebar-panel"
       [createListForm]="createListForm"
       [creatingPlaylist]="creatingPlaylist()"
-      [playlists]="playlists()"
+      [playlists]="playlistsForView()"
       [selectedPlaylistId]="selectedPlaylist()?.id ?? null"
       (createRequested)="createPlaylist()"
       (playlistSelected)="openPlaylist($event)"
@@ -48,12 +48,45 @@
         [loadingPlaylist]="loadingPlaylist()"
         [selectedPlaylist]="selectedPlaylist()"
         [deletingPlaylist]="deletingPlaylist()"
+        [renamingPlaylist]="renamingPlaylist()"
         [removingTrackIds]="removingTrackId()"
+        (renameRequested)="startRenamePlaylist()"
         (deleteRequested)="deleteCurrentPlaylist()"
         (playRequested)="playSong($event)"
         (removeRequested)="removeTrack($event)"
       />
     </section>
+  </div>
+  }
+
+  @if (renamePlaylistTarget()) {
+  <div class="modal-overlay" (click)="cancelRename()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="cancelRename()">&times;</button>
+      <h2>Editar nombre</h2>
+      <p class="modal-message">Cambia el nombre de la lista "{{ renamePlaylistTarget()!.listName }}".</p>
+
+      <form class="rename-form" [formGroup]="renameListForm" (ngSubmit)="confirmRename()">
+        <label for="renamePlaylistName">Nuevo nombre</label>
+        <input
+          id="renamePlaylistName"
+          type="text"
+          formControlName="name"
+          placeholder="Nombre para tu lista"
+        />
+
+        @if (renameListForm.controls['name'].invalid && renameListForm.controls['name'].touched) {
+        <span class="field-error">Nombre demasiado corto</span>
+        }
+
+        <div class="modal-actions">
+          <button class="modal-cancel" type="button" (click)="cancelRename()">Cancelar</button>
+          <button class="modal-confirm" type="submit" [disabled]="renameListForm.invalid || renamingPlaylist()">
+            {{ renamingPlaylist() ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
   }
 

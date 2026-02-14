@@ -185,6 +185,32 @@
   line-height: 1.5;
 }
 
+.rename-form {
+  display: grid;
+  gap: 10px;
+}
+
+.rename-form label {
+  color: #b3b3b3;
+  font-size: 0.9rem;
+}
+
+.rename-form input {
+  width: 100%;
+  min-height: 42px;
+  border-radius: 999px;
+  border: 1px solid #303030;
+  background: #0f0f0f;
+  color: #fff;
+  padding: 0 14px;
+  outline: none;
+}
+
+.rename-form input:focus {
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 0 2px rgba(0, 255, 191, 0.16);
+}
+
 .modal-actions {
   display: flex;
   gap: 10px;

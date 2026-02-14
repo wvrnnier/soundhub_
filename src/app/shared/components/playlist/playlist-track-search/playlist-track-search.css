@@ -18,6 +18,20 @@
   margin: 4px 0;
 }
 
+.panel-title,
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title iconify-icon,
+.section-title iconify-icon,
+.state-icon {
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+
 .panel-header span {
   color: #9f9f9f;
   font-size: 0.9rem;
@@ -79,6 +93,10 @@
 }
 
 .results h3 {
+  margin: 12px 0 10px;
+}
+
+.section-title {
   margin: 12px 0 10px;
 }
 
@@ -181,6 +199,10 @@
   background: #171717;
   border-radius: 14px;
   padding: 18px;
+}
+
+.state-icon {
+  margin-bottom: 8px;
 }
 
 .state-card h2 {
