@@ -1,16 +1,80 @@
 .track-card {
-  width: 160px;
+  width: 200px;
   padding: 12px;
-  border-radius: 10px;
-  background: #181818;
+  border-radius: 4px;
+  background: #0d0d0d;
   cursor: pointer;
-  transition: background 0.3s;
   position: relative;
-  /* Ensure positioning context for dropdown */
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+/* BORDE GRADIENTE ANIMADO AL HOVER */
+.track-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 300% 300%;
+  background-position: 100% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.track-card:hover::before {
+  opacity: 1;
+  animation: shineSwipe 1.2s ease-in-out infinite;
+}
+
+/* RESPLANDOR DIFUSO DETRÁS */
+.track-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 4px;
+  background: linear-gradient(
+    135deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 70%
+  );
+  background-size: 300% 300%;
+  background-position: 100% 100%;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.track-card:hover::after {
+  opacity: 1;
+  animation: shineSwipe 1.2s ease-in-out infinite;
+}
+
+@keyframes shineSwipe {
+  0%   { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
 }
 
 .track-card:hover {
-  background: #282828;
+  background: #111;
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* Imagen */
@@ -18,9 +82,10 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  border-radius: 8px;
+  border-radius: 2px;
   overflow: hidden;
   margin-bottom: 12px;
+  z-index: 3;
 }
 
 .artwork-container img {
@@ -64,18 +129,25 @@
 .track-card h3 {
   margin: 0;
   font-weight: bold;
+  font-size: 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
+  z-index: 3;
 }
 
 .track-card p {
   margin-top: 4px;
-  font-size: 14px;
-  color: #bbb;
+  font-size: 12px;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
+  z-index: 3;
 }
 
 .add-to-list-btn {

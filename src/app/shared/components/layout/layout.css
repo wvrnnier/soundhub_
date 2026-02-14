@@ -8,11 +8,12 @@
 /* Columna de contenido (Explorar, Inicio, Favoritas...) */
 .page {
     flex: 1;
-    padding: 32px;
+    padding: 32px 24px;
     padding-bottom: 150px;
     /* Espacio extra para el player */
     min-height: calc(100vh - 72px);
     /* 100vh menos la altura del navbar */
     background: #111212;
     box-sizing: border-box;
+    overflow-x: hidden;
 }

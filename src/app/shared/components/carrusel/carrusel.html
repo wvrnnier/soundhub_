@@ -1,13 +1,26 @@
 <div class="carrusel">
-  <button (click)="prev()">⟨</button>
+  <button (click)="prev()"><iconify-icon class="prev-icon" icon="si:chevron-left-square-fill"></iconify-icon></button>
 
-  <div class="row">
-    @for (item of visibleItems(); track $index) { @if (type() === 'album') {
-    <app-album [album]="item"></app-album>
-    }@if (type() === 'track') {
-    <app-track-card [track]="item"></app-track-card>
-    } }
+  <div class="row" [class.animate-slide]="animating()">
+    @if (isLoading()) {
+      @for (p of placeholders; track $index) {
+        <div class="shimmer-card">
+          <div class="shimmer-img"></div>
+          <div class="shimmer-line title"></div>
+          <div class="shimmer-line subtitle"></div>
+        </div>
+      }
+    } @else {
+      @for (item of visibleItems(); track $index) {
+        @if (type() === 'album') {
+          <app-album [album]="item"></app-album>
+        }
+        @if (type() === 'track') {
+          <app-track-card [track]="item"></app-track-card>
+        }
+      }
+    }
   </div>
 
-  <button (click)="next()">⟩</button>
+  <button (click)="next()"><iconify-icon class="next-icon" icon="si:chevron-right-square-fill"></iconify-icon></button>
 </div>
