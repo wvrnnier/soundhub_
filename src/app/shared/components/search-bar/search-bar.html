@@ -1,31 +1,25 @@
 <div class="search-container">
-  <input
-    type="text"
-    [(ngModel)]="searchTerm"
-    (input)="onSearch()"
-    (blur)="onBlur()"
-    (keydown)="onKeyDown($event)"
-    placeholder="Buscar canciones..."
-    class="search-input"
-  />
+  <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" (blur)="onBlur()" (keydown)="onKeyDown($event)"
+    placeholder="Buscar..." class="search-input" />
 
   @if (showDropdown && searchResults.length > 0) {
   <div class="search-dropdown">
+    <!-- Un solo bucle para TODO -->
     @for (result of searchResults; track result.id) {
-    <div
-      class="search-result-item"
-      [class.highlighted]="$index === highlightedIndex"
-      (click)="onSelectResult(result)"
-    >
+    <div class="search-result-item" [class.highlighted]="$index === highlightedIndex" (click)="onSelectResult(result)">
       <img [src]="result.cover" alt="{{ result.title }}" class="search-result-cover" />
       <div class="search-result-info">
-        <strong>{{ result.title }}</strong> 
+        <strong>{{ result.title }}</strong>
         <span class="artist-name">{{ result.artist }}</span>
+        <!-- Opcional: Mostrar una etiqueta si es Album -->
+        @if (isAlbum(result)) { <span class="badge">Album</span> }
       </div>
     </div>
     }
   </div>
-  } @if (showDropdown && searchResults.length === 0 && searchTerm.length > 0) {
+  }
+
+  @if (showDropdown && searchResults.length === 0 && searchTerm.length > 0) {
   <div class="search-dropdown no-results">
     <div class="search-result-item">No se encontraron resultados</div>
   </div>

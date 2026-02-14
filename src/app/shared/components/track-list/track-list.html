@@ -6,3 +6,12 @@
 
   }
 </div>
+
+@if (albums().length > 0) {
+<h2 style="margin-top: 30px;">Álbumes</h2>
+<div class="album-grid">
+  @for (album of albums(); track album.id) {
+  <app-album [album]="album"></app-album>
+  }
+</div>
+}

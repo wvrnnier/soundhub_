@@ -53,7 +53,7 @@ export interface SearchResponse {
   providedIn: 'root',
 })
 export class MusicService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // DATOS PARA LA BÚSQUEDA DINÁMICA
   tracks = signal<Track[]>([]);
@@ -93,11 +93,14 @@ export class MusicService {
   }
 
   searchAlbums(query: string, limit = 24) {
-    this.http.get<SearchResponse>(`${API_URL}/search`, {
+    return this.http.get<SearchResponse>(`${API_URL}/search`, {
       params: { term: query, entity: 'album', limit: limit.toString() }
-    }).subscribe((resp) => {
-      this.albums.set(resp.results as Album[]);
-    });
+    }).pipe(
+      map(resp => {
+        this.albums.set(resp.results as Album[]);
+        return resp;
+      })
+    );
   }
 
   clearSearch() {
