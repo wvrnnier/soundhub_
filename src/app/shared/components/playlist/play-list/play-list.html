@@ -1,0 +1,75 @@
+<section class="playlist-page">
+  <header class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">Biblioteca</p>
+      <h1>@if (username()) {<span class="username">{{ username() }}</span> } playlists</h1>
+      <p class="hero-desc">Crea tu colección, agrega canciones y escúchalas cuando quieras</p>
+    </div>
+  </header>
+
+  @if (!isLoggedIn()) {
+  <section class="state-card">
+    <h2>Inicia sesión para gestionar tus listas</h2>
+    <p>Las playlists se guardan y se sincronizan con tu cuenta.</p>
+  </section>
+  } @else {
+  <div class="workspace">
+    <app-playlist-sidebar
+      class="panel sidebar-panel"
+      [createListForm]="createListForm"
+      [creatingPlaylist]="creatingPlaylist()"
+      [playlists]="playlists()"
+      [selectedPlaylistId]="selectedPlaylist()?.id ?? null"
+      (createRequested)="createPlaylist()"
+      (playlistSelected)="openPlaylist($event)"
+    />
+
+    <section class="panel search-panel">
+      @if (loadingPlaylist()) {
+      <p class="loading">Cargando lista...</p>
+      }
+
+      <app-playlist-track-search
+        [selectedPlaylist]="selectedPlaylist()"
+        [addingTrackIds]="addingTrackId()"
+        (trackSelected)="addTrack($event)"
+      />
+    </section>
+
+    <section class="songs-panel-area">
+      @if (toastMessage()) {
+      <p class="playlist-toast" [class.error]="toastType() === 'error'" [class.success]="toastType() === 'success'">
+        {{ toastMessage() }}
+      </p>
+      }
+
+      <app-playlist-songs-panel
+        class="panel songs-panel"
+        [loadingPlaylist]="loadingPlaylist()"
+        [selectedPlaylist]="selectedPlaylist()"
+        [deletingPlaylist]="deletingPlaylist()"
+        [removingTrackIds]="removingTrackId()"
+        (deleteRequested)="deleteCurrentPlaylist()"
+        (playRequested)="playSong($event)"
+        (removeRequested)="removeTrack($event)"
+      />
+    </section>
+  </div>
+  }
+
+  @if (confirmDeletePlaylist()) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="cancelDelete()">&times;</button>
+      <h2>Eliminar lista</h2>
+      <p class="modal-message">¿Quieres borrar la lista "{{ confirmDeletePlaylist()!.listName }}"? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="modal-cancel" type="button" (click)="cancelDelete()">Cancelar</button>
+        <button class="modal-confirm" type="button" (click)="confirmDelete()" [disabled]="deletingPlaylist()">
+          {{ deletingPlaylist() ? 'Borrando...' : 'Borrar lista' }}
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+</section>

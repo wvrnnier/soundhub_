@@ -1,0 +1,31 @@
+<h2>Crear lista</h2>
+<form class="create-form" [formGroup]="createListForm()" (ngSubmit)="onCreatePlaylist()">
+  <input id="playlistName" type="text" formControlName="name" placeholder="Nombre para tu lista" />
+
+  @if (createListForm().controls['name'].invalid && createListForm().controls['name'].touched) {
+  <span class="field-error">Nombre demasiado corto</span>
+  }
+
+  <button type="submit" [disabled]="createListForm().invalid || creatingPlaylist()">
+    {{ creatingPlaylist() ? 'Creando...' : 'Crear lista' }}
+  </button>
+</form>
+
+<div class="playlist-summary">
+  <h3>Mis listas</h3>
+  <div class="playlist-list-scroll">
+    @for (playlist of playlists(); track playlist.id) {
+    <button
+      type="button"
+      class="playlist-item"
+      [class.active]="selectedPlaylistId() === playlist.id"
+      (click)="onOpenPlaylist(playlist.id)"
+    >
+      <span class="name">{{ playlist.listName }}</span>
+      <span class="meta">{{ playlist.songCount }} canciones</span>
+    </button>
+    } @empty {
+    <p class="empty">Todavía no tienes listas creadas.</p>
+    }
+  </div>
+</div>

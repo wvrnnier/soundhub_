@@ -1,0 +1,56 @@
+@if (loadingPlaylist()) {
+<p class="loading">Cargando lista...</p>
+}
+
+@if (selectedPlaylist(); as playlist) {
+<div class="playlist-header">
+  <div>
+    <p class="eyebrow">Lista activa</p>
+    <h2>{{ playlist.listName }}</h2>
+    <span>{{ playlist.songCount }} canciones guardadas</span>
+  </div>
+
+  <button class="danger" type="button" (click)="onDeletePlaylist()" [disabled]="deletingPlaylist()">
+    {{ deletingPlaylist() ? 'Borrando...' : 'Borrar lista' }}
+  </button>
+</div>
+
+<section class="songs">
+  <h3>Canciones en esta lista</h3>
+
+  @if (playlist.songs.length === 0) {
+  <p class="empty">Aún no hay canciones. Usa "Agregar canción" para empezar.</p>
+  } @else {
+  <div class="songs-scroll">
+    @for (song of playlist.songs; track song.id) {
+    <article class="song-item">
+      <img [src]="song.cover" alt="Cover de {{ song.title }}" />
+      <div class="song-info">
+        <strong>{{ song.title }}</strong>
+        <span>{{ song.artist }}</span>
+      </div>
+
+      <div class="song-actions">
+        <button type="button" (click)="onPlaySong(song)" [disabled]="!song.previewUrl">
+          Reproducir
+        </button>
+        <button
+          type="button"
+          class="remove"
+          (click)="onRemoveSong(song)"
+          [disabled]="isRemoving(song.trackId)"
+        >
+          {{ isRemoving(song.trackId) ? 'Quitando...' : 'Quitar' }}
+        </button>
+      </div>
+    </article>
+    }
+  </div>
+  }
+</section>
+} @else {
+<section class="state-card">
+  <h2>No hay lista seleccionada</h2>
+  <p>Crea una lista nueva o selecciona una de la barra lateral</p>
+</section>
+}

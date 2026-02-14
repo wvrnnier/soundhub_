@@ -17,14 +17,16 @@
       </button>
 
       @if (isLoggedIn) {
-      @for (playlist of playlists(); track playlist.id) {
-      <button class="submenu-item" type="button" (click)="openPlaylist(playlist.id, $event)">
-        <span>{{ playlist.listName }}</span>
-        <small>{{ playlist.songCount }}</small>
-      </button>
-      } @empty {
-      <span class="submenu-empty">Sin listas creadas</span>
-      }
+      <div class="submenu-playlist-scroll">
+        @for (playlist of playlists(); track playlist.id) {
+        <button class="submenu-item" type="button" (click)="openPlaylist(playlist.id, $event)">
+          <span>{{ playlist.listName }}</span>
+          <small>{{ playlist.songCount }}</small>
+        </button>
+        } @empty {
+        <span class="submenu-empty">Sin listas creadas</span>
+        }
+      </div>
       }
     </div>
     }

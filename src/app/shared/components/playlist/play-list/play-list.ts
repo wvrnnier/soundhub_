@@ -4,20 +4,29 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AudioService } from '../../../core/services/audio-service';
-import { AuthService } from '../../../core/services/auth.service';
-import { Track } from '../../../core/services/music-service';
+import { AudioService } from '../../../../core/services/audio-service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { Track } from '../../../../core/services/music-service';
+import { PlaylistSidebarComponent } from '../playlist-sidebar/playlist-sidebar';
+import { PlaylistSongsPanelComponent } from '../playlist-songs-panel/playlist-songs-panel';
+import { PlaylistTrackSearchComponent } from '../playlist-track-search/playlist-track-search';
 import {
   PlaylistDetail,
   PlaylistService,
   PlaylistSong,
   PlaylistSummary,
-} from '../../../core/services/playlist-service';
+} from '../../../../core/services/playlist-service';
 
 @Component({
   selector: 'app-play-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PlaylistTrackSearchComponent,
+    PlaylistSidebarComponent,
+    PlaylistSongsPanelComponent,
+  ],
   templateUrl: './play-list.html',
   styleUrl: './play-list.css',
 })
@@ -37,24 +46,20 @@ export class PlayList implements OnInit {
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
   });
 
-  readonly searchForm = this.fb.nonNullable.group({
-    query: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-  });
-
   readonly isLoggedIn = signal(false);
   readonly loadingPlaylist = signal(false);
-  readonly searchingTracks = signal(false);
   readonly creatingPlaylist = signal(false);
   readonly deletingPlaylist = signal(false);
   readonly addingTrackId = signal<Set<string>>(new Set());
   readonly removingTrackId = signal<Set<string>>(new Set());
-  readonly errorMessage = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
-  readonly searchResults = signal<Track[]>([]);
+  readonly toastMessage = signal<string | null>(null);
+  readonly toastType = signal<'success' | 'error'>('success');
   readonly selectedPlaylist = signal<PlaylistDetail | null>(null);
   readonly confirmDeletePlaylist = signal<PlaylistDetail | null>(null);
 
   private routePlaylistId: number | null = null;
+  private readonly toastDurationMs = 2800;
+  private toastTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
@@ -69,15 +74,13 @@ export class PlayList implements OnInit {
     this.authService.currentUser$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
       this.isLoggedIn.set(!!user);
       this.username.set(user?.username ?? '');
-      this.errorMessage.set(null);
-      this.successMessage.set(null);
+      this.clearFeedback();
 
       if (user) {
         this.loadPlaylists();
       } else {
         this.playlistService.clearState();
         this.selectedPlaylist.set(null);
-        this.searchResults.set([]);
       }
     });
   }
@@ -110,7 +113,7 @@ export class PlayList implements OnInit {
       next: (playlist) => {
         this.creatingPlaylist.set(false);
         this.createListForm.reset({ name: '' });
-        this.successMessage.set('Lista creada');
+        this.showSuccess('Lista creada');
         this.openPlaylist(playlist.id);
       },
       error: (error) => {
@@ -142,8 +145,7 @@ export class PlayList implements OnInit {
         this.deletingPlaylist.set(false);
         this.confirmDeletePlaylist.set(null);
         this.selectedPlaylist.set(null);
-        this.searchResults.set([]);
-        this.successMessage.set('Lista eliminada');
+        this.showSuccess('Lista eliminada');
         this.loadPlaylists();
       },
       error: (error) => {
@@ -156,37 +158,6 @@ export class PlayList implements OnInit {
 
   cancelDelete(): void {
     this.confirmDeletePlaylist.set(null);
-  }
-
-  searchTracksToAdd(): void {
-    if (this.searchForm.invalid) {
-      this.searchForm.markAllAsTouched();
-      return;
-    }
-
-    const selectedPlaylist = this.selectedPlaylist();
-    if (!selectedPlaylist) {
-      this.errorMessage.set('Primero crea o selecciona una lista');
-      return;
-    }
-
-    const query = this.searchForm.controls.query.value.trim();
-    if (!query) return;
-
-    this.clearFeedback();
-    this.searchingTracks.set(true);
-
-    this.playlistService.searchTracks(query).subscribe({
-      next: (tracks) => {
-        const existingIds = new Set(selectedPlaylist.songs.map((song) => song.trackId));
-        this.searchResults.set(tracks.filter((track) => !existingIds.has(track.id)));
-        this.searchingTracks.set(false);
-      },
-      error: (error) => {
-        this.searchingTracks.set(false);
-        this.handleHttpError(error, 'No se pudieron buscar canciones');
-      },
-    });
   }
 
   addTrack(track: Track): void {
@@ -203,10 +174,7 @@ export class PlayList implements OnInit {
           next.delete(track.id);
           return next;
         });
-        this.searchResults.update((tracks) =>
-          tracks.filter((searchTrack) => searchTrack.id !== track.id),
-        );
-        this.successMessage.set('Cancion agregada');
+        this.showSuccess('Cancion agregada');
         this.loadPlaylist(playlist.id, false);
         this.loadSidebarLibrarySongs();
       },
@@ -235,7 +203,7 @@ export class PlayList implements OnInit {
           next.delete(song.trackId);
           return next;
         });
-        this.successMessage.set('Cancion eliminada de la lista');
+        this.showSuccess('Cancion eliminada de la lista');
         this.loadPlaylist(playlist.id, false);
         this.loadSidebarLibrarySongs();
       },
@@ -252,7 +220,7 @@ export class PlayList implements OnInit {
 
   playSong(song: PlaylistSong): void {
     if (!song.previewUrl) {
-      this.errorMessage.set('Esta cancion no tiene preview disponible para reproducir');
+      this.showError('Esta cancion no tiene preview disponible para reproducir');
       return;
     }
 
@@ -344,12 +312,34 @@ export class PlayList implements OnInit {
   }
 
   private clearFeedback(): void {
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
+    this.toastMessage.set(null);
+    if (this.toastTimeoutId) {
+      clearTimeout(this.toastTimeoutId);
+      this.toastTimeoutId = null;
+    }
   }
 
   private handleHttpError(error: unknown, fallbackMessage: string): void {
     const httpError = error as HttpErrorResponse;
-    this.errorMessage.set(httpError?.error?.error ?? httpError?.error?.message ?? fallbackMessage);
+    const message = httpError?.error?.error ?? httpError?.error?.message ?? fallbackMessage;
+    this.showError(message);
+  }
+
+  private showSuccess(message: string): void {
+    this.showToast(message, 'success');
+  }
+
+  private showError(message: string): void {
+    this.showToast(message, 'error');
+  }
+
+  private showToast(message: string, type: 'success' | 'error'): void {
+    this.clearFeedback();
+    this.toastType.set(type);
+    this.toastMessage.set(message);
+    this.toastTimeoutId = setTimeout(() => {
+      this.toastMessage.set(null);
+      this.toastTimeoutId = null;
+    }, this.toastDurationMs);
   }
 }
