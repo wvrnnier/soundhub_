@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { MusicService, Track, Album } from '../../../core/services/music-service';
-
 import { Subject, of, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
@@ -36,7 +35,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       document.addEventListener('click', this.onExitClick.bind(this));
-      console.log('Añadido listener de click al documento');
       // Configurar búsqueda reactiva
       this.searchSubject.pipe(
         debounceTime(250),
@@ -104,7 +102,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (isPlatformBrowser(this.platformId)) {
       document.removeEventListener('click', this.onExitClick.bind(this));
-      console.log('Eliminado listener de click del documento');
       this.searchSubject.complete();
     }
   }
@@ -149,42 +146,29 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onKeyDown(event: KeyboardEvent) {
-    console.log('Key pressed:', event.key, 'Dropdown visible:', this.showDropdown, 'Results length:', this.searchResults.length);
-    if (this.searchResults.length === 0 && event.key !== 'Escape') {
-      console.log('Sin resultados y no es escape');
-      return;
-    }
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       this.highlightedIndex = (this.highlightedIndex + 1) % this.searchResults.length;
-      console.log('ArrowDown: índice =', this.highlightedIndex);
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       this.highlightedIndex = (this.highlightedIndex - 1 + this.searchResults.length) % this.searchResults.length;
-      console.log('ArrowUp: índice =', this.highlightedIndex);
     } else if (event.key === 'Enter') {
       event.preventDefault();
       if (this.highlightedIndex >= 0 && this.highlightedIndex < this.searchResults.length) {
-        console.log('Enter: resultado seleccionado ', this.highlightedIndex);
         this.onSelectResult(this.searchResults[this.highlightedIndex]);
       }
     } else if (event.key === 'Escape') {
       event.preventDefault();
-      console.log('Escape: cerrando dropdown');
       this.showDropdown = false;
       this.cdr.detectChanges();
     }
   }
 
   onExitClick(event: MouseEvent) {
-    console.log('Detectado click en:', event.target);
     if (event.target instanceof Element && !this.el.nativeElement.contains(event.target)) {
-      console.log('Click fuera del componente, cerrando dropdown');
       this.showDropdown = false;
       this.cdr.detectChanges();
-    } else {
-      console.log('Click dentro del componente, no hacer nada');
     }
   }
 }
