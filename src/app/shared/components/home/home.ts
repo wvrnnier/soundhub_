@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
   tracks = this.music.homeTracks;
 
   ngOnInit() {
-    this.music.getTrendingSongs();
-    this.music.getTrendingAlbums();
+    this.music.getTrendingSongs().subscribe();
+    this.music.getTrendingAlbums().subscribe();
   }
 }

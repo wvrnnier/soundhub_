@@ -32,7 +32,7 @@ export class TrackListComponent implements OnInit {
 
   ngOnInit() {
     // Reutilizo las homeTracks (trending ES) si ya están cargadas
-    this.music.getTrendingSongs();
-    this.music.getTrendingAlbums();
+    this.music.getTrendingSongs().subscribe();
+    this.music.getTrendingAlbums().subscribe();
   }
 }

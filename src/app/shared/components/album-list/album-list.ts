@@ -17,6 +17,6 @@ export class AlbumListComponent implements OnInit {
   query = 'queen'; // o ‘a’ si quieres más resultados
 
   ngOnInit() {
-    this.music.searchAlbums(this.query);
+    this.music.searchAlbums(this.query).subscribe();
   }
 }

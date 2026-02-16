@@ -113,21 +113,33 @@ export class MusicService {
 
 
   // TRENDING (via backend proxy para evitar CORS, con caché local)
-  getTrendingSongs() {
-    if (this.homeTracks().length > 0) return; // ya cargados
-    this.http
+  // TRENDING (via backend proxy para evitar CORS, con caché local)
+  getTrendingSongs(): Observable<Track[]> {
+    if (this.homeTracks().length > 0) return of(this.homeTracks());
+
+    return this.http
       .get<{ results: Track[] }>(`${API_URL}/trending/songs`)
-      .subscribe((resp) => {
-        this.homeTracks.set(resp.results);
-      });
+      .pipe(
+        map(resp => resp.results),
+        // Efecto secundario: actualizar la señal
+        switchMap(tracks => {
+          this.homeTracks.set(tracks);
+          return of(tracks);
+        })
+      );
   }
 
-  getTrendingAlbums() {
-    if (this.homeAlbums().length > 0) return; // ya cargados
-    this.http
+  getTrendingAlbums(): Observable<Album[]> {
+    if (this.homeAlbums().length > 0) return of(this.homeAlbums());
+
+    return this.http
       .get<{ results: Album[] }>(`${API_URL}/trending/albums`)
-      .subscribe((resp) => {
-        this.homeAlbums.set(resp.results);
-      });
+      .pipe(
+        map(resp => resp.results),
+        switchMap(albums => {
+          this.homeAlbums.set(albums);
+          return of(albums);
+        })
+      );
   }
 }
