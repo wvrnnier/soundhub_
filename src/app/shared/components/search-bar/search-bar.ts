@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { MusicService, Track, Album } from '../../../core/services/music-service';
-import { SearchStateService } from '../../../core/services/search-state';
+
 import { Subject, of, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
@@ -27,7 +27,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   constructor(
     private music: MusicService,
-    private searchState: SearchStateService,
+
     private el: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef
@@ -134,7 +134,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     } else {
       // Es una canción
       this.selectResult.emit(result as Track);
-      this.searchState.setSelectedTrack(result as Track);
+
       this.router.navigate(['/trackDetail', result.id]);
     }
   }

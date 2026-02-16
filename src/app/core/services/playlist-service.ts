@@ -269,9 +269,9 @@ export class PlaylistService {
             playlists.map((playlist) =>
               playlist.id === playlistId
                 ? {
-                    ...playlist,
-                    songCount: Math.max(playlist.songCount - 1, 0),
-                  }
+                  ...playlist,
+                  songCount: Math.max(playlist.songCount - 1, 0),
+                }
                 : playlist,
             ),
           );
@@ -288,17 +288,7 @@ export class PlaylistService {
       );
   }
 
-  searchTracks(query: string, limit = 12): Observable<Track[]> {
-    return this.http
-      .get<SearchResponse>(`${MUSIC_API_URL}/search`, {
-        params: {
-          term: query,
-          entity: 'song',
-          limit: limit.toString(),
-        },
-      })
-      .pipe(map((response) => response.results as Track[]));
-  }
+
 
   // ========================
   // Helpers internos de estado

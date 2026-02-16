@@ -15,7 +15,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, catchError, debounceTime, distinctUntilChanged, map, of, switchMap } from 'rxjs';
-import { Track } from '../../../../core/services/music-service';
+import { MusicService, Track } from '../../../../core/services/music-service';
 import { PlaylistDetail, PlaylistService } from '../../../../core/services/playlist-service';
 
 @Component({
@@ -30,6 +30,7 @@ export class PlaylistTrackSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly playlistService = inject(PlaylistService);
+  private readonly musicService = inject(MusicService);
 
   selectedPlaylist = input<PlaylistDetail | null>(null);
   addingTrackIds = input<Set<string>>(new Set<string>());
@@ -113,7 +114,8 @@ export class PlaylistTrackSearchComponent implements OnInit {
     this.searchingTracks.set(true);
     this.searchError.set(null);
 
-    return this.playlistService.searchTracks(query).pipe(
+    return this.musicService.searchTracksOnly(query, 12).pipe(
+      map((response) => response.results as Track[]),
       map((tracks) => this.filterExistingTracks(tracks, selectedPlaylist)),
       catchError((error) => {
         this.searchError.set(this.resolveSearchError(error, 'No se pudieron buscar canciones'));

@@ -67,11 +67,18 @@ export class MusicService {
   // DATOS PARA PORTADA
 
 
-  searchTracks(query: string, limit: number): Observable<SearchResponse> {
-    this.isSearching.set(true);
+
+  // BÚSQUEDA PURA (Sin efectos secundarios en signals)
+  searchTracksOnly(query: string, limit: number): Observable<SearchResponse> {
     return this.http.get<SearchResponse>(`${API_URL}/search`, {
       params: { term: query, entity: 'song', limit: limit.toString() }
-    }).pipe(
+    });
+  }
+
+  // BÚSQUEDA CON EFECTO (Actualiza signals)
+  searchTracks(query: string, limit: number): Observable<SearchResponse> {
+    this.isSearching.set(true);
+    return this.searchTracksOnly(query, limit).pipe(
       map(resp => {
         this.tracks.set(resp.results as Track[]);
         return resp;
