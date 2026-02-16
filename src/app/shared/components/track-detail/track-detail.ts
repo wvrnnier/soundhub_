@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, HostListener } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MusicService, Track } from '../../../core/services/music-service';
 import { AudioService } from '../../../core/services/audio-service';
@@ -68,8 +68,18 @@ export class TrackDetailComponent implements OnInit {
     }
   }
 
-  togglePlaylistMenu() {
+  togglePlaylistMenu(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
     this.showPlaylistMenu.update(v => !v);
+  }
+
+  @HostListener('document:click')
+  closeMenu() {
+    if (this.showPlaylistMenu()) {
+      this.showPlaylistMenu.set(false);
+    }
   }
 
   addToPlaylist(playlistId: number) {

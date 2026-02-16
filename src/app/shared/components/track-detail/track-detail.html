@@ -30,11 +30,11 @@
         </button>
         @if (playlistService.playlists().length > 0) {
         <div class="playlist-action-container">
-          <button class="add-btn" (click)="togglePlaylistMenu()" title="Añadir a playlist">
+          <button class="add-btn" (click)="togglePlaylistMenu($event)" title="Añadir a playlist">
             +
           </button>
           @if (showPlaylistMenu()) {
-          <div class="playlist-dropdown">
+          <div class="playlist-dropdown" (click)="$event.stopPropagation()">
             <h6>Añadir a...</h6>
             @for (list of playlistService.playlists(); track list.id) {
             <button class="playlist-option" (click)="addToPlaylist(list.id)" [disabled]="isSongInPlaylist(list.id)">
