@@ -65,14 +65,7 @@ export class MusicService {
   homeAlbums = signal<Album[]>([]);
 
   // DATOS PARA PORTADA
-  searchSongs(query: string, limit = 24) {
-    this.isSearching.set(true);
-    this.http.get<SearchResponse>(`${API_URL}/search`, {
-      params: { term: query, entity: 'song', limit: limit.toString() }
-    }).subscribe((resp) => {
-      this.tracks.set(resp.results as Track[]);
-    });
-  }
+
 
   searchTracks(query: string, limit: number): Observable<SearchResponse> {
     this.isSearching.set(true);
@@ -86,11 +79,7 @@ export class MusicService {
     );
   }
 
-  searchArtists(term: string, limit: number = 20): Observable<SearchResponse> {
-    return this.http.get<SearchResponse>(`${API_URL}/search`, {
-      params: { term, entity: 'musicArtist', limit: limit.toString() }
-    });
-  }
+
 
   searchAlbums(query: string, limit = 24) {
     return this.http.get<SearchResponse>(`${API_URL}/search`, {
@@ -119,16 +108,9 @@ export class MusicService {
     return this.http.get(`${API_URL}/album/${albumId}`);
   }
 
-  getArtistWithTracks(artistId: string, limit: number = 20): Observable<any> {
-    return this.http.get(`${API_URL}/artist/${artistId}`, {
-      params: { limit: limit.toString() }
-    });
-  }
 
-  // Buscar por ID localmente
-  byId(id: string) {
-    return this.tracks().find(t => t.id === id) ?? null;
-  }
+
+
 
   // TRENDING (via backend proxy para evitar CORS, con caché local)
   getTrendingSongs() {
