@@ -14,6 +14,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "outputPath": "dist/AngularProyecto",
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -25,12 +26,7 @@
               "src/custom-theme.scss",
               "src/styles.css",
               "src/theme.css"
-            ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            ]
           },
           "configurations": {
             "production": {
