@@ -1,5 +1,5 @@
 header {
-    background-color: #000000;
+    background-color: var(--nav-bar);
     color: white;
     padding: 0.5rem 2rem;
     width: 100%;
@@ -10,7 +10,7 @@ header {
 }
 
 app-side-bar.expanded~header {
-    left: 270px;
+    left: var(--sidebar-w-expanded);
 }
 
 .nav-bar {
@@ -24,14 +24,14 @@ app-side-bar.expanded~header {
 .logo {
     font-size: 2rem;
     font-weight: bold;
-    color: #fff;
+    color: var(--text);
     text-decoration: none;
     flex-shrink: 0;
     white-space: nowrap;
 }
 
 .logo-icon {
-    color: #1db954;
+    color: var(--accent);
     font-size: 2rem;
     margin-right: 2px;
 }
@@ -46,7 +46,7 @@ app-side-bar.expanded~header {
 }
 
 .nav-links a {
-    color: #b3b3b3;
+    color: var(--text);
     text-decoration: none;
     transition: color 0.3s;
     white-space: nowrap;
@@ -55,8 +55,8 @@ app-side-bar.expanded~header {
 
 .nav-links a:hover,
 .nav-links a.active {
-    text-shadow: 0 0 8px #1db954;
-    color: #fff;
+    text-shadow: 0 0 8px var(--accent);
+    color: var(--accent);
 }
 
 .home-icon {

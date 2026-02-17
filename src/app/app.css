@@ -1,6 +1,32 @@
 :root {
+  --header-h: 56px;
+  /*Altura del navbar fijo*/
+  --sb-collapsed: 76px;
+  /*ancho de sidebar cuando está cerrado*/
   --bg: #0f0f0f;
   /*color de fondo*/
+}
+
+.shell {
+  position: relative;
+  /*contenedor base que no es necesario usar*/
+  padding-top: var(--header-h);
+}
+
+/*Dejar hueco para el navbar*/
+
+/* el contenido no se mueve cuando la sidebar se expande */
+.main {
+  margin-left: var(--sb-collapsed);
+  /* Deja hueco a la izquierda para sidebar cerrada*/
+  height: calc(100vh - var(--header-h));
+  /*la altura es igual a la ventana menos la altura del navbar*/
+  overflow: auto;
+  /*si el contenido se pasa, hace scroll interno*/
+  padding: 24px 40px;
+  /*separación inferior*/
+  scrollbar-gutter: stable both-edges;
+  /*mantiene sitio para hacer scroll cuando lo tenga que hgacer*/
 }
 
 html,
