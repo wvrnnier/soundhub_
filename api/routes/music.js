@@ -98,7 +98,6 @@ router.get('/search', async (req, res) => {
 // Función helper para transformar datos según entidad
 function transformByEntity(item, entity) {
 if (!item) return null;
-//Agregar tpye: 'track' a los objetos
   switch(entity) {
     case 'song':
     case 'musicTrack':
@@ -291,7 +290,8 @@ router.get('/trending/songs', async (req, res) => {
         } catch { return null; }
       })
     );
-
+    // Elimino todos los valores que sean null, undefined o falsy 
+    // en caso de que el lookup falle por alguna razón, así no se rompe la respuesta
     const results = lookups.filter(Boolean);
     trendingCache.songs = { data: results, timestamp: Date.now() };
 

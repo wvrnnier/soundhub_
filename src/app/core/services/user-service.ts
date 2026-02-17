@@ -3,25 +3,25 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthService, User } from './auth.service';
 
-export interface UpdateProfileRequest {
+interface UpdateProfileRequest {
   username: string;
   email: string;
   password?: string;
   newsletter: boolean;
 }
 
-export interface ProfileResponse {
+interface ProfileResponse {
   message: string;
   user: User;
 }
 
-export interface AvatarResponse {
+interface AvatarResponse {
   message: string;
   url: string;
   user: User;
 }
 
-export interface MessageResponse {
+interface MessageResponse {
   message: string;
 }
 
