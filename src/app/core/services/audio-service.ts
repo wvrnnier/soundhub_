@@ -55,14 +55,7 @@ export class AudioService {
 
     if (queue.length > 0) {
       if (this.isShuffle()) {
-        this.originalQueue = [...queue];
-        const shuffled = this.shuffleArray([...queue]);
-        const index = shuffled.findIndex(t => t.id === track.id);
-        if (index > -1) {
-          shuffled.splice(index, 1);
-          shuffled.unshift(track);
-        }
-        this.queue.set(shuffled);
+        this.setupShuffleQueue(track, queue);
       } else {
         this.queue.set(queue);
         this.originalQueue = [];
@@ -82,6 +75,7 @@ export class AudioService {
     this.audio.load();
     this.play();
   }
+
 
   togglePlay() {
     this.isPlaying() ? this.pause() : this.play();
@@ -134,55 +128,6 @@ export class AudioService {
     }
   }
 
-  toggleMute() {
-    this.isMuted() ? this.unmute() : this.mute();
-  }
-
-  toggleShuffle() {
-    const newState = !this.isShuffle();
-    this.isShuffle.set(newState);
-
-    const currentTrack = this.currentTrack();
-    const currentQueue = this.queue();
-
-    if (newState) {
-      // Activar shuffle
-      if (currentQueue.length > 0) {
-        this.originalQueue = [...currentQueue];
-        const shuffled = this.shuffleArray([...currentQueue]);
-
-        // Mantener la canción actual sonando
-        if (currentTrack) {
-          const index = shuffled.findIndex(t => t.id === currentTrack.id);
-          if (index > -1) {
-            shuffled.splice(index, 1);
-            shuffled.unshift(currentTrack);
-          }
-        }
-        this.queue.set(shuffled);
-      }
-    } else {
-      // Desactivar shuffle (restaurar original)
-      if (this.originalQueue.length > 0) {
-        this.queue.set(this.originalQueue);
-        this.originalQueue = [];
-      }
-    }
-  }
-
-  toggleLoop() {
-    this.isLoop.set(!this.isLoop());
-  }
-
-  private shuffleArray(array: Track[]): Track[] {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
-
   prev() {
     const current = this.currentTrack();
     const queue = this.queue();
@@ -194,4 +139,56 @@ export class AudioService {
       this.playTrack(queue[index - 1]);
     }
   }
+
+  toggleMute() {
+    this.isMuted() ? this.unmute() : this.mute();
+  }
+
+  toggleShuffle() {
+    const newState = !this.isShuffle();
+    this.isShuffle.set(newState);
+
+    const currentTrack = this.currentTrack();
+    const currentQueue = this.queue(); // En ese momento es la lista "normal"
+
+    if (newState) {
+      if (currentTrack && currentQueue.length > 0) {
+        this.setupShuffleQueue(currentTrack, currentQueue);
+      }
+    } else {
+      // Restaurar original
+      if (this.originalQueue.length > 0) {
+        this.queue.set(this.originalQueue);
+        this.originalQueue = [];
+      }
+    }
+  }
+
+  private setupShuffleQueue(track: Track, sourceQueue: Track[]) {
+    this.originalQueue = [...sourceQueue]; // Guardamos copia del orden original
+    const shuffled = this.shuffleArray([...sourceQueue]);
+
+    // Poner la canción actual al principio
+    const index = shuffled.findIndex(t => t.id === track.id);
+    if (index > -1) {
+      shuffled.splice(index, 1);
+      shuffled.unshift(track);
+    }
+    this.queue.set(shuffled);
+  }
+
+  private shuffleArray(array: Track[]): Track[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+
+  toggleLoop() {
+    this.isLoop.set(!this.isLoop());
+  }
+
+
 }

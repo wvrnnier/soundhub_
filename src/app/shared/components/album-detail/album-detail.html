@@ -1,4 +1,5 @@
-<div class="album-page" *ngIf="album()">
+@if (album()) {
+<div class="album-page">
     <!-- CABECERA -->
     <header class="album-header">
         <div class="cover-art">
@@ -41,18 +42,20 @@
             <div class="col-title">Título</div>
         </div>
 
-        <div class="track-row" *ngFor="let track of tracks(); let i = index" [routerLink]="['/trackDetail', track.id]"
+        @for (track of tracks(); track track.id; let i = $index) {
+        <div class="track-row" [routerLink]="['/trackDetail', track.id]"
             [class.playing]="audioService.currentTrack()?.id === track.id">
             <div class="col-number">
                 <span class="track-index">
-                    <span *ngIf="audioService.currentTrack()?.id === track.id && audioService.isPlaying()"
-                        style="color: var(--accent);">
+                    @if (audioService.currentTrack()?.id === track.id && audioService.isPlaying()) {
+                    <span style="color: var(--accent);">
                         <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;">
                             <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
                         </svg>
                     </span>
-                    <span *ngIf="!(audioService.currentTrack()?.id === track.id && audioService.isPlaying())">{{ i + 1
-                        }}</span>
+                    } @else {
+                    <span>{{ i + 1 }}</span>
+                    }
                 </span>
                 <button class="track-play-btn" (click)="$event.stopPropagation(); playFromTrack(i)">
                     @if (!(audioService.currentTrack()?.id === track.id && audioService.isPlaying())) {
@@ -72,5 +75,7 @@
             </div>
             <div class="col-time">{{ formatDuration(track.duration) }}</div>
         </div>
+        }
     </div>
 </div>
+}

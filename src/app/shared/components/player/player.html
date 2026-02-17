@@ -1,4 +1,5 @@
-<div class="player-container" *ngIf="currentTrack">
+@if (currentTrack) {
+<div class="player-container">
 
   <div class="track-info">
     <img [src]="currentTrack.cover" alt="" class="cover-image">
@@ -9,10 +10,11 @@
         </a>
       </div>
       <span class="track-artist">{{ currentTrack.artist }}</span>
-      <a *ngIf="currentTrack.album && currentTrack.albumId" [routerLink]="['/albumDetail', currentTrack.albumId]"
-        class="track-album-link">
+      @if (currentTrack.album && currentTrack.albumId) {
+      <a [routerLink]="['/albumDetail', currentTrack.albumId]" class="track-album-link">
         {{ currentTrack.album }}
       </a>
+      }
     </div>
   </div>
 
@@ -62,3 +64,4 @@
   </div>
 
 </div>
+}
