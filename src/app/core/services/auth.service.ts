@@ -3,14 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-export interface LoginRequest {
+interface LoginRequest {
   email: string;
   password: string;
 }
 
 export type Gender = 'm' | 'f' | 'nb' | 'na';
 
-export interface RegisterRequest {
+interface RegisterRequest {
   email: string;
   username: string;
   password: string;
@@ -36,7 +36,7 @@ export interface User {
   userLists?: UserList[];
 }
 
-export interface AuthResponse {
+interface AuthResponse {
   message: string;
   token: string;
   user: User;
@@ -77,10 +77,6 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
-  }
-
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
   }
 
   /** Actualiza el usuario en el BehaviorSubject y localStorage */

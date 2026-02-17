@@ -85,23 +85,9 @@ router.delete('/account', async (req, res) => {
             return res.status(401).json({ message: 'Contraseña incorrecta' });
         }
 
-        // Cascada manual: songs_list → user_lists → users
-        // 1. Obtener los IDs de las listas del usuario
-        const userLists = await sql`SELECT id FROM user_lists WHERE user_id = ${req.user.id}`;
-        const listIds = userLists.map(l => l.id);
-
-        // 2. Eliminar canciones de songs_list asociadas a esas listas
-        if (listIds.length > 0) {
-            await sql`DELETE FROM songs_list WHERE list_id = ANY(${listIds})`;
-        }
-
-        // 3. Eliminar las listas del usuario
-        await sql`DELETE FROM user_lists WHERE user_id = ${req.user.id}`;
-
-        // 4. Eliminar el usuario
         await sql`DELETE FROM users WHERE id = ${req.user.id}`;
 
-        // 5. Borrar avatar del Blob de Vercel (si existía)
+        // Borrar avatar del Blob de Vercel (si existía)
         if (user.profile_image_url && user.profile_image_url.includes('blob.vercel-storage.com')) {
             try {
                 await del(user.profile_image_url, { token: process.env.BLOB_READ_WRITE_TOKEN });

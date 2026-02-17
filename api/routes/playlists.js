@@ -89,7 +89,9 @@ async function requireOwnedPlaylist(userId, playlistId, res) {
 // ========================
 // Helpers de metadata iTunes
 // ========================
-
+// Esto divide un array en grupos de un tamaño menor
+// Ejemplo: chunk([1,2,3,4,5], 2) => [[1,2], [3,4], [5]]
+// Es útil para hacer consultas en lotes a la API
 function chunk(array, size) {
   const out = [];
   for (let i = 0; i < array.length; i += size) {
@@ -97,7 +99,8 @@ function chunk(array, size) {
   }
   return out;
 }
-
+// Elimina todos los valores false del array tarackIds con filter(Boolean)
+// Crea un Set para eliminar duplicados y  lo esparce creando un nuevo array
 async function getSongMetadata(trackIds) {
   const uniqueTrackIds = [...new Set(trackIds.filter(Boolean))];
   if (uniqueTrackIds.length === 0) {
